@@ -225,43 +225,104 @@ const SUPPS=[
 ];
 
 // ═══════ WORKOUT DATA ═══════
-const PHASES=[
-  {k:"foundation",l:"Foundation",w:"1\u20134",n:"Build habits. Learn movements. Protect joints. Consistency over intensity.",d:[
-    {d:"Sunday",t:"Rest",e:[]},
-    {d:"Monday",t:"Upper Body + Walk",e:[{n:"Incline Push-ups (hands on counter)",s:"3\u00d710"},{n:"Dumbbell Overhead Press",s:"3\u00d710"},{n:"Dumbbell Bent-Over Rows",s:"3\u00d710 each"},{n:"Bicep Curls",s:"2\u00d712"},{n:"Chair Tricep Dips",s:"2\u00d78"},{n:"Plank Hold",s:"3\u00d720 sec"},{n:"Walk (moderate pace)",s:"30 min"}]},
-    {d:"Tuesday",t:"Walk + Stretch",e:[{n:"Brisk Walk",s:"30\u201340 min"},{n:"Full Body Stretch",s:"10 min"}]},
-    {d:"Wednesday",t:"Lower Body + Walk",e:[{n:"Bodyweight Squats (to chair)",s:"3\u00d710"},{n:"Walking Lunges",s:"3\u00d78 each leg"},{n:"Glute Bridges",s:"3\u00d712"},{n:"Calf Raises",s:"3\u00d715"},{n:"Wall Sit",s:"3\u00d720 sec"},{n:"Walk (moderate pace)",s:"30 min"}]},
-    {d:"Thursday",t:"Active Recovery",e:[{n:"Easy Walk or Light Stretching",s:"20\u201330 min"}]},
-    {d:"Friday",t:"Full Body + Walk",e:[{n:"Goblet Squats (dumbbell)",s:"3\u00d710"},{n:"Incline Push-ups",s:"3\u00d710"},{n:"Dumbbell Deadlifts",s:"3\u00d710"},{n:"Dumbbell Shoulder Press",s:"3\u00d710"},{n:"Plank Hold",s:"3\u00d730 sec"},{n:"Walk (moderate pace)",s:"30 min"}]},
-    {d:"Saturday",t:"Cardio + Core",e:[{n:"Walk or Stationary Bike",s:"40 min"},{n:"Dead Bugs",s:"3\u00d710 each"},{n:"Bird Dogs",s:"3\u00d710 each"},{n:"Plank",s:"3\u00d730 sec"}]},
-  ]},
-  {k:"build",l:"Build",w:"5\u20138",n:"More weight. More volume. Walks get longer. Add incline or speed.",d:[
-    {d:"Sunday",t:"Rest",e:[]},
-    {d:"Monday",t:"Push + Cardio",e:[{n:"Push-ups (floor or incline)",s:"3\u00d712"},{n:"Dumbbell Bench Press",s:"3\u00d710"},{n:"Overhead Press",s:"3\u00d710"},{n:"Lateral Raises",s:"3\u00d712"},{n:"Tricep Extensions",s:"3\u00d712"},{n:"Walk or Bike",s:"35 min"}]},
-    {d:"Tuesday",t:"Cardio",e:[{n:"Brisk Walk (include hills)",s:"40 min"},{n:"Stretching",s:"10 min"}]},
-    {d:"Wednesday",t:"Pull + Legs",e:[{n:"Dumbbell Rows",s:"3\u00d712 each"},{n:"Goblet Squats",s:"3\u00d712"},{n:"Romanian Deadlifts",s:"3\u00d710"},{n:"Curls",s:"3\u00d712"},{n:"Lunges",s:"3\u00d710 each"},{n:"Walk or Bike",s:"35 min"}]},
-    {d:"Thursday",t:"Active Recovery",e:[{n:"Light Walk or Yoga",s:"20\u201330 min"}]},
-    {d:"Friday",t:"Full Body",e:[{n:"Squats (weighted)",s:"4\u00d710"},{n:"Push-ups",s:"3\u00d712"},{n:"Bent-Over Rows",s:"3\u00d712"},{n:"Shoulder Press",s:"3\u00d710"},{n:"Plank",s:"3\u00d745 sec"},{n:"Walk",s:"30 min"}]},
-    {d:"Saturday",t:"Long Cardio + Core",e:[{n:"Walk, Bike, or Swim",s:"45\u201360 min"},{n:"Crunches or Knee Raises",s:"3\u00d712"},{n:"Russian Twists",s:"3\u00d715 each"},{n:"Plank",s:"3\u00d745 sec"}]},
-  ]},
-  {k:"push",l:"Push",w:"9\u201312+",n:"Intensity goes up. Walk/jog intervals. Heavier weights. You\u2019re a different person now.",d:[
-    {d:"Sunday",t:"Rest",e:[]},
-    {d:"Monday",t:"Upper Push + HIIT Walk",e:[{n:"Push-ups",s:"4\u00d715"},{n:"Dumbbell Bench Press",s:"4\u00d710"},{n:"Overhead Press",s:"4\u00d710"},{n:"Lateral Raises",s:"3\u00d715"},{n:"Tricep Dips",s:"3\u00d712"},{n:"Walk/Jog Intervals",s:"30 min (1 jog / 2 walk)"}]},
-    {d:"Tuesday",t:"Cardio + Abs",e:[{n:"Walk/Jog Intervals or Bike",s:"40 min"},{n:"Core Circuit (plank, dead bugs, crunches)",s:"3 rounds"}]},
-    {d:"Wednesday",t:"Lower Body",e:[{n:"Squats",s:"4\u00d712"},{n:"Romanian Deadlifts",s:"4\u00d710"},{n:"Bulgarian Split Squats",s:"3\u00d710 each"},{n:"Calf Raises",s:"4\u00d715"},{n:"Glute Bridges (weighted)",s:"3\u00d715"},{n:"Walk",s:"30 min"}]},
-    {d:"Thursday",t:"Active Recovery",e:[{n:"Walk, Swim, or Yoga",s:"30 min"}]},
-    {d:"Friday",t:"Upper Pull + Cardio",e:[{n:"Pull-ups or Lat Pulldown",s:"4\u00d78"},{n:"Dumbbell Rows",s:"4\u00d710 each"},{n:"Face Pulls (band)",s:"3\u00d715"},{n:"Bicep Curls",s:"3\u00d712"},{n:"Farmer\u2019s Walks",s:"3\u00d740 sec"},{n:"Walk/Jog",s:"30 min"}]},
-    {d:"Saturday",t:"Long Cardio",e:[{n:"Walk, Hike, Bike, or Swim",s:"50\u201360 min"},{n:"Full Stretch Routine",s:"15 min"}]},
-  ]},
-];
-function getPhase(wk){return wk<=4?0:wk<=8?1:2}
+const WO_CATS=['gym','cardio','home'];
+const WO_CAT_LBL={gym:'\ud83c\udfcb\ufe0f Gym',cardio:'\ud83d\udeb6 Cardio',home:'\ud83c\udfe0 Home'};
+const WORKOUTS={
+  gym:[
+    {id:'chest',name:'Chest & Triceps',desc:'Heavy compounds build chest thickness. On your frame, a big chest commands attention.',ex:[
+      {n:'Barbell Bench Press',s:'4\u00d78\u201310',t:'Compound. Control the descent \u2014 long arms mean more ROM. No bouncing.'},
+      {n:'Incline Dumbbell Press',s:'3\u00d710\u201312',t:'30\u00b0 incline. Builds upper chest fullness.'},
+      {n:'Cable Flyes (or Pec Deck)',s:'3\u00d712\u201315',t:'Squeeze at the top. Feel the stretch.'},
+      {n:'Dumbbell Pullover',s:'3\u00d712',t:'Chest and lats. Stretch at the bottom, squeeze at the top.'},
+      {n:'Tricep Rope Pushdown',s:'3\u00d712\u201315',t:'Spread the rope at the bottom. Full lockout.'},
+      {n:'Overhead Tricep Extension',s:'3\u00d712',t:'Cable or dumbbell. Big stretch at the bottom.'},
+      {n:'Close-Grip Bench Press',s:'3\u00d78\u201310',t:'Hands shoulder-width. Tricep mass builder.'},
+    ]},
+    {id:'back',name:'Back & Biceps',desc:'Wide lats create the V-taper. Heavy rows build the density that makes people move out of your way.',ex:[
+      {n:'Barbell Bent-Over Row',s:'4\u00d78\u201310',t:'45\u00b0 angle. Pull to your belly button. Squeeze your shoulder blades.'},
+      {n:'Lat Pulldown (wide grip)',s:'3\u00d710\u201312',t:'Pull to your upper chest. Lean back slightly.'},
+      {n:'Seated Cable Row',s:'3\u00d710\u201312',t:'Keep your back straight. Full stretch, full squeeze.'},
+      {n:'Dumbbell Single-Arm Row',s:'3\u00d710 each',t:'Brace on the bench. Pull to your hip. Heavy.'},
+      {n:'Face Pulls',s:'3\u00d715',t:'High cable. Pull to your ears. Rear delts + posture.'},
+      {n:'Barbell Curl',s:'3\u00d710\u201312',t:'Strict form. No swinging. Arms fill out slow on tall guys \u2014 be patient.'},
+      {n:'Hammer Curls',s:'3\u00d712',t:'Hits the brachialis. Makes your arms look thick from the side.'},
+      {n:'Farmer\u2019s Walks',s:'3\u00d740 sec',t:'Heavy dumbbells. Walk. Grip, traps, core, everything.'},
+    ]},
+    {id:'shoulders',name:'Shoulders & Arms',desc:'Wide shoulders on a 6\u20195\u2033 frame is the difference between big and imposing. Lateral raises are your best friend.',ex:[
+      {n:'Overhead Press (barbell or DB)',s:'4\u00d78\u201310',t:'Strict form, no leg drive. The king of "looks strong" exercises.'},
+      {n:'Lateral Raises',s:'4\u00d712\u201315',t:'Light weight, SLOW reps. This is THE exercise for wide shoulders. Don\u2019t ego lift.'},
+      {n:'Rear Delt Flyes (cable or DB)',s:'3\u00d715',t:'Bent over or reverse pec deck. Balances the shoulders, improves posture.'},
+      {n:'Barbell Shrugs',s:'4\u00d712',t:'Heavy. Hold at the top for 2 sec. Big traps = "don\u2019t mess with me."'},
+      {n:'EZ-Bar Curl',s:'3\u00d710\u201312',t:'Slightly wider than shoulder width. Controlled reps.'},
+      {n:'Incline Dumbbell Curl',s:'3\u00d712',t:'45\u00b0 incline bench. Long stretch at the bottom. Builds the peak.'},
+      {n:'Skull Crushers (EZ-bar)',s:'3\u00d710\u201312',t:'Lower to your forehead. Elbows in. Tricep mass.'},
+      {n:'Cable Tricep Pushdown (V-bar)',s:'3\u00d712\u201315',t:'Finish the arms. Full lockout every rep.'},
+    ]},
+    {id:'legs',name:'Legs',desc:'Don\u2019t skip these. Strong legs complete the build, boost testosterone, and burn the most calories of any workout.',ex:[
+      {n:'Barbell Back Squat or Leg Press',s:'4\u00d78\u201310',t:'Squat if your back is good. Leg press if not. No shame \u2014 both build legs.'},
+      {n:'Romanian Deadlift',s:'4\u00d78\u201310',t:'Slight knee bend. Push hips back. Feel the hamstring stretch. Builds the whole posterior chain.'},
+      {n:'Walking Lunges (DB)',s:'3\u00d710 each',t:'Long stride. Control the descent. Quads, glutes, balance.'},
+      {n:'Leg Curl Machine',s:'3\u00d712',t:'Slow negatives. Squeeze at the top.'},
+      {n:'Leg Extension Machine',s:'3\u00d712',t:'Squeeze at the top for 1 sec. Quad isolation.'},
+      {n:'Standing Calf Raises',s:'4\u00d715',t:'Full ROM. Stretch at the bottom, pause at the top.'},
+      {n:'Seated Calf Raises',s:'3\u00d715',t:'Hits the soleus. Slow and controlled.'},
+    ]},
+  ],
+  cardio:[
+    {id:'incline',name:'Incline Treadmill Walk',desc:'The single best fat-burning cardio. High incline, moderate pace, zero joint impact.',ex:[
+      {n:'Incline Walk',s:'30\u201345 min',t:'3.0\u20133.5 mph, 10\u201315% incline. Hold nothing. Swing your arms.'},
+    ]},
+    {id:'rowing',name:'Rowing Machine',desc:'Full-body cardio. Burns calories, builds back endurance, zero impact on knees.',ex:[
+      {n:'Rowing Intervals',s:'20\u201330 min',t:'1 min hard / 1 min easy. Keep your back straight, drive with legs first.'},
+    ]},
+    {id:'bike',name:'Stationary Bike',desc:'Easy on the joints at any weight. Great for recovery days or longer sessions.',ex:[
+      {n:'Steady State Ride',s:'30\u201340 min',t:'Moderate resistance. RPM 70\u201390. Heart rate in the fat-burning zone.'},
+    ]},
+    {id:'stairmaster',name:'Stairmaster',desc:'Brutal on the glutes and quads. Excellent calorie burn. Start with 15 min if needed.',ex:[
+      {n:'Stairmaster Climb',s:'20\u201330 min',t:'Moderate pace. Don\u2019t lean on the rails \u2014 stand upright. If 20 min is hard, start with 15.'},
+    ]},
+  ],
+  home:[
+    {id:'home-upper',name:'Upper Body (Bodyweight)',desc:'No gym, no problem. Push-ups and dips build real pressing strength.',ex:[
+      {n:'Push-ups',s:'4\u00d715\u201320',t:'Full ROM. Chest to floor. If 15 is hard, do 4 sets to failure.'},
+      {n:'Diamond Push-ups',s:'3\u00d710\u201312',t:'Hands close together. Tricep focused.'},
+      {n:'Pike Push-ups',s:'3\u00d710',t:'Feet elevated on a chair, hips high. Shoulders and upper chest.'},
+      {n:'Chair Dips',s:'3\u00d712\u201315',t:'Hands on a sturdy chair behind you. Keep elbows in.'},
+      {n:'Inverted Rows (under a table)',s:'3\u00d712',t:'Lie under a sturdy table, pull chest to edge. Back work at home.'},
+      {n:'Plank to Push-up',s:'3\u00d710',t:'Forearm plank \u2192 push-up position \u2192 back down. Core + arms.'},
+      {n:'Superman Hold',s:'3\u00d720 sec',t:'Face down, lift arms and legs. Squeeze your lower back and glutes.'},
+    ]},
+    {id:'home-core',name:'Core & Abs',desc:'Strong core supports every lift. This routine hits all angles.',ex:[
+      {n:'Dead Bugs',s:'3\u00d712 each',t:'Back flat on the floor. Opposite arm/leg extends. Slow and controlled.'},
+      {n:'Bicycle Crunches',s:'3\u00d720 each',t:'Elbow to opposite knee. Don\u2019t pull your neck.'},
+      {n:'Plank',s:'3\u00d745\u201360 sec',t:'Forearms and toes. Straight line from head to heels. Squeeze everything.'},
+      {n:'Mountain Climbers',s:'3\u00d720 each',t:'Controlled pace. Drive knees to chest.'},
+      {n:'Russian Twists',s:'3\u00d715 each',t:'Feet off the floor. Rotate from the torso, not just the arms.'},
+      {n:'Leg Raises',s:'3\u00d712',t:'Lying flat. Lower legs slowly. Core stays engaged the whole time.'},
+      {n:'Bird Dogs',s:'3\u00d710 each',t:'Opposite arm/leg. Hold for 2 sec at the top. Balance and stability.'},
+      {n:'Side Plank',s:'3\u00d720\u201330 sec each',t:'Forearm and feet stacked. Hips up. Obliques.'},
+    ]},
+    {id:'home-full',name:'Full Body (Bodyweight)',desc:'When you can\u2019t get to the gym but still need to move. No equipment needed.',ex:[
+      {n:'Burpees (step-back, no jump)',s:'3\u00d710',t:'Step back instead of jumping. Still brutal. Full body.'},
+      {n:'Push-ups',s:'3\u00d715',t:'Standard push-ups. Chest to floor.'},
+      {n:'Bodyweight Squats',s:'3\u00d715',t:'Below parallel if you can. Drive through your heels.'},
+      {n:'Walking Lunges',s:'3\u00d710 each',t:'Long stride. Keep your torso upright.'},
+      {n:'Glute Bridge',s:'3\u00d715',t:'Squeeze at the top for 2 sec. Drive through your heels.'},
+      {n:'Plank',s:'3\u00d745 sec',t:'Straight line. Squeeze your core and glutes.'},
+      {n:'Superman',s:'3\u00d712',t:'Arms and legs up. Hold 2 sec. Lower back and glutes.'},
+      {n:'Mountain Climbers',s:'3\u00d715 each',t:'Controlled. Drive knees to chest. Finish strong.'},
+    ]},
+  ],
+};
 
 // ═══════ STATE ═══════
 let state={
   tab:'today',data:null,photos:[],
   form:{weight:'',workout:false,meals:false,noGas:true},
   foodForm:{name:'',cal:'',pro:''},
-  saved:false,mealSlot:'breakfast',selDay:new Date().getDay(),
+  woForm:{duration:'',calories:'',notes:''},
+  saved:false,mealSlot:'breakfast',
+  woCat:'gym',woIdx:0,
   suppOpen:-1,photoView:-1,
   setupW:305,setupG:275
 };
@@ -364,9 +425,27 @@ function ring(progress,dayNum){
 }
 
 // ═══════ ACTIONS ═══════
+function todayWorkouts(){
+  if(!state.data||!state.data.logs)return[];
+  const log=state.data.logs[getToday()];
+  return(log&&log.workouts)||[];
+}
 function setTab(t){state.tab=t;render()}
 function setSlot(s){state.mealSlot=s;render()}
-function setDay(d){state.selDay=d;render()}
+function setWoCat(c){state.woCat=c;state.woIdx=0;render()}
+function setWoIdx(i){state.woIdx=i;render()}
+function updateWo(key,v){state.woForm[key]=v}
+function completeWorkout(){
+  const wo=WORKOUTS[state.woCat][state.woIdx];if(!wo)return;
+  const t=getToday();
+  if(!state.data.logs[t])state.data.logs[t]={foods:[]};
+  if(!state.data.logs[t].workouts)state.data.logs[t].workouts=[];
+  state.data.logs[t].workouts.push({name:wo.name,duration:Number(state.woForm.duration)||0,calories:Number(state.woForm.calories)||0,notes:state.woForm.notes||''});
+  state.data.logs[t].workout=true;
+  state.form.workout=true;
+  state.woForm={duration:'',calories:'',notes:''};
+  save();render();
+}
 function toggleSupp(i){state.suppOpen=state.suppOpen===i?-1:i;render()}
 function toggleForm(key){state.form[key]=!state.form[key];state.saved=false;render()}
 function updateWeight(v){state.form.weight=v;state.saved=false}
@@ -414,8 +493,9 @@ function progBar(label,current,target,color){
 function renderToday(){
   const cfg=state.data.config,dn=daysBetween(SD,getToday())+1,dl=daysBetween(getToday(),TD);
   const total=daysBetween(SD,TD),prog=total>0?Math.min(1,daysBetween(SD,getToday())/total):0;
-  const wk=getWeek(),ph=getPhase(wk),wl=cfg.startWeight-latestWeight();
+  const wk=getWeek(),wl=cfg.startWeight-latestWeight();
   const foods=todayFoods(),tc=todayCal(),tp=todayPro(),f=state.form;
+  const tw=todayWorkouts();
   return`
     ${ring(prog,dn)}
     <div class="stat-row">
@@ -424,9 +504,8 @@ function renderToday(){
       <div class="stat"><div class="stat-val mono text-cy">${cfg.goalWeight}</div><div class="stat-lbl">Goal</div></div>
     </div>
     <div class="card mt-md">
-      <div class="card-label">${getDayName()}'s workout</div>
-      <div class="text-em fw-bold">${PHASES[ph].d[getDayIdx()].t}</div>
-      <div class="text-xs text-muted mt-sm">Week ${wk} \u00b7 ${PHASES[ph].l} phase</div>
+      <div class="card-label">Today's training</div>
+      ${tw.length?tw.map(w=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><div><div class="text-em fw-bold">${w.name}</div><div class="text-xs text-muted">${w.duration?w.duration+' min':''}${w.duration&&w.calories?' \u00b7 ':''}${w.calories?w.calories+' cal burned':''}</div></div><span class="text-xs text-em">\u2713</span></div>`).join(''):'<div class="text-sm text-muted">No workout logged yet. Head to the Train tab to pick one.</div>'}
     </div>
 
     <div class="card">
@@ -477,12 +556,51 @@ function renderFuel(){
 
 // ═══════ TAB: TRAIN ═══════
 function renderTrain(){
-  const wk=getWeek(),ph=getPhase(wk),dayData=PHASES[ph].d[state.selDay],di=getDayIdx();
+  const wk=getWeek(),cat=state.woCat,list=WORKOUTS[cat],wo=list[state.woIdx];
+  const tw=todayWorkouts();
   return`
-    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="card-label">Current Phase</div><div class="text-xs text-muted">Week ${wk}</div></div><div class="text-em fw-bold" style="font-size:18px">${PHASES[ph].l}</div><div class="text-xs text-muted mt-sm">${PHASES[ph].n}</div><div style="display:flex;gap:4px;margin-top:10px">${PHASES.map((_,i)=>`<div style="height:6px;flex:1;border-radius:3px;background:${i<=ph?'var(--em)':'var(--input)'}"></div>`).join('')}</div></div>
-    <div class="day-row">${['Su','Mo','Tu','We','Th','Fr','Sa'].map((d,i)=>`<button class="day-btn ${state.selDay===i?'sel':i===di?'today':'off'}" onclick="setDay(${i})">${d}</button>`).join('')}</div>
-    <div class="card"><div class="text-xs text-muted">${dayData.d}</div><div class="fw-bold mt-sm">${dayData.t}</div>${dayData.e.length===0?'<div class="text-sm text-muted" style="margin-top:12px">Rest day. Recover. Stretch if you feel like it. You earned this.</div>':`<div style="margin-top:12px">${dayData.e.map(e=>`<div class="ex-row"><span class="ex-name">${e.n}</span><span class="ex-sets mono">${e.s}</span></div>`).join('')}</div>`}</div>
-    <div class="card"><div class="card-label" style="margin-bottom:8px">Training Notes</div><div class="train-note">\u2022 <strong>Warm up</strong> \u2014 5 min walking or light movement before every session</div><div class="train-note">\u2022 <strong>Weight selection</strong> \u2014 rep 8 should feel hard but form stays clean</div><div class="train-note">\u2022 <strong>Rest between sets</strong> \u2014 60\u201390 sec isolation, 2 min compounds</div><div class="train-note">\u2022 <strong>Walking pace</strong> \u2014 conversational but purposeful, slightly out of breath</div><div class="train-note">\u2022 <strong>No running yet</strong> \u2014 joints first. Jog intervals come in the Push phase</div></div>`;
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="card-label">Week ${wk}</div>
+        <div class="text-xs text-muted">Pick any workout, any day</div>
+      </div>
+      <div class="text-xs text-muted mt-sm">Suggested: 4 gym + 2\u20133 cardio per week. Rest \u22651 day. Add weight when the reps feel easy.</div>
+    </div>
+
+    <div class="pill-row">${WO_CATS.map(c=>`<button class="pill ${cat===c?'on':'off'}" onclick="setWoCat('${c}')">${WO_CAT_LBL[c]}</button>`).join('')}</div>
+
+    <div class="pill-row">${list.map((w,i)=>`<button class="pill ${state.woIdx===i?'on':'off'}" onclick="setWoIdx(${i})">${w.name}</button>`).join('')}</div>
+
+    <div class="card">
+      <div class="fw-bold" style="font-size:16px">${wo.name}</div>
+      <div class="text-xs text-muted mt-sm" style="line-height:1.5">${wo.desc}</div>
+      <div style="margin-top:12px">
+        ${wo.ex.map(e=>`<div class="ex-row" style="flex-direction:column;align-items:flex-start;gap:2px">
+          <div style="display:flex;justify-content:space-between;width:100%"><span class="ex-name" style="color:var(--text)">${e.n}</span><span class="ex-sets mono">${e.s}</span></div>
+          ${e.t?`<div class="text-xs text-muted" style="line-height:1.4">${e.t}</div>`:''}
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card gap-sm">
+      <div class="text-sm fw-bold">\ud83d\udcca Log This Workout</div>
+      <div class="food-num-row">
+        <input class="food-num" placeholder="Duration (min)" type="number" inputmode="numeric" oninput="updateWo('duration',this.value)" value="${state.woForm.duration}">
+        <input class="food-num" placeholder="Cal burned" type="number" inputmode="numeric" oninput="updateWo('calories',this.value)" value="${state.woForm.calories}">
+      </div>
+      <input class="food-input" placeholder="Notes (optional)" oninput="updateWo('notes',this.value)" value="${state.woForm.notes}">
+      <button class="btn btn-primary" onclick="completeWorkout()">\u2713 Complete ${wo.name}</button>
+    </div>
+
+    ${tw.length?`<div class="card"><div class="card-label">Completed Today</div>${tw.map(w=>`<div style="padding:4px 0;border-bottom:1px solid var(--border)"><div class="text-sm fw-bold text-em">${w.name}</div><div class="text-xs text-muted">${w.duration?w.duration+' min':''}${w.duration&&w.calories?' \u00b7 ':''}${w.calories?w.calories+' cal burned':''}${w.notes?' \u00b7 '+w.notes:''}</div></div>`).join('')}</div>`:''}
+
+    <div class="card"><div class="card-label" style="margin-bottom:8px">Training Rules</div>
+      <div class="train-note">\u2022 <strong>Warm up</strong> \u2014 5 min walking or light cardio before every session</div>
+      <div class="train-note">\u2022 <strong>Progressive overload</strong> \u2014 completed all reps? Add 5 lbs barbell / 2.5 lbs DBs next time</div>
+      <div class="train-note">\u2022 <strong>Rest between sets</strong> \u2014 60\u201390 sec isolation, 2\u20133 min compound lifts</div>
+      <div class="train-note">\u2022 <strong>Tall guy note</strong> \u2014 long limbs = more ROM. Don\u2019t ego lift. Controlled reps beat heavy swings every time</div>
+      <div class="train-note">\u2022 <strong>Lateral raises</strong> \u2014 the single most important exercise for making a tall frame look filled out. Never skip them</div>
+    </div>`;
 }
 
 // ═══════ TAB: PHOTOS ═══════
