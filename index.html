@@ -13,9 +13,14 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#020617;--surface:#0f172a;--surface2:#1e293b;--border:#334155;--text:#f8fafc;--text2:#94a3b8;--green:#22c55e;--green2:#16a34a;--cyan:#06b6d4;--amber:#f59e0b;--red:#ef4444;--purple:#a855f7;--blue:#3b82f6;--pink:#ec4899}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;padding-bottom:80px}
-.hdr{text-align:center;padding:16px 16px 8px;background:linear-gradient(180deg,rgba(34,197,94,.08),transparent)}
+.hdr{text-align:center;padding:16px 16px 4px;background:linear-gradient(180deg,rgba(34,197,94,.08),transparent)}
 .hdr-title{font-size:28px;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hdr-sub{font-size:13px;color:var(--text2);margin-top:2px}
+.date-nav{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 16px 4px}
+.date-nav button{background:none;border:none;color:var(--green);font-size:22px;cursor:pointer;padding:4px 10px}
+.date-nav-label{font-size:15px;font-weight:600;color:var(--text);cursor:pointer;padding:4px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border);min-width:140px;text-align:center}
+.date-nav-label.past{border-color:var(--amber);color:var(--amber)}
+.date-nav-today{font-size:12px;color:var(--cyan);cursor:pointer;padding:4px 10px;border:1px solid var(--cyan);border-radius:6px;background:none;font-weight:600}
 .content{padding:12px 16px 16px}
 .tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px 4px;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:100}
 .tab-btn{flex:1;background:none;border:none;color:var(--text2);font-size:9px;padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border-radius:8px;transition:all .2s}
@@ -35,6 +40,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .btn-sm{padding:8px 14px;font-size:13px;width:auto;border-radius:8px}
 .btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
 input,select,textarea{width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:16px;-webkit-appearance:none}
+input[type="date"]{color-scheme:dark}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green)}
 textarea{resize:vertical;min-height:60px;font-family:inherit}
 label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px}
@@ -65,7 +71,7 @@ label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px}
 .core-addon{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25);border-radius:10px;padding:12px;margin-top:12px}
 .core-addon-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .focus-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
-.focus-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.focus-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:14px;color:#fff}
 .focus-check.done{background:var(--green);border-color:var(--green)}
 .focus-text{flex:1;font-size:15px}
 .focus-text.done{text-decoration:line-through;opacity:.5}
@@ -91,14 +97,8 @@ label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px}
 .tag-green{background:rgba(34,197,94,.15);color:var(--green)}
 .tag-amber{background:rgba(245,158,11,.15);color:var(--amber)}
 .tag-red{background:rgba(239,68,68,.15);color:var(--red)}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
-.toggle{width:48px;height:28px;border-radius:14px;background:var(--surface2);border:1px solid var(--border);position:relative;cursor:pointer;transition:all .2s}
-.toggle.on{background:var(--green);border-color:var(--green)}
-.toggle::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:2px;left:2px;transition:all .2s}
-.toggle.on::after{left:22px}
 .log-entry{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(51,65,85,.3);font-size:13px}
 .log-entry:last-child{border-bottom:none}
-.section-divider{height:1px;background:var(--border);margin:16px 0}
 .inline-stat{display:flex;gap:12px;flex-wrap:wrap}
 .inline-stat-item{flex:1;min-width:80px;text-align:center;padding:10px;background:var(--surface2);border-radius:8px}
 .inline-stat-num{font-size:22px;font-weight:800}
@@ -120,14 +120,11 @@ const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',focus:'Focus',recharge
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let state={tab:'today',modal:null,selectedWorkout:null,data:null};
+let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null};
+let tempSleepQuality=0,tempEnergy=0;
 
 function defaults(){
-  return {
-    config:{startWeight:305,goalWeight:270,startDate:'2026-07-07',calorieTarget:2100,proteinTarget:150},
-    weights:{},meals:{},workouts:{},
-    focus:{},sleep:{},photos:{}
-  };
+  return{config:{startWeight:305,goalWeight:270,startDate:'2026-07-08',calorieTarget:2100,proteinTarget:150},weights:{},meals:{},workouts:{},focus:{},sleep:{},photos:{}};
 }
 
 function load(){
@@ -136,279 +133,196 @@ function load(){
     if(raw){
       const d=JSON.parse(raw);
       const def=defaults();
-      // Merge with defaults for backward compat
-      state.data={
-        config:{...def.config,...(d.config||{})},
-        weights:{...def.weights,...(d.weights||{})},
-        meals:{...def.meals,...(d.meals||{})},
-        workouts:{...def.workouts,...(d.workouts||{})},
-        focus:{...def.focus,...(d.focus||{})},
-        sleep:{...def.sleep,...(d.sleep||{})},
-        photos:{...def.photos,...(d.photos||{})}
-      };
-    } else {
-      state.data=defaults();
-    }
+      state.data={config:{...def.config,...(d.config||{})},weights:{...def.weights,...(d.weights||{})},meals:{...def.meals,...(d.meals||{})},workouts:{...def.workouts,...(d.workouts||{})},focus:{...def.focus,...(d.focus||{})},sleep:{...def.sleep,...(d.sleep||{})},photos:{...def.photos,...(d.photos||{})}};
+    }else{state.data=defaults();}
   }catch(e){state.data=defaults();}
+  state.viewDate=getToday();
 }
 
-function save(){
-  try{localStorage.setItem(STORE_KEY,JSON.stringify(state.data));}catch(e){}
-}
-
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state.data));}catch(e){}}
 function getToday(){return new Date().toISOString().slice(0,10)}
+function getVD(){return state.viewDate||getToday()}
+function isViewingToday(){return getVD()===getToday()}
 function daysBetween(a,b){return Math.ceil((new Date(b)-new Date(a))/(864e5))}
 function round1(n){return Math.round(n*10)/10}
+function fmtDate(d){const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}
+
+function shiftDate(days){
+  const d=new Date(getVD()+'T12:00:00');
+  d.setDate(d.getDate()+days);
+  const ds=d.toISOString().slice(0,10);
+  const today=getToday();
+  if(ds>today) return; // can't go into future
+  state.viewDate=ds;
+  render();
+}
 
 // ═══════════════════════════════════════════
 // WORKOUT DATABASE
 // ═══════════════════════════════════════════
-const WORKOUTS = {
-  gym: [
-    {
-      name: 'Back & Biceps',
-      routines: [
-        {
-          id:'bb-a', name:'Heavy Pulls',
-          desc:'Compound barbell focus for mass',
-          exercises:[
-            {name:'Barbell Row',sets:'4×8',note:'Wide grip, pull to lower chest. Long arms = longer ROM, control the negative.'},
-            {name:'Weighted Pull-ups',sets:'4×6-8',note:'Use assisted machine if needed. Full dead hang between reps.'},
-            {name:'T-Bar Row',sets:'3×10',note:'Chest on pad if available. Squeeze at top.'},
-            {name:'Hammer Curls',sets:'3×12',note:'Standing, no swing. Great for forearm/brachialis at your height.'},
-            {name:'Barbell Curls',sets:'3×10',note:'EZ bar fine. Strict form, elbows pinned.'}
-          ]
-        },
-        {
-          id:'bb-b', name:'Volume & Cables',
-          desc:'Higher rep pump work with cables',
-          exercises:[
-            {name:'Seated Cable Row',sets:'4×12',note:'Squeeze shoulder blades together hard at contraction.'},
-            {name:'Lat Pulldown (Wide)',sets:'4×10',note:'Lean back slightly. Pull to upper chest, not behind neck.'},
-            {name:'Single-Arm DB Row',sets:'3×10/side',note:'Brace on bench. Let the weight stretch at bottom — your long arms are an advantage here.'},
-            {name:'Face Pulls',sets:'3×15',note:'Rope attachment, pull to forehead. Rear delt and posture work.'},
-            {name:'Incline DB Curls',sets:'3×12',note:'Bench at 45°. Full stretch at bottom, slow negative.'},
-            {name:'Cable Curls',sets:'3×15',note:'Burnout set. Keep elbows still.'}
-          ]
-        },
-        {
-          id:'bb-c', name:'Machine Day',
-          desc:'Joint-friendly machine focus',
-          exercises:[
-            {name:'Machine Row (Chest-Supported)',sets:'4×12',note:'Great for isolating lats without lower back fatigue.'},
-            {name:'Lat Pulldown (Close Grip)',sets:'4×10',note:'V-bar or close-grip handle. Full stretch at top.'},
-            {name:'Reverse Fly Machine',sets:'3×15',note:'Light weight, feel the squeeze. Rear delts need love.'},
-            {name:'Preacher Curl Machine',sets:'3×12',note:'Slow eccentric. Pad eliminates cheating.'},
-            {name:'Cable Rope Hammer Curls',sets:'3×15',note:'Squeeze and spread the rope at top.'}
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Chest & Triceps',
-      routines: [
-        {
-          id:'ct-a', name:'Heavy Press',
-          desc:'Barbell and compound pressing',
-          exercises:[
-            {name:'Flat Bench Press',sets:'4×6-8',note:'Wider grip for your wingspan. Touch mid-chest, drive through feet.'},
-            {name:'Incline DB Press',sets:'4×10',note:'30° incline. Full ROM with long arms = great upper chest stretch.'},
-            {name:'Cable Flyes (Low-to-High)',sets:'3×12',note:'Cross cables at top. Squeeze chest, not shoulders.'},
-            {name:'Close-Grip Bench Press',sets:'3×10',note:'Hands shoulder-width. Elbows tucked for tricep focus.'},
-            {name:'Tricep Dips (Machine or Assisted)',sets:'3×10',note:'Lean slightly forward for chest assist. Controlled descent.'}
-          ]
-        },
-        {
-          id:'ct-b', name:'Volume Builder',
-          desc:'Higher reps for hypertrophy',
-          exercises:[
-            {name:'DB Bench Press',sets:'4×10',note:'Neutral-to-pronated grip through the rep. Deep stretch at bottom.'},
-            {name:'Incline Barbell Press',sets:'3×10',note:'30° bench. Keep bar path over upper chest.'},
-            {name:'Pec Deck',sets:'3×12',note:'Don\'t go past comfortable stretch. Squeeze 2 sec at close.'},
-            {name:'Skull Crushers (EZ Bar)',sets:'3×12',note:'Lower to forehead, not behind head. Elbows pointed at ceiling.'},
-            {name:'Overhead Tricep Extension (Cable)',sets:'3×15',note:'Rope attachment. Spread the rope at full extension.'},
-            {name:'Push-ups to Failure',sets:'2×max',note:'Burnout finisher. Wide grip, chest to floor.'}
-          ]
-        },
-        {
-          id:'ct-c', name:'Machine & Cable',
-          desc:'Joint-friendly with cable isolation',
-          exercises:[
-            {name:'Machine Chest Press',sets:'4×12',note:'Adjust seat so handles align with mid-chest.'},
-            {name:'Cable Crossovers',sets:'4×12',note:'Set pulleys high. Step through, squeeze at bottom.'},
-            {name:'Incline Machine Press',sets:'3×10',note:'If available. Otherwise incline Smith machine.'},
-            {name:'Tricep Pushdowns (Bar)',sets:'4×12',note:'Straight bar or V-bar. Lock elbows at sides.'},
-            {name:'Tricep Kickbacks (Cable)',sets:'3×15',note:'One arm at a time. Full extension, squeeze at top.'}
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Shoulders & Arms',
-      routines: [
-        {
-          id:'sa-a', name:'Heavy Overhead',
-          desc:'Compound pressing for boulder shoulders',
-          exercises:[
-            {name:'Overhead Press (Barbell)',sets:'4×6-8',note:'Standing or seated. Strict press, no leg drive. Core tight.'},
-            {name:'Arnold Press',sets:'3×10',note:'Full rotation. Great for all three delt heads.'},
-            {name:'Lateral Raises',sets:'4×15',note:'PRIORITY EXERCISE for filling out a tall frame. Light weight, high reps. Lead with elbows.'},
-            {name:'Barbell Curls',sets:'3×10',note:'Strict. Superset with next exercise.'},
-            {name:'Close-Grip Bench or Dips',sets:'3×10',note:'Tricep focused. Complete the arm circuit.'}
-          ]
-        },
-        {
-          id:'sa-b', name:'Cable & Isolation',
-          desc:'Cable work for constant tension',
-          exercises:[
-            {name:'DB Shoulder Press',sets:'4×10',note:'Seated, back supported. Full lockout at top.'},
-            {name:'Cable Lateral Raises',sets:'4×12',note:'Behind-the-back cable path for constant tension through full ROM.'},
-            {name:'Rear Delt Cable Flyes',sets:'3×15',note:'Cables at face height. Cross-body pull.'},
-            {name:'Hammer Curls',sets:'3×12',note:'Alternating. Builds that brachialis thickness.'},
-            {name:'Tricep Pushdowns',sets:'3×12',note:'Rope. Spread at bottom, squeeze tricep.'},
-            {name:'Reverse Curls',sets:'3×12',note:'EZ bar. Forearm and grip work.'}
-          ]
-        },
-        {
-          id:'sa-c', name:'Burnout Session',
-          desc:'High-rep pump and supersets',
-          exercises:[
-            {name:'Machine Shoulder Press',sets:'4×12',note:'Controlled. Use machine so you can push safely to failure.'},
-            {name:'Upright Rows (Cable or DB)',sets:'3×12',note:'Only pull to chest level. Stop if shoulders pinch.'},
-            {name:'Face Pulls',sets:'3×15',note:'Posture and rear delt work. High pull, external rotation at top.'},
-            {name:'21s Bicep Curls',sets:'3 sets',note:'7 bottom half + 7 top half + 7 full. The burn is the point.'},
-            {name:'Dip Machine',sets:'3×12',note:'Adjust for tricep focus (upright torso).'},
-            {name:'Lateral Raise Drop Set',sets:'2 drops',note:'Start heavy, drop twice. 8 reps each weight. Don\'t stop.'}
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Legs',
-      routines: [
-        {
-          id:'lg-a', name:'Squat Focus',
-          desc:'Barbell squat as the main lift',
-          exercises:[
-            {name:'Barbell Back Squat',sets:'4×8',note:'Wider stance for your height. Hit parallel — your long femurs make this harder, so own it.'},
-            {name:'Romanian Deadlift',sets:'3×10',note:'Slight knee bend, hinge at hips. Feel the hamstring stretch.'},
-            {name:'Leg Press',sets:'4×12',note:'Feet high and wide on platform for glute/ham focus.'},
-            {name:'Leg Curls',sets:'3×12',note:'Lying or seated. Slow negative.'},
-            {name:'Standing Calf Raises',sets:'4×15',note:'Full stretch at bottom, pause at top. Calves need high volume.'}
-          ]
-        },
-        {
-          id:'lg-b', name:'Deadlift Focus',
-          desc:'Deadlift as the primary pull',
-          exercises:[
-            {name:'Conventional Deadlift',sets:'4×6',note:'Mixed or hook grip. Long arms = advantage off the floor. Drive hips through.'},
-            {name:'Front Squat or Goblet Squat',sets:'3×10',note:'Keeps torso upright. Great for quads and core.'},
-            {name:'Walking Lunges (DB)',sets:'3×12/leg',note:'Long stride for your legs. Keep torso upright.'},
-            {name:'Leg Extension',sets:'3×15',note:'Quad isolation. Squeeze at top, slow negative.'},
-            {name:'Seated Calf Raises',sets:'4×15',note:'Targets soleus. Slow and controlled.'}
-          ]
-        },
-        {
-          id:'lg-c', name:'Machine Day',
-          desc:'All machines, save the joints',
-          exercises:[
-            {name:'Hack Squat',sets:'4×10',note:'Feet shoulder-width, midway on platform.'},
-            {name:'Leg Press',sets:'4×12',note:'Vary foot position: high for glutes/hams, low for quads.'},
-            {name:'Leg Extension',sets:'3×12',note:'Moderate weight, squeeze at lockout.'},
-            {name:'Seated Leg Curl',sets:'3×12',note:'Feel the hamstrings work. No momentum.'},
-            {name:'Hip Thrust (Machine or Barbell)',sets:'3×10',note:'Pause at top. Glute focus.'},
-            {name:'Calf Press on Leg Press',sets:'4×15',note:'Toes on bottom edge of platform. Full stretch.'}
-          ]
-        }
-      ]
-    }
+const WORKOUTS={
+  gym:[
+    {name:'Back & Biceps',routines:[
+      {id:'bb-a',name:'Heavy Pulls',desc:'Compound barbell focus for mass',exercises:[
+        {name:'Barbell Row',sets:'4×8',note:'Wide grip, pull to lower chest. Long arms = longer ROM, control the negative.'},
+        {name:'Weighted Pull-ups',sets:'4×6-8',note:'Use assisted machine if needed. Full dead hang between reps.'},
+        {name:'T-Bar Row',sets:'3×10',note:'Chest on pad if available. Squeeze at top.'},
+        {name:'Hammer Curls',sets:'3×12',note:'Standing, no swing. Great for forearm/brachialis at your height.'},
+        {name:'Barbell Curls',sets:'3×10',note:'EZ bar fine. Strict form, elbows pinned.'}
+      ]},
+      {id:'bb-b',name:'Volume & Cables',desc:'Higher rep pump work with cables',exercises:[
+        {name:'Seated Cable Row',sets:'4×12',note:'Squeeze shoulder blades together hard at contraction.'},
+        {name:'Lat Pulldown (Wide)',sets:'4×10',note:'Lean back slightly. Pull to upper chest, not behind neck.'},
+        {name:'Single-Arm DB Row',sets:'3×10/side',note:'Brace on bench. Let the weight stretch at bottom — your long arms are an advantage here.'},
+        {name:'Face Pulls',sets:'3×15',note:'Rope attachment, pull to forehead. Rear delt and posture work.'},
+        {name:'Incline DB Curls',sets:'3×12',note:'Bench at 45°. Full stretch at bottom, slow negative.'},
+        {name:'Cable Curls',sets:'3×15',note:'Burnout set. Keep elbows still.'}
+      ]},
+      {id:'bb-c',name:'Machine Day',desc:'Joint-friendly machine focus',exercises:[
+        {name:'Machine Row (Chest-Supported)',sets:'4×12',note:'Great for isolating lats without lower back fatigue.'},
+        {name:'Lat Pulldown (Close Grip)',sets:'4×10',note:'V-bar or close-grip handle. Full stretch at top.'},
+        {name:'Reverse Fly Machine',sets:'3×15',note:'Light weight, feel the squeeze. Rear delts need love.'},
+        {name:'Preacher Curl Machine',sets:'3×12',note:'Slow eccentric. Pad eliminates cheating.'},
+        {name:'Cable Rope Hammer Curls',sets:'3×15',note:'Squeeze and spread the rope at top.'}
+      ]}
+    ]},
+    {name:'Chest & Triceps',routines:[
+      {id:'ct-a',name:'Heavy Press',desc:'Barbell and compound pressing',exercises:[
+        {name:'Flat Bench Press',sets:'4×6-8',note:'Wider grip for your wingspan. Touch mid-chest, drive through feet.'},
+        {name:'Incline DB Press',sets:'4×10',note:'30° incline. Full ROM with long arms = great upper chest stretch.'},
+        {name:'Cable Flyes (Low-to-High)',sets:'3×12',note:'Cross cables at top. Squeeze chest, not shoulders.'},
+        {name:'Close-Grip Bench Press',sets:'3×10',note:'Hands shoulder-width. Elbows tucked for tricep focus.'},
+        {name:'Tricep Dips (Machine or Assisted)',sets:'3×10',note:'Lean slightly forward for chest assist. Controlled descent.'}
+      ]},
+      {id:'ct-b',name:'Volume Builder',desc:'Higher reps for hypertrophy',exercises:[
+        {name:'DB Bench Press',sets:'4×10',note:'Neutral-to-pronated grip through the rep. Deep stretch at bottom.'},
+        {name:'Incline Barbell Press',sets:'3×10',note:'30° bench. Keep bar path over upper chest.'},
+        {name:'Pec Deck',sets:'3×12',note:'Don\'t go past comfortable stretch. Squeeze 2 sec at close.'},
+        {name:'Skull Crushers (EZ Bar)',sets:'3×12',note:'Lower to forehead, not behind head. Elbows pointed at ceiling.'},
+        {name:'Overhead Tricep Extension (Cable)',sets:'3×15',note:'Rope attachment. Spread the rope at full extension.'},
+        {name:'Push-ups to Failure',sets:'2×max',note:'Burnout finisher. Wide grip, chest to floor.'}
+      ]},
+      {id:'ct-c',name:'Machine & Cable',desc:'Joint-friendly with cable isolation',exercises:[
+        {name:'Machine Chest Press',sets:'4×12',note:'Adjust seat so handles align with mid-chest.'},
+        {name:'Cable Crossovers',sets:'4×12',note:'Set pulleys high. Step through, squeeze at bottom.'},
+        {name:'Incline Machine Press',sets:'3×10',note:'If available. Otherwise incline Smith machine.'},
+        {name:'Tricep Pushdowns (Bar)',sets:'4×12',note:'Straight bar or V-bar. Lock elbows at sides.'},
+        {name:'Tricep Kickbacks (Cable)',sets:'3×15',note:'One arm at a time. Full extension, squeeze at top.'}
+      ]}
+    ]},
+    {name:'Shoulders & Arms',routines:[
+      {id:'sa-a',name:'Heavy Overhead',desc:'Compound pressing for boulder shoulders',exercises:[
+        {name:'Overhead Press (Barbell)',sets:'4×6-8',note:'Standing or seated. Strict press, no leg drive. Core tight.'},
+        {name:'Arnold Press',sets:'3×10',note:'Full rotation. Great for all three delt heads.'},
+        {name:'Lateral Raises',sets:'4×15',note:'PRIORITY EXERCISE for filling out a tall frame. Light weight, high reps. Lead with elbows.'},
+        {name:'Barbell Curls',sets:'3×10',note:'Strict. Superset with next exercise.'},
+        {name:'Close-Grip Bench or Dips',sets:'3×10',note:'Tricep focused. Complete the arm circuit.'}
+      ]},
+      {id:'sa-b',name:'Cable & Isolation',desc:'Cable work for constant tension',exercises:[
+        {name:'DB Shoulder Press',sets:'4×10',note:'Seated, back supported. Full lockout at top.'},
+        {name:'Cable Lateral Raises',sets:'4×12',note:'Behind-the-back cable path for constant tension through full ROM.'},
+        {name:'Rear Delt Cable Flyes',sets:'3×15',note:'Cables at face height. Cross-body pull.'},
+        {name:'Hammer Curls',sets:'3×12',note:'Alternating. Builds that brachialis thickness.'},
+        {name:'Tricep Pushdowns',sets:'3×12',note:'Rope. Spread at bottom, squeeze tricep.'},
+        {name:'Reverse Curls',sets:'3×12',note:'EZ bar. Forearm and grip work.'}
+      ]},
+      {id:'sa-c',name:'Burnout Session',desc:'High-rep pump and supersets',exercises:[
+        {name:'Machine Shoulder Press',sets:'4×12',note:'Controlled. Use machine so you can push safely to failure.'},
+        {name:'Upright Rows (Cable or DB)',sets:'3×12',note:'Only pull to chest level. Stop if shoulders pinch.'},
+        {name:'Face Pulls',sets:'3×15',note:'Posture and rear delt work. High pull, external rotation at top.'},
+        {name:'21s Bicep Curls',sets:'3 sets',note:'7 bottom half + 7 top half + 7 full. The burn is the point.'},
+        {name:'Dip Machine',sets:'3×12',note:'Adjust for tricep focus (upright torso).'},
+        {name:'Lateral Raise Drop Set',sets:'2 drops',note:'Start heavy, drop twice. 8 reps each weight. Don\'t stop.'}
+      ]}
+    ]},
+    {name:'Legs',routines:[
+      {id:'lg-a',name:'Squat Focus',desc:'Barbell squat as the main lift',exercises:[
+        {name:'Barbell Back Squat',sets:'4×8',note:'Wider stance for your height. Hit parallel — your long femurs make this harder, so own it.'},
+        {name:'Romanian Deadlift',sets:'3×10',note:'Slight knee bend, hinge at hips. Feel the hamstring stretch.'},
+        {name:'Leg Press',sets:'4×12',note:'Feet high and wide on platform for glute/ham focus.'},
+        {name:'Leg Curls',sets:'3×12',note:'Lying or seated. Slow negative.'},
+        {name:'Standing Calf Raises',sets:'4×15',note:'Full stretch at bottom, pause at top. Calves need high volume.'}
+      ]},
+      {id:'lg-b',name:'Deadlift Focus',desc:'Deadlift as the primary pull',exercises:[
+        {name:'Conventional Deadlift',sets:'4×6',note:'Mixed or hook grip. Long arms = advantage off the floor. Drive hips through.'},
+        {name:'Front Squat or Goblet Squat',sets:'3×10',note:'Keeps torso upright. Great for quads and core.'},
+        {name:'Walking Lunges (DB)',sets:'3×12/leg',note:'Long stride for your legs. Keep torso upright.'},
+        {name:'Leg Extension',sets:'3×15',note:'Quad isolation. Squeeze at top, slow negative.'},
+        {name:'Seated Calf Raises',sets:'4×15',note:'Targets soleus. Slow and controlled.'}
+      ]},
+      {id:'lg-c',name:'Machine Day',desc:'All machines, save the joints',exercises:[
+        {name:'Hack Squat',sets:'4×10',note:'Feet shoulder-width, midway on platform.'},
+        {name:'Leg Press',sets:'4×12',note:'Vary foot position: high for glutes/hams, low for quads.'},
+        {name:'Leg Extension',sets:'3×12',note:'Moderate weight, squeeze at lockout.'},
+        {name:'Seated Leg Curl',sets:'3×12',note:'Feel the hamstrings work. No momentum.'},
+        {name:'Hip Thrust (Machine or Barbell)',sets:'3×10',note:'Pause at top. Glute focus.'},
+        {name:'Calf Press on Leg Press',sets:'4×15',note:'Toes on bottom edge of platform. Full stretch.'}
+      ]}
+    ]}
   ],
-  cardio: [
-    {id:'cardio-incline',name:'Incline Treadmill Walk',desc:'12% incline, 3.0-3.5 mph. 30-45 min. Low impact fat burner — the \"12-3-30\" zone.',duration:'30-45 min'},
-    {id:'cardio-row',name:'Rowing Machine',desc:'Steady state 20 min or 30s sprint / 30s rest intervals. Full body cardio.',duration:'20-30 min'},
-    {id:'cardio-bike',name:'Stationary Bike',desc:'Moderate resistance, 30 min steady or HIIT intervals. Easy on the knees.',duration:'25-35 min'},
-    {id:'cardio-stair',name:'Stairmaster',desc:'Level 5-7, 20-30 min. Brutal but effective. Hold the rails lightly if needed.',duration:'20-30 min'}
+  cardio:[
+    {id:'cardio-incline',name:'Incline Treadmill Walk',desc:'12% incline, 3.0-3.5 mph. 30-45 min. Low impact fat burner.',duration:'30-45 min'},
+    {id:'cardio-row',name:'Rowing Machine',desc:'Steady state 20 min or 30s sprint / 30s rest intervals. Full body.',duration:'20-30 min'},
+    {id:'cardio-bike',name:'Stationary Bike',desc:'Moderate resistance, 30 min steady or HIIT intervals.',duration:'25-35 min'},
+    {id:'cardio-stair',name:'Stairmaster',desc:'Level 5-7, 20-30 min. Brutal but effective.',duration:'20-30 min'}
   ],
-  home: [
+  home:[
     {id:'home-upper',name:'Upper Body Bodyweight',desc:'Push-ups, pike push-ups, diamond push-ups, chair dips, plank shoulder taps. 3 rounds.',duration:'25 min'},
     {id:'home-core',name:'Core & Abs',desc:'Crunches, leg raises, bicycle crunches, plank (60s), mountain climbers, dead bugs. 3 rounds.',duration:'20 min'},
-    {id:'home-full',name:'Full Body Bodyweight',desc:'Burpees, jump squats, push-ups, lunges, plank, mountain climbers. 4 rounds, 45s work / 15s rest.',duration:'30 min'}
+    {id:'home-full',name:'Full Body Bodyweight',desc:'Burpees, jump squats, push-ups, lunges, plank, mountain climbers. 4 rounds.',duration:'30 min'}
   ],
-  coreAddon: [
-    {
-      id:'core-quick', name:'Quick Core (10 min)',
-      desc:'Tack this onto any upper body day',
-      exercises:[
-        {name:'Plank Hold',sets:'3×45s',note:'Elbows under shoulders, body straight. No sagging.'},
-        {name:'Cable Crunches',sets:'3×15',note:'Kneel facing away from cable. Crunch down, exhale hard.'},
-        {name:'Hanging Leg Raises',sets:'3×10',note:'Use ab straps if grip is an issue. Control the swing.'}
-      ]
-    },
-    {
-      id:'core-full', name:'Full Core (20 min)',
-      desc:'Dedicated ab work when you have extra time',
-      exercises:[
-        {name:'Ab Rollout (Wheel or Barbell)',sets:'3×10',note:'Start from knees. Extend as far as you can control.'},
-        {name:'Cable Woodchops',sets:'3×12/side',note:'Rotate from core, not arms. High-to-low and low-to-high.'},
-        {name:'Decline Crunches',sets:'3×15',note:'Hold a plate for added resistance.'},
-        {name:'Hanging Leg Raises',sets:'3×10',note:'Straight legs if possible. Slow negative.'},
-        {name:'Plank Hold',sets:'2×60s',note:'Finisher. Breathe steadily.'}
-      ]
-    },
-    {
-      id:'core-func', name:'Functional Core (15 min)',
-      desc:'Stability and anti-rotation focus',
-      exercises:[
-        {name:'Pallof Press',sets:'3×10/side',note:'Cable at chest height. Press and hold. Resist rotation.'},
-        {name:'Dead Bugs',sets:'3×10/side',note:'Lower back MUST stay pressed to floor. Slow and controlled.'},
-        {name:'Bird Dogs',sets:'3×10/side',note:'Extend opposite arm and leg. Pause at full extension.'},
-        {name:'Russian Twists',sets:'3×20',note:'Feet elevated. Touch floor each side. Use a light DB or plate.'},
-        {name:'Farmer Carries',sets:'3×40yd',note:'Heavy DBs. Walk tall, shoulders packed, core braced.'}
-      ]
-    }
+  coreAddon:[
+    {id:'core-quick',name:'Quick Core (10 min)',desc:'Tack onto any upper body day',exercises:[
+      {name:'Plank Hold',sets:'3×45s',note:'Elbows under shoulders, body straight. No sagging.'},
+      {name:'Cable Crunches',sets:'3×15',note:'Kneel facing away from cable. Crunch down, exhale hard.'},
+      {name:'Hanging Leg Raises',sets:'3×10',note:'Use ab straps if grip is an issue. Control the swing.'}
+    ]},
+    {id:'core-full',name:'Full Core (20 min)',desc:'Dedicated ab work when you have extra time',exercises:[
+      {name:'Ab Rollout (Wheel or Barbell)',sets:'3×10',note:'Start from knees. Extend as far as you can control.'},
+      {name:'Cable Woodchops',sets:'3×12/side',note:'Rotate from core, not arms. High-to-low and low-to-high.'},
+      {name:'Decline Crunches',sets:'3×15',note:'Hold a plate for added resistance.'},
+      {name:'Hanging Leg Raises',sets:'3×10',note:'Straight legs if possible. Slow negative.'},
+      {name:'Plank Hold',sets:'2×60s',note:'Finisher. Breathe steadily.'}
+    ]},
+    {id:'core-func',name:'Functional Core (15 min)',desc:'Stability and anti-rotation focus',exercises:[
+      {name:'Pallof Press',sets:'3×10/side',note:'Cable at chest height. Press and hold. Resist rotation.'},
+      {name:'Dead Bugs',sets:'3×10/side',note:'Lower back MUST stay pressed to floor. Slow and controlled.'},
+      {name:'Bird Dogs',sets:'3×10/side',note:'Extend opposite arm and leg. Pause at full extension.'},
+      {name:'Russian Twists',sets:'3×20',note:'Feet elevated. Touch floor each side. Use a light DB or plate.'},
+      {name:'Farmer Carries',sets:'3×40yd',note:'Heavy DBs. Walk tall, shoulders packed, core braced.'}
+    ]}
   ]
 };
 
 // ═══════════════════════════════════════════
-// STREAK / MOMENTUM ENGINE
+// STREAK / MOMENTUM
 // ═══════════════════════════════════════════
 function getActivityLevel(date){
-  let score=0;
-  const d=state.data;
-  if(d.weights[date]) score++;
-  if(d.meals[date]&&d.meals[date].length>0) score++;
-  if(d.workouts[date]&&d.workouts[date].length>0) score++;
-  if(d.focus[date]&&d.focus[date].length>0) score++;
-  if(d.sleep[date]) score++;
-  return Math.min(score,4);
+  let s=0;const d=state.data;
+  if(d.weights[date])s++;
+  if(d.meals[date]&&d.meals[date].length>0)s++;
+  if(d.workouts[date]&&d.workouts[date].length>0)s++;
+  if(d.focus[date]&&d.focus[date].length>0)s++;
+  if(d.sleep[date])s++;
+  return Math.min(s,4);
 }
 
 function getCurrentStreak(){
-  let streak=0;
-  let d=new Date();
-  // Check today first
-  const todayLevel=getActivityLevel(getToday());
-  if(todayLevel>0) streak++;
-  // Then count backwards
+  let streak=0;let d=new Date();
+  if(getActivityLevel(getToday())>0)streak++;
   d.setDate(d.getDate()-1);
   while(true){
     const ds=d.toISOString().slice(0,10);
     if(getActivityLevel(ds)>0){streak++;d.setDate(d.getDate()-1);}
     else break;
-    if(streak>365) break;
+    if(streak>365)break;
   }
   return streak;
 }
 
 function getLongestStreak(){
-  const allDates=new Set([
-    ...Object.keys(state.data.weights),
-    ...Object.keys(state.data.meals),
-    ...Object.keys(state.data.workouts),
-    ...Object.keys(state.data.focus),
-    ...Object.keys(state.data.sleep)
-  ]);
-  if(allDates.size===0) return 0;
+  const allDates=new Set([...Object.keys(state.data.weights),...Object.keys(state.data.meals),...Object.keys(state.data.workouts),...Object.keys(state.data.focus),...Object.keys(state.data.sleep)]);
+  if(allDates.size===0)return 0;
   const sorted=[...allDates].sort();
   let longest=1,current=1;
   for(let i=1;i<sorted.length;i++){
@@ -418,13 +332,37 @@ function getLongestStreak(){
   return longest;
 }
 
+function getLatestWeight(){
+  const dates=Object.keys(state.data.weights).sort();
+  return dates.length>0?state.data.weights[dates[dates.length-1]]:null;
+}
+
+// ═══════════════════════════════════════════
+// DATE NAV (shown on data tabs)
+// ═══════════════════════════════════════════
+function renderDateNav(){
+  const vd=getVD();
+  const isPast=vd<getToday();
+  const isFuture=vd>=getToday();
+  return `<div class="date-nav">
+    <button onclick="shiftDate(-1)">‹</button>
+    <div class="date-nav-label ${isPast?'past':''}" onclick="openDatePicker()">${fmtDate(vd)}${isPast?' (past)':''}</div>
+    ${isFuture?'':`<button onclick="shiftDate(1)">›</button>`}
+    ${isPast?`<button class="date-nav-today" onclick="state.viewDate=getToday();render()">Today</button>`:''}
+  </div>`;
+}
+
+function openDatePicker(){
+  state.modal='date-picker';render();
+}
+
 // ═══════════════════════════════════════════
 // RENDERERS
 // ═══════════════════════════════════════════
 function renderToday(){
-  const today=getToday();
-  const dl=daysBetween(today,TD);
-  const w=state.data.weights[today];
+  const vd=getVD();
+  const dl=daysBetween(getToday(),TD);
+  const w=state.data.weights[vd];
   const startW=state.data.config.startWeight;
   const goalW=state.data.config.goalWeight;
   const latestWeight=getLatestWeight();
@@ -432,60 +370,44 @@ function renderToday(){
   const totalNeeded=round1(startW-goalW);
   const pct=totalNeeded>0?Math.min(100,round1((totalLost/totalNeeded)*100)):0;
   const streak=getCurrentStreak();
-  const todayMeals=state.data.meals[today]||[];
-  const todayCals=todayMeals.reduce((s,m)=>s+(m.calories||0),0);
-  const todayProtein=todayMeals.reduce((s,m)=>s+(m.protein||0),0);
-  const todayWorkouts=state.data.workouts[today]||[];
+  const vdMeals=state.data.meals[vd]||[];
+  const vdCals=vdMeals.reduce((s,m)=>s+(m.calories||0),0);
+  const vdProtein=vdMeals.reduce((s,m)=>s+(m.protein||0),0);
+  const vdWorkouts=state.data.workouts[vd]||[];
 
-  // Heatmap data — last 35 days
-  let heatmapHTML='';
+  // Heatmap — last 35 days from TODAY (always anchored to real today)
   const now=new Date();
   const startDay=new Date(now);
   startDay.setDate(startDay.getDate()-34);
-  // Align to Sunday
-  while(startDay.getDay()!==0) startDay.setDate(startDay.getDate()-1);
-  const cells=[];
-  const d2=new Date(startDay);
+  while(startDay.getDay()!==0)startDay.setDate(startDay.getDate()-1);
+  const cells=[];const d2=new Date(startDay);
   while(d2<=now||cells.length%7!==0){
     const ds=d2.toISOString().slice(0,10);
     const level=getActivityLevel(ds);
-    const isToday=ds===today;
+    const isToday=ds===getToday();
     const isFuture=d2>now;
-    cells.push(`<div class="heatmap-cell ${isFuture?'':('l'+level)} ${isToday?'today':''}" title="${ds}: ${level} activities"></div>`);
+    cells.push(`<div class="heatmap-cell ${isFuture?'':('l'+level)} ${isToday?'today':''}" title="${ds}"></div>`);
     d2.setDate(d2.getDate()+1);
-    if(cells.length>42) break;
+    if(cells.length>42)break;
   }
-  heatmapHTML=cells.join('');
 
   return `
+    ${renderDateNav()}
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <span class="streak-badge">🔥 ${streak} day streak</span>
         <span style="font-size:13px;color:var(--text2)">${dl} days left</span>
       </div>
       <div class="inline-stat">
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--green)">${latestWeight||'--'}</div>
-          <div class="inline-stat-label">Current lbs</div>
-        </div>
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--cyan)">${totalLost>0?'-':''}${Math.abs(totalLost)}</div>
-          <div class="inline-stat-label">Lost</div>
-        </div>
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--amber)">${pct}%</div>
-          <div class="inline-stat-label">To goal</div>
-        </div>
+        <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--green)">${latestWeight||'--'}</div><div class="inline-stat-label">Current lbs</div></div>
+        <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${totalLost>0?'-':''}${Math.abs(totalLost)}</div><div class="inline-stat-label">Lost</div></div>
+        <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber)">${pct}%</div><div class="inline-stat-label">To goal</div></div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">Momentum</div>
-      <div class="heatmap">${heatmapHTML}</div>
-      <div class="heatmap-labels">
-        <span>5 weeks ago</span>
-        <span>Today</span>
-      </div>
+      <div class="heatmap">${cells.join('')}</div>
+      <div class="heatmap-labels"><span>5 weeks ago</span><span>Today</span></div>
       <div style="display:flex;gap:8px;margin-top:8px;align-items:center;font-size:11px;color:var(--text2)">
         <div class="heatmap-cell" style="width:12px;height:12px;display:inline-block"></div>None
         <div class="heatmap-cell l1" style="width:12px;height:12px;display:inline-block"></div>Low
@@ -494,452 +416,203 @@ function renderToday(){
         <div class="heatmap-cell l4" style="width:12px;height:12px;display:inline-block"></div>Full
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">Today's snapshot</div>
-      <div class="stat-row">
-        <span class="stat-label">Weight</span>
-        <span class="stat-value">${w?w+' lbs':'—'}</span>
-      </div>
-      ${!w?`<div class="form-group" style="margin-top:8px">
-        <div style="display:flex;gap:8px">
-          <input type="number" id="weight-in" placeholder="Weigh in (lbs)" step="0.1" inputmode="decimal" style="flex:1">
-          <button class="btn btn-primary btn-sm" onclick="logWeight()">Log</button>
-        </div>
-      </div>`:''}
-      <div class="stat-row">
-        <span class="stat-label">Calories</span>
-        <span class="stat-value">${todayCals} <span style="font-size:13px;color:var(--text2)">/ ${state.data.config.calorieTarget}</span></span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(todayCals/state.data.config.calorieTarget)*100)}%;background:${todayCals>state.data.config.calorieTarget?'var(--red)':'var(--green)'}"></div></div>
-      <div class="stat-row" style="margin-top:4px">
-        <span class="stat-label">Protein</span>
-        <span class="stat-value">${todayProtein}g <span style="font-size:13px;color:var(--text2)">/ ${state.data.config.proteinTarget}g</span></span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(todayProtein/state.data.config.proteinTarget)*100)}%;background:var(--cyan)"></div></div>
-      <div class="stat-row" style="margin-top:4px">
-        <span class="stat-label">Workouts</span>
-        <span class="stat-value">${todayWorkouts.length>0?todayWorkouts.map(w=>'<span class="tag tag-green">'+w.name+'</span>').join(' '):'None yet'}</span>
-      </div>
-    </div>
-  `;
+      <div class="card-title">${isViewingToday()?'Today\'s Snapshot':fmtDate(vd)}</div>
+      <div class="stat-row"><span class="stat-label">Weight</span><span class="stat-value">${w?w+' lbs':'—'}</span></div>
+      ${!w?`<div class="form-group" style="margin-top:8px"><div style="display:flex;gap:8px">
+        <input type="number" id="weight-in" placeholder="Weigh in (lbs)" step="0.1" inputmode="decimal" style="flex:1">
+        <button class="btn btn-primary btn-sm" onclick="logWeight()">Log</button>
+      </div></div>`:''}
+      <div class="stat-row"><span class="stat-label">Calories</span><span class="stat-value">${vdCals} <span style="font-size:13px;color:var(--text2)">/ ${state.data.config.calorieTarget}</span></span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(vdCals/state.data.config.calorieTarget)*100)}%;background:${vdCals>state.data.config.calorieTarget?'var(--red)':'var(--green)'}"></div></div>
+      <div class="stat-row" style="margin-top:4px"><span class="stat-label">Protein</span><span class="stat-value">${vdProtein}g <span style="font-size:13px;color:var(--text2)">/ ${state.data.config.proteinTarget}g</span></span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(vdProtein/state.data.config.proteinTarget)*100)}%;background:var(--cyan)"></div></div>
+      <div class="stat-row" style="margin-top:4px"><span class="stat-label">Workouts</span><span class="stat-value">${vdWorkouts.length>0?vdWorkouts.map(w=>'<span class="tag tag-green">'+w.name+'</span>').join(' '):'None'}</span></div>
+    </div>`;
 }
 
 function renderFuel(){
-  const today=getToday();
-  const meals=state.data.meals[today]||[];
+  const vd=getVD();
+  const meals=state.data.meals[vd]||[];
   const totalCal=meals.reduce((s,m)=>s+(m.calories||0),0);
   const totalPro=meals.reduce((s,m)=>s+(m.protein||0),0);
-  const calTarget=state.data.config.calorieTarget;
-  const proTarget=state.data.config.proteinTarget;
-
-  const mealList=meals.map((m,i)=>`
-    <div class="meal-item">
-      <div class="meal-info">
-        <div class="meal-name">${m.name}</div>
-        <div class="meal-macros">${m.calories} cal · ${m.protein}g protein</div>
-      </div>
-      <div class="meal-delete" onclick="deleteMeal(${i})">✕</div>
-    </div>
-  `).join('');
-
+  const calT=state.data.config.calorieTarget,proT=state.data.config.proteinTarget;
   return `
+    ${renderDateNav()}
     <div class="card">
       <div class="card-title">Daily Fuel</div>
-      <div class="stat-row">
-        <span class="stat-label">Calories</span>
-        <span class="stat-value" style="color:${totalCal>calTarget?'var(--red)':'var(--green)'}">${totalCal} / ${calTarget}</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(totalCal/calTarget)*100)}%;background:${totalCal>calTarget?'var(--red)':'var(--green)'}"></div></div>
-      <div class="stat-row" style="margin-top:8px">
-        <span class="stat-label">Protein</span>
-        <span class="stat-value" style="color:var(--cyan)">${totalPro}g / ${proTarget}g</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(totalPro/proTarget)*100)}%;background:var(--cyan)"></div></div>
+      <div class="stat-row"><span class="stat-label">Calories</span><span class="stat-value" style="color:${totalCal>calT?'var(--red)':'var(--green)'}">${totalCal} / ${calT}</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(totalCal/calT)*100)}%;background:${totalCal>calT?'var(--red)':'var(--green)'}"></div></div>
+      <div class="stat-row" style="margin-top:8px"><span class="stat-label">Protein</span><span class="stat-value" style="color:var(--cyan)">${totalPro}g / ${proT}g</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(totalPro/proT)*100)}%;background:var(--cyan)"></div></div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Meals Logged</div>
-      ${meals.length>0?mealList:'<div class="empty-state">No meals logged today. Get fueling.</div>'}
+    <div class="card"><div class="card-title">Meals Logged</div>
+      ${meals.length>0?meals.map((m,i)=>`<div class="meal-item"><div class="meal-info"><div class="meal-name">${m.name}</div><div class="meal-macros">${m.calories} cal · ${m.protein}g protein</div></div><div class="meal-delete" onclick="deleteMeal(${i})">✕</div></div>`).join(''):'<div class="empty-state">No meals logged. Get fueling.</div>'}
     </div>
-
-    <button class="btn btn-primary" onclick="showModal('add-meal')">+ Log Meal</button>
-  `;
+    <button class="btn btn-primary" onclick="showModal('add-meal')">+ Log Meal</button>`;
 }
 
 function renderTrain(){
-  const today=getToday();
-  const todayWorkouts=state.data.workouts[today]||[];
-  const loggedHTML=todayWorkouts.length>0?`
-    <div class="card">
-      <div class="card-title">Today's Training</div>
-      ${todayWorkouts.map((w,i)=>`
-        <div class="log-entry">
-          <span>${w.name} ${w.routine?'— '+w.routine:''}</span>
-          <span style="color:var(--green)">${w.duration||''}${w.duration?' min':''} ${w.calories?'· '+w.calories+' cal':''}</span>
-        </div>
-      `).join('')}
-    </div>
-  `:'';
-
-  // Show core add-on option
-  const coreHTML=`
-    <div class="core-addon">
-      <div class="core-addon-title">🎯 Core Add-On <span style="font-size:11px;font-weight:400;color:var(--text2)">— stack onto any upper body day</span></div>
-      ${WORKOUTS.coreAddon.map(c=>`
-        <div class="workout-card" onclick="showWorkoutDetail('coreAddon','${c.id}')">
-          <div class="workout-card-name">${c.name}</div>
-          <div class="workout-card-desc">${c.desc}</div>
-        </div>
-      `).join('')}
-    </div>
-  `;
+  const vd=getVD();
+  const vdWorkouts=state.data.workouts[vd]||[];
+  const loggedHTML=vdWorkouts.length>0?`<div class="card"><div class="card-title">${isViewingToday()?'Today\'s Training':fmtDate(vd)+' Training'}</div>
+    ${vdWorkouts.map((w,i)=>`<div class="log-entry"><span>${w.name} ${w.routine?'— '+w.routine:''}</span><span style="color:var(--green)">${w.duration||''}${w.duration?' min':''} ${w.calories?'· '+w.calories+' cal':''}</span></div>`).join('')}</div>`:'';
 
   return `
+    ${renderDateNav()}
     ${loggedHTML}
-    <div class="workout-group">
-      <div class="workout-group-title">🏋️ Gym Splits</div>
-      ${WORKOUTS.gym.map(g=>`
-        <div class="workout-card" onclick="showModal('gym-split-${g.name.replace(/[^a-zA-Z]/g,'')}')">
-          <div class="workout-card-name">${g.name}</div>
-          <div class="workout-card-desc">${g.routines.length} routines — tap to choose</div>
-        </div>
-      `).join('')}
+    <div class="workout-group"><div class="workout-group-title">🏋️ Gym Splits</div>
+      ${WORKOUTS.gym.map(g=>`<div class="workout-card" onclick="showModal('gym-split-${g.name.replace(/[^a-zA-Z]/g,'')}')"><div class="workout-card-name">${g.name}</div><div class="workout-card-desc">${g.routines.length} routines — tap to choose</div></div>`).join('')}
     </div>
-
-    <div class="workout-group">
-      <div class="workout-group-title">🫀 Cardio</div>
-      ${WORKOUTS.cardio.map(c=>`
-        <div class="workout-card" onclick="showWorkoutDetail('cardio','${c.id}')">
-          <div class="workout-card-name">${c.name}</div>
-          <div class="workout-card-desc">${c.desc}</div>
-        </div>
-      `).join('')}
+    <div class="workout-group"><div class="workout-group-title">🫀 Cardio</div>
+      ${WORKOUTS.cardio.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('cardio','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
     </div>
-
-    <div class="workout-group">
-      <div class="workout-group-title">🏠 Home</div>
-      ${WORKOUTS.home.map(c=>`
-        <div class="workout-card" onclick="showWorkoutDetail('home','${c.id}')">
-          <div class="workout-card-name">${c.name}</div>
-          <div class="workout-card-desc">${c.desc}</div>
-        </div>
-      `).join('')}
+    <div class="workout-group"><div class="workout-group-title">🏠 Home</div>
+      ${WORKOUTS.home.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('home','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
     </div>
-
-    ${coreHTML}
-  `;
+    <div class="core-addon"><div class="core-addon-title">🎯 Core Add-On <span style="font-size:11px;font-weight:400;color:var(--text2)">— stack onto any upper body day</span></div>
+      ${WORKOUTS.coreAddon.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('coreAddon','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
+    </div>`;
 }
 
 function renderFocus(){
-  const today=getToday();
-  const items=state.data.focus[today]||[];
+  const vd=getVD();
+  const items=state.data.focus[vd]||[];
   const doneCount=items.filter(i=>i.done).length;
-
-  const itemsHTML=items.map((item,i)=>`
-    <div class="focus-item">
-      <div class="focus-check ${item.done?'done':''}" onclick="toggleFocus(${i})">${item.done?'✓':''}</div>
-      <div class="focus-text ${item.done?'done':''}">${item.text}</div>
-      <div class="focus-delete" onclick="deleteFocus(${i})">✕</div>
-    </div>
-  `).join('');
-
   const completionPct=items.length>0?Math.round((doneCount/items.length)*100):0;
 
+  // History
+  const dates=Object.keys(state.data.focus).sort().reverse().slice(0,7);
+  const histRows=dates.filter(d=>d!==vd).map(d=>{
+    const it=state.data.focus[d];const dn=it.filter(i=>i.done).length;const t=it.length;const p=t>0?Math.round((dn/t)*100):0;
+    return `<div class="log-entry"><span>${fmtDate(d)}</span><span style="color:${p===100?'var(--green)':p>0?'var(--amber)':'var(--red)'}">${dn}/${t} (${p}%)</span></div>`;
+  }).join('');
+
   return `
-    <div class="card">
-      <div class="card-title">Today's Non-Negotiables</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">What are the 1–3 things that MUST happen today?</p>
-      ${items.length>0?`
-        <div style="margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-            <span style="color:var(--text2)">${doneCount}/${items.length} complete</span>
-            <span style="color:var(--green);font-weight:700">${completionPct}%</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${completionPct}%;background:var(--green)"></div></div>
-        </div>
-      `:''}
-      ${itemsHTML}
+    ${renderDateNav()}
+    <div class="card"><div class="card-title">${isViewingToday()?'Today\'s':fmtDate(vd)} Non-Negotiables</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">What are the 1–3 things that MUST happen?</p>
+      ${items.length>0?`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--text2)">${doneCount}/${items.length} complete</span><span style="color:var(--green);font-weight:700">${completionPct}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${completionPct}%;background:var(--green)"></div></div></div>`:''}
+      ${items.map((item,i)=>`<div class="focus-item"><div class="focus-check ${item.done?'done':''}" onclick="toggleFocus(${i})">${item.done?'✓':''}</div><div class="focus-text ${item.done?'done':''}">${item.text}</div><div class="focus-delete" onclick="deleteFocus(${i})">✕</div></div>`).join('')}
       ${items.length>=3?'<p style="font-size:12px;color:var(--text2);text-align:center;margin-top:8px">Max 3 — focus means choosing.</p>':''}
     </div>
-
-    ${items.length<3?`
-      <div class="card">
-        <div class="form-group">
-          <input type="text" id="focus-input" placeholder="What must get done today?" maxlength="100">
-        </div>
-        <button class="btn btn-primary" onclick="addFocus()">+ Add Focus Item</button>
-      </div>
-    `:''}
-
-    ${renderFocusHistory()}
-  `;
-}
-
-function renderFocusHistory(){
-  const dates=Object.keys(state.data.focus).sort().reverse().slice(0,7);
-  if(dates.length<=1) return '';
-  const rows=dates.filter(d=>d!==getToday()).map(d=>{
-    const items=state.data.focus[d];
-    const done=items.filter(i=>i.done).length;
-    const total=items.length;
-    const pct=total>0?Math.round((done/total)*100):0;
-    return `<div class="log-entry"><span>${d}</span><span style="color:${pct===100?'var(--green)':pct>0?'var(--amber)':'var(--red)'}">${done}/${total} (${pct}%)</span></div>`;
-  }).join('');
-  return `<div class="card"><div class="card-title">Recent Focus</div>${rows}</div>`;
+    ${items.length<3?`<div class="card"><div class="form-group"><input type="text" id="focus-input" placeholder="What must get done?" maxlength="100"></div><button class="btn btn-primary" onclick="addFocus()">+ Add Focus Item</button></div>`:''}
+    ${histRows?`<div class="card"><div class="card-title">Recent Focus</div>${histRows}</div>`:''}`;
 }
 
 function renderRecharge(){
-  const today=getToday();
-  const sleep=state.data.sleep[today];
+  const vd=getVD();
+  const sleep=state.data.sleep[vd];
 
-  const loggedHTML=sleep?`
-    <div class="card">
-      <div class="card-title">Last Night's Rest</div>
-      <div class="inline-stat">
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--cyan)">${sleep.hours}</div>
-          <div class="inline-stat-label">Hours</div>
-        </div>
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--amber)">${'⭐'.repeat(sleep.quality)}</div>
-          <div class="inline-stat-label">Quality</div>
-        </div>
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:${sleep.energy>=4?'var(--green)':sleep.energy>=2?'var(--amber)':'var(--red)'}">${['','😴','😐','🙂','😊','⚡'][sleep.energy]||'—'}</div>
-          <div class="inline-stat-label">Energy</div>
-        </div>
-      </div>
-      <button class="btn btn-secondary btn-sm" style="margin-top:12px" onclick="state.data.sleep['${today}']=null;save();render()">Re-log</button>
+  const loggedHTML=sleep?`<div class="card"><div class="card-title">Sleep Log</div>
+    <div class="inline-stat">
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${sleep.hours}</div><div class="inline-stat-label">Hours</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber)">${'⭐'.repeat(sleep.quality)}</div><div class="inline-stat-label">Quality</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${sleep.energy>=4?'var(--green)':sleep.energy>=2?'var(--amber)':'var(--red)'}">${['','😴','😐','🙂','😊','⚡'][sleep.energy]||'—'}</div><div class="inline-stat-label">Energy</div></div>
     </div>
-  `:`
-    <div class="card">
-      <div class="card-title">Log Last Night's Sleep</div>
-      <div class="form-group">
-        <label>Hours slept</label>
-        <input type="number" id="sleep-hours" placeholder="7.5" step="0.5" min="0" max="16" inputmode="decimal">
-      </div>
-      <div class="form-group">
-        <label>Sleep quality</label>
-        <div class="quality-stars" id="quality-stars">
-          ${[1,2,3,4,5].map(i=>`<span class="star" onclick="setSleepQuality(${i})" data-star="${i}">⭐</span>`).join('')}
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Morning energy level</label>
-        <div class="energy-selector">
-          ${[
-            {val:1,label:'😴 Dead'},
-            {val:2,label:'😐 Low'},
-            {val:3,label:'🙂 OK'},
-            {val:4,label:'😊 Good'},
-            {val:5,label:'⚡ Wired'}
-          ].map(e=>`<div class="energy-btn" onclick="setEnergy(${e.val})" data-energy="${e.val}">${e.label}</div>`).join('')}
-        </div>
-      </div>
-      <button class="btn btn-primary" onclick="logSleep()">Log Sleep</button>
-    </div>
-  `;
+    <button class="btn btn-secondary btn-sm" style="margin-top:12px" onclick="delete state.data.sleep['${vd}'];save();render()">Re-log</button>
+  </div>`:`<div class="card"><div class="card-title">Log Sleep</div>
+    <div class="form-group"><label>Hours slept</label><input type="number" id="sleep-hours" placeholder="7.5" step="0.5" min="0" max="16" inputmode="decimal"></div>
+    <div class="form-group"><label>Sleep quality</label><div class="quality-stars" id="quality-stars">${[1,2,3,4,5].map(i=>`<span class="star" onclick="setSleepQuality(${i})" data-star="${i}">⭐</span>`).join('')}</div></div>
+    <div class="form-group"><label>Morning energy level</label><div class="energy-selector">${[{v:1,l:'😴 Dead'},{v:2,l:'😐 Low'},{v:3,l:'🙂 OK'},{v:4,l:'😊 Good'},{v:5,l:'⚡ Wired'}].map(e=>`<div class="energy-btn" onclick="setEnergy(${e.v})" data-energy="${e.v}">${e.l}</div>`).join('')}</div></div>
+    <button class="btn btn-primary" onclick="logSleep()">Log Sleep</button>
+  </div>`;
 
-  // Sleep history
   const sleepDates=Object.keys(state.data.sleep).sort().reverse().slice(0,14);
-  const historyHTML=sleepDates.filter(d=>d!==today||sleep).map(d=>{
-    const s=state.data.sleep[d];
-    if(!s) return '';
-    return `<div class="log-entry">
-      <span>${d}</span>
-      <span>${s.hours}h · ${'⭐'.repeat(s.quality)} · ${['','😴','😐','🙂','😊','⚡'][s.energy]||''}</span>
-    </div>`;
-  }).join('');
-
-  // Avg stats
+  const histHTML=sleepDates.map(d=>{const s=state.data.sleep[d];if(!s)return '';return `<div class="log-entry"><span>${fmtDate(d)}</span><span>${s.hours}h · ${'⭐'.repeat(s.quality)} · ${['','😴','😐','🙂','😊','⚡'][s.energy]||''}</span></div>`;}).join('');
   const allSleep=Object.values(state.data.sleep).filter(s=>s);
-  const avgHours=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.hours,0)/allSleep.length):'—';
-  const avgQuality=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.quality,0)/allSleep.length):'—';
-  const avgEnergy=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.energy,0)/allSleep.length):'—';
+  const avgH=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.hours,0)/allSleep.length):'—';
+  const avgQ=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.quality,0)/allSleep.length):'—';
+  const avgE=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.energy,0)/allSleep.length):'—';
 
   return `
+    ${renderDateNav()}
     ${loggedHTML}
-    ${allSleep.length>1?`
-      <div class="card">
-        <div class="card-title">Averages</div>
-        <div class="inline-stat">
-          <div class="inline-stat-item">
-            <div class="inline-stat-num" style="color:var(--cyan)">${avgHours}</div>
-            <div class="inline-stat-label">Avg hours</div>
-          </div>
-          <div class="inline-stat-item">
-            <div class="inline-stat-num" style="color:var(--amber)">${avgQuality}</div>
-            <div class="inline-stat-label">Avg quality</div>
-          </div>
-          <div class="inline-stat-item">
-            <div class="inline-stat-num" style="color:var(--green)">${avgEnergy}</div>
-            <div class="inline-stat-label">Avg energy</div>
-          </div>
-        </div>
-      </div>
-    `:''}
-    ${historyHTML?`<div class="card"><div class="card-title">Sleep Log</div>${historyHTML}</div>`:''}
-  `;
+    ${allSleep.length>1?`<div class="card"><div class="card-title">Averages</div><div class="inline-stat">
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${avgH}</div><div class="inline-stat-label">Avg hours</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber)">${avgQ}</div><div class="inline-stat-label">Avg quality</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--green)">${avgE}</div><div class="inline-stat-label">Avg energy</div></div>
+    </div></div>`:''}
+    ${histHTML?`<div class="card"><div class="card-title">Sleep History</div>${histHTML}</div>`:''}`;
 }
 
 function renderStats(){
-  const latestW=getLatestWeight();
-  const startW=state.data.config.startWeight;
-  const goalW=state.data.config.goalWeight;
-  const totalLost=latestW?round1(startW-latestW):0;
-  const streak=getCurrentStreak();
-  const longest=getLongestStreak();
-
-  // Count total workout days
+  const latestW=getLatestWeight();const startW=state.data.config.startWeight;const goalW=state.data.config.goalWeight;
+  const totalLost=latestW?round1(startW-latestW):0;const streak=getCurrentStreak();const longest=getLongestStreak();
   const workoutDays=Object.keys(state.data.workouts).filter(d=>(state.data.workouts[d]||[]).length>0).length;
-  // Count total meals logged
   const totalMeals=Object.values(state.data.meals).reduce((s,arr)=>s+(arr||[]).length,0);
-  // Focus completion rate
-  const focusDates=Object.keys(state.data.focus);
   let focusDone=0,focusTotal=0;
-  focusDates.forEach(d=>{
-    const items=state.data.focus[d]||[];
-    focusTotal+=items.length;
-    focusDone+=items.filter(i=>i.done).length;
-  });
+  Object.keys(state.data.focus).forEach(d=>{const it=state.data.focus[d]||[];focusTotal+=it.length;focusDone+=it.filter(i=>i.done).length;});
   const focusRate=focusTotal>0?Math.round((focusDone/focusTotal)*100):0;
 
   return `
-    <div class="card">
-      <div class="card-title">Progress</div>
-      <div class="inline-stat">
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--green)">${latestW||'--'}</div>
-          <div class="inline-stat-label">Current</div>
-        </div>
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--cyan)">${totalLost>0?'-':''}${Math.abs(totalLost)}</div>
-          <div class="inline-stat-label">Lost</div>
-        </div>
-        <div class="inline-stat-item">
-          <div class="inline-stat-num" style="color:var(--amber)">${goalW}</div>
-          <div class="inline-stat-label">Goal</div>
-        </div>
-      </div>
+    <div class="card"><div class="card-title">Progress</div><div class="inline-stat">
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--green)">${latestW||'--'}</div><div class="inline-stat-label">Current</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${totalLost>0?'-':''}${Math.abs(totalLost)}</div><div class="inline-stat-label">Lost</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber)">${goalW}</div><div class="inline-stat-label">Goal</div></div>
+    </div></div>
+    <div class="card"><div class="card-title">Weight Trend</div><div class="chart-container"><canvas id="weight-chart"></canvas></div></div>
+    <div class="card"><div class="card-title">Consistency</div>
+      <div class="stat-row"><span class="stat-label">🔥 Current streak</span><span class="stat-value" style="color:var(--green)">${streak} days</span></div>
+      <div class="stat-row"><span class="stat-label">🏆 Longest streak</span><span class="stat-value" style="color:var(--amber)">${longest} days</span></div>
+      <div class="stat-row"><span class="stat-label">💪 Workout days</span><span class="stat-value">${workoutDays}</span></div>
+      <div class="stat-row"><span class="stat-label">🍽 Meals logged</span><span class="stat-value">${totalMeals}</span></div>
+      <div class="stat-row"><span class="stat-label">🎯 Focus completion</span><span class="stat-value" style="color:${focusRate>=80?'var(--green)':focusRate>=50?'var(--amber)':'var(--red)'}">${focusRate}%</span></div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Weight Trend</div>
-      <div class="chart-container"><canvas id="weight-chart"></canvas></div>
+    <div class="card"><div class="card-title">Settings</div>
+      <div class="form-group"><label>Calorie target</label><input type="number" value="${state.data.config.calorieTarget}" onchange="state.data.config.calorieTarget=+this.value;save();render()" inputmode="numeric"></div>
+      <div class="form-group"><label>Protein target (g)</label><input type="number" value="${state.data.config.proteinTarget}" onchange="state.data.config.proteinTarget=+this.value;save();render()" inputmode="numeric"></div>
+      <div class="form-group"><label>Goal weight (lbs)</label><input type="number" value="${state.data.config.goalWeight}" onchange="state.data.config.goalWeight=+this.value;save();render()" inputmode="numeric" step="1"></div>
+      <div class="form-group"><label>Start weight (lbs)</label><input type="number" value="${state.data.config.startWeight}" onchange="state.data.config.startWeight=+this.value;save();render()" inputmode="numeric" step="0.1"></div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Consistency</div>
-      <div class="stat-row">
-        <span class="stat-label">🔥 Current streak</span>
-        <span class="stat-value" style="color:var(--green)">${streak} days</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">🏆 Longest streak</span>
-        <span class="stat-value" style="color:var(--amber)">${longest} days</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">💪 Workout days</span>
-        <span class="stat-value">${workoutDays}</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">🍽 Meals logged</span>
-        <span class="stat-value">${totalMeals}</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">🎯 Focus completion</span>
-        <span class="stat-value" style="color:${focusRate>=80?'var(--green)':focusRate>=50?'var(--amber)':'var(--red)'}">${focusRate}%</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Settings</div>
-      <div class="form-group">
-        <label>Calorie target</label>
-        <input type="number" value="${state.data.config.calorieTarget}" onchange="state.data.config.calorieTarget=+this.value;save();render()" inputmode="numeric">
-      </div>
-      <div class="form-group">
-        <label>Protein target (g)</label>
-        <input type="number" value="${state.data.config.proteinTarget}" onchange="state.data.config.proteinTarget=+this.value;save();render()" inputmode="numeric">
-      </div>
-      <div class="form-group">
-        <label>Goal weight (lbs)</label>
-        <input type="number" value="${state.data.config.goalWeight}" onchange="state.data.config.goalWeight=+this.value;save();render()" inputmode="numeric" step="1">
-      </div>
-      <div class="form-group">
-        <label>Start weight (lbs)</label>
-        <input type="number" value="${state.data.config.startWeight}" onchange="state.data.config.startWeight=+this.value;save();render()" inputmode="numeric" step="0.1">
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Data</div>
+    <div class="card"><div class="card-title">Data</div>
       <button class="btn btn-secondary btn-sm" onclick="exportData()" style="margin-bottom:8px">📥 Export JSON Backup</button>
       <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file').click()">📤 Import JSON Backup</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
-    </div>
-  `;
+    </div>`;
 }
 
 // ═══════════════════════════════════════════
 // MODALS
 // ═══════════════════════════════════════════
 function renderModal(){
-  if(!state.modal) return '';
+  if(!state.modal)return '';
   let title='',body='';
 
   if(state.modal==='add-meal'){
-    title='Log Meal';
-    body=`
-      <div class="form-group"><label>What did you eat?</label><input type="text" id="meal-name" placeholder="e.g. Grilled chicken & rice"></div>
+    title='Log Meal — '+fmtDate(getVD());
+    body=`<div class="form-group"><label>What did you eat?</label><input type="text" id="meal-name" placeholder="e.g. Grilled chicken & rice"></div>
       <div class="form-group"><label>Calories</label><input type="number" id="meal-cal" placeholder="500" inputmode="numeric"></div>
       <div class="form-group"><label>Protein (g)</label><input type="number" id="meal-pro" placeholder="35" inputmode="numeric"></div>
-      <button class="btn btn-primary" onclick="saveMeal()">Log It</button>
-    `;
+      <button class="btn btn-primary" onclick="saveMeal()">Log It</button>`;
+  }
+
+  if(state.modal==='date-picker'){
+    title='Jump to Date';
+    body=`<div class="form-group"><label>Select a date</label><input type="date" id="date-pick" value="${getVD()}" max="${getToday()}"></div>
+      <button class="btn btn-primary" onclick="jumpToDate()">Go</button>`;
   }
 
   if(state.modal&&state.modal.startsWith('gym-split-')){
     const splitName=state.modal.replace('gym-split-','');
     const group=WORKOUTS.gym.find(g=>g.name.replace(/[^a-zA-Z]/g,'')===splitName);
-    if(group){
-      title=group.name;
-      body=group.routines.map(r=>`
-        <div class="workout-card" onclick="showWorkoutDetail('gym','${r.id}')">
-          <div class="workout-card-name">${r.name}</div>
-          <div class="workout-card-desc">${r.desc}</div>
-        </div>
-      `).join('');
-    }
+    if(group){title=group.name;body=group.routines.map(r=>`<div class="workout-card" onclick="showWorkoutDetail('gym','${r.id}')"><div class="workout-card-name">${r.name}</div><div class="workout-card-desc">${r.desc}</div></div>`).join('');}
   }
 
   if(state.modal==='workout-detail'&&state.selectedWorkout){
     const w=state.selectedWorkout;
     title=w.name;
-    body=`
-      <p style="color:var(--text2);font-size:13px;margin-bottom:12px">${w.desc||''}</p>
-      ${w.exercises?w.exercises.map(e=>`
-        <div class="exercise-item">
-          <span class="exercise-name">${e.name}</span>
-          <span class="exercise-detail">${e.sets}</span>
-        </div>
-        ${e.note?`<div class="coach-note">💡 ${e.note}</div>`:''}
-      `).join(''):`<p style="font-size:13px;color:var(--text2)">${w.desc||w.duration||''}</p>`}
-      <div class="section-divider"></div>
+    body=`<p style="color:var(--text2);font-size:13px;margin-bottom:12px">${w.desc||''}</p>
+      ${w.exercises?w.exercises.map(e=>`<div class="exercise-item"><span class="exercise-name">${e.name}</span><span class="exercise-detail">${e.sets}</span></div>${e.note?`<div class="coach-note">💡 ${e.note}</div>`:''}`).join(''):`<p style="font-size:13px;color:var(--text2)">${w.desc||w.duration||''}</p>`}
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
       <div class="form-group"><label>Duration (min)</label><input type="number" id="log-duration" placeholder="45" inputmode="numeric"></div>
       <div class="form-group"><label>Active Calories (Apple Watch)</label><input type="number" id="log-calories" placeholder="500" inputmode="numeric"></div>
-      <button class="btn btn-primary" onclick="logWorkout()">Log Workout</button>
-    `;
+      <button class="btn btn-primary" onclick="logWorkout()">Log Workout for ${fmtDate(getVD())}</button>`;
   }
 
-  return `
-    <div class="modal-overlay" onclick="if(event.target===this){closeModal()}">
-      <div class="modal">
-        <div class="modal-title"><span>${title}</span><span class="modal-close" onclick="closeModal()">✕</span></div>
-        ${body}
-      </div>
-    </div>
-  `;
+  return `<div class="modal-overlay" onclick="if(event.target===this){closeModal()}"><div class="modal">
+    <div class="modal-title"><span>${title}</span><span class="modal-close" onclick="closeModal()">✕</span></div>${body}
+  </div></div>`;
 }
 
 // ═══════════════════════════════════════════
@@ -949,10 +622,15 @@ function setTab(t){state.tab=t;state.modal=null;render();}
 function showModal(m){state.modal=m;render();}
 function closeModal(){state.modal=null;state.selectedWorkout=null;render();}
 
+function jumpToDate(){
+  const v=document.getElementById('date-pick')?.value;
+  if(v&&v<=getToday()){state.viewDate=v;closeModal();}
+}
+
 function logWeight(){
   const v=parseFloat(document.getElementById('weight-in')?.value);
-  if(!v||v<50||v>600) return;
-  state.data.weights[getToday()]=round1(v);
+  if(!v||v<50||v>600)return;
+  state.data.weights[getVD()]=round1(v);
   save();render();
 }
 
@@ -960,223 +638,138 @@ function saveMeal(){
   const name=document.getElementById('meal-name')?.value?.trim();
   const cal=parseInt(document.getElementById('meal-cal')?.value)||0;
   const pro=parseInt(document.getElementById('meal-pro')?.value)||0;
-  if(!name) return;
-  const today=getToday();
-  if(!state.data.meals[today]) state.data.meals[today]=[];
-  state.data.meals[today].push({name,calories:cal,protein:pro});
+  if(!name)return;
+  const vd=getVD();
+  if(!state.data.meals[vd])state.data.meals[vd]=[];
+  state.data.meals[vd].push({name,calories:cal,protein:pro});
   save();closeModal();
 }
 
 function deleteMeal(i){
-  const today=getToday();
-  if(state.data.meals[today]){state.data.meals[today].splice(i,1);save();render();}
+  const vd=getVD();
+  if(state.data.meals[vd]){state.data.meals[vd].splice(i,1);save();render();}
 }
 
 function showWorkoutDetail(category,id){
   let workout=null;
-  if(category==='gym'){
-    for(const g of WORKOUTS.gym){
-      const found=g.routines.find(r=>r.id===id);
-      if(found){workout={...found,groupName:g.name};break;}
-    }
-  } else if(category==='cardio'){
-    workout=WORKOUTS.cardio.find(c=>c.id===id);
-  } else if(category==='home'){
-    workout=WORKOUTS.home.find(c=>c.id===id);
-  } else if(category==='coreAddon'){
-    workout=WORKOUTS.coreAddon.find(c=>c.id===id);
-    if(workout) workout={...workout,isCore:true};
-  }
+  if(category==='gym'){for(const g of WORKOUTS.gym){const f=g.routines.find(r=>r.id===id);if(f){workout={...f,groupName:g.name};break;}}}
+  else if(category==='cardio')workout=WORKOUTS.cardio.find(c=>c.id===id);
+  else if(category==='home')workout=WORKOUTS.home.find(c=>c.id===id);
+  else if(category==='coreAddon'){workout=WORKOUTS.coreAddon.find(c=>c.id===id);if(workout)workout={...workout,isCore:true};}
   if(workout){state.selectedWorkout=workout;state.modal='workout-detail';render();}
 }
 
 function logWorkout(){
-  const w=state.selectedWorkout;
-  if(!w) return;
+  const w=state.selectedWorkout;if(!w)return;
   const dur=parseInt(document.getElementById('log-duration')?.value)||0;
   const cal=parseInt(document.getElementById('log-calories')?.value)||0;
-  const today=getToday();
-  if(!state.data.workouts[today]) state.data.workouts[today]=[];
-  state.data.workouts[today].push({
-    name:w.groupName||w.name,
-    routine:w.groupName?w.name:'',
-    duration:dur,
-    calories:cal,
-    isCore:w.isCore||false
-  });
+  const vd=getVD();
+  if(!state.data.workouts[vd])state.data.workouts[vd]=[];
+  state.data.workouts[vd].push({name:w.groupName||w.name,routine:w.groupName?w.name:'',duration:dur,calories:cal,isCore:w.isCore||false});
   save();closeModal();
 }
 
-// Focus
 function addFocus(){
   const input=document.getElementById('focus-input');
-  const text=input?.value?.trim();
-  if(!text) return;
-  const today=getToday();
-  if(!state.data.focus[today]) state.data.focus[today]=[];
-  if(state.data.focus[today].length>=3) return;
-  state.data.focus[today].push({text,done:false});
+  const text=input?.value?.trim();if(!text)return;
+  const vd=getVD();
+  if(!state.data.focus[vd])state.data.focus[vd]=[];
+  if(state.data.focus[vd].length>=3)return;
+  state.data.focus[vd].push({text,done:false});
   save();render();
 }
 
 function toggleFocus(i){
-  const today=getToday();
-  if(state.data.focus[today]&&state.data.focus[today][i]){
-    state.data.focus[today][i].done=!state.data.focus[today][i].done;
-    save();render();
-  }
+  const vd=getVD();
+  if(state.data.focus[vd]&&state.data.focus[vd][i]){state.data.focus[vd][i].done=!state.data.focus[vd][i].done;save();render();}
 }
 
 function deleteFocus(i){
-  const today=getToday();
-  if(state.data.focus[today]){state.data.focus[today].splice(i,1);save();render();}
+  const vd=getVD();
+  if(state.data.focus[vd]){state.data.focus[vd].splice(i,1);save();render();}
 }
-
-// Sleep
-let tempSleepQuality=0;
-let tempEnergy=0;
 
 function setSleepQuality(n){
   tempSleepQuality=n;
-  document.querySelectorAll('.star').forEach(s=>{
-    s.classList.toggle('filled',parseInt(s.dataset.star)<=n);
-  });
+  document.querySelectorAll('.star').forEach(s=>{s.classList.toggle('filled',parseInt(s.dataset.star)<=n);});
 }
 
 function setEnergy(n){
   tempEnergy=n;
-  document.querySelectorAll('.energy-btn').forEach(b=>{
-    b.classList.toggle('active',parseInt(b.dataset.energy)===n);
-  });
+  document.querySelectorAll('.energy-btn').forEach(b=>{b.classList.toggle('active',parseInt(b.dataset.energy)===n);});
 }
 
 function logSleep(){
   const hours=parseFloat(document.getElementById('sleep-hours')?.value);
-  if(!hours||hours<0||hours>16) return;
-  if(!tempSleepQuality) return;
-  if(!tempEnergy) return;
-  state.data.sleep[getToday()]={hours:round1(hours),quality:tempSleepQuality,energy:tempEnergy};
-  tempSleepQuality=0;tempEnergy=0;
-  save();render();
+  if(!hours||hours<0||hours>16)return;if(!tempSleepQuality||!tempEnergy)return;
+  state.data.sleep[getVD()]={hours:round1(hours),quality:tempSleepQuality,energy:tempEnergy};
+  tempSleepQuality=0;tempEnergy=0;save();render();
 }
 
-// Data management
 function exportData(){
   const blob=new Blob([JSON.stringify(state.data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`lockin-backup-${getToday()}.json`;
-  a.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=`lockin-backup-${getToday()}.json`;a.click();URL.revokeObjectURL(url);
 }
 
 function importData(e){
-  const file=e.target.files[0];
-  if(!file) return;
+  const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=function(ev){
     try{
-      const imported=JSON.parse(ev.target.result);
-      if(imported.config){
-        // Merge: imported data takes priority but preserves any keys not in import
+      const imp=JSON.parse(ev.target.result);
+      if(imp.config||imp.weights){
         const def=defaults();
         state.data={
-          config:{...def.config,...(imported.config||{})},
-          weights:{...(state.data.weights||{}),...(imported.weights||{})},
-          meals:{...(state.data.meals||{}),...(imported.meals||{})},
-          workouts:{...(state.data.workouts||{}),...(imported.workouts||{})},
-          focus:{...(state.data.focus||{}),...(imported.focus||{})},
-          sleep:{...(state.data.sleep||{}),...(imported.sleep||{})},
-          photos:{...(state.data.photos||{}),...(imported.photos||{})}
+          config:{...def.config,...(state.data.config||{}),...(imp.config||{})},
+          weights:{...(state.data.weights||{}),...(imp.weights||{})},
+          meals:{...(state.data.meals||{}),...(imp.meals||{})},
+          workouts:{...(state.data.workouts||{}),...(imp.workouts||{})},
+          focus:{...(state.data.focus||{}),...(imp.focus||{})},
+          sleep:{...(state.data.sleep||{}),...(imp.sleep||{})},
+          photos:{...(state.data.photos||{}),...(imp.photos||{})}
         };
-        save();render();
-        alert('Data imported successfully!');
+        save();render();alert('Data imported successfully!');
       }else{alert('Invalid backup file.');}
     }catch(err){alert('Error reading file.');}
   };
   reader.readAsText(file);
+  e.target.value='';
 }
 
 // ═══════════════════════════════════════════
 // CHART
 // ═══════════════════════════════════════════
-function getLatestWeight(){
-  const dates=Object.keys(state.data.weights).sort();
-  return dates.length>0?state.data.weights[dates[dates.length-1]]:null;
-}
-
 function drawWeightChart(){
-  const canvas=document.getElementById('weight-chart');
-  if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
+  const canvas=document.getElementById('weight-chart');if(!canvas)return;
+  const ctx=canvas.getContext('2d');const dpr=window.devicePixelRatio||1;
   const rect=canvas.parentElement.getBoundingClientRect();
-  canvas.width=rect.width*dpr;
-  canvas.height=200*dpr;
-  canvas.style.width=rect.width+'px';
-  canvas.style.height='200px';
+  canvas.width=rect.width*dpr;canvas.height=200*dpr;
+  canvas.style.width=rect.width+'px';canvas.style.height='200px';
   ctx.scale(dpr,dpr);
-
-  const W=rect.width,H=200;
-  const pad={top:20,right:15,bottom:30,left:45};
+  const W=rect.width,H=200,pad={top:20,right:15,bottom:30,left:45};
   const dates=Object.keys(state.data.weights).sort();
-  if(dates.length<2){
-    ctx.fillStyle='#94a3b8';ctx.font='14px -apple-system,sans-serif';
-    ctx.textAlign='center';ctx.fillText('Log 2+ weigh-ins to see your trend',W/2,H/2);
-    return;
-  }
+  if(dates.length<2){ctx.fillStyle='#94a3b8';ctx.font='14px -apple-system,sans-serif';ctx.textAlign='center';ctx.fillText('Log 2+ weigh-ins to see trend',W/2,H/2);return;}
   const vals=dates.map(d=>state.data.weights[d]);
-  const goal=state.data.config.goalWeight;
-  const allVals=[...vals,goal];
-  const minV=Math.min(...allVals)-5;
-  const maxV=Math.max(...allVals)+5;
-  const xScale=(W-pad.left-pad.right)/(dates.length-1);
-  const yScale=(H-pad.top-pad.bottom)/(maxV-minV);
-  const toX=i=>pad.left+i*xScale;
-  const toY=v=>pad.top+(maxV-v)*yScale;
+  const goal=state.data.config.goalWeight;const allV=[...vals,goal];
+  const minV=Math.min(...allV)-5,maxV=Math.max(...allV)+5;
+  const xS=(W-pad.left-pad.right)/(dates.length-1);
+  const yS=(H-pad.top-pad.bottom)/(maxV-minV);
+  const toX=i=>pad.left+i*xS,toY=v=>pad.top+(maxV-v)*yS;
 
-  // Grid lines
   ctx.strokeStyle='rgba(51,65,85,.5)';ctx.lineWidth=0.5;
-  const steps=5;
-  for(let i=0;i<=steps;i++){
-    const v=minV+((maxV-minV)/steps)*i;
-    const y=toY(v);
-    ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(W-pad.right,y);ctx.stroke();
-    ctx.fillStyle='#64748b';ctx.font='11px -apple-system,sans-serif';ctx.textAlign='right';
-    ctx.fillText(Math.round(v),pad.left-8,y+4);
-  }
+  for(let i=0;i<=5;i++){const v=minV+((maxV-minV)/5)*i;const y=toY(v);ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(W-pad.right,y);ctx.stroke();ctx.fillStyle='#64748b';ctx.font='11px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(Math.round(v),pad.left-8,y+4);}
 
-  // Goal line
-  const gy=toY(goal);
-  ctx.strokeStyle='rgba(6,182,212,.5)';ctx.lineWidth=1;ctx.setLineDash([5,5]);
-  ctx.beginPath();ctx.moveTo(pad.left,gy);ctx.lineTo(W-pad.right,gy);ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.fillStyle='#06b6d4';ctx.font='11px -apple-system,sans-serif';ctx.textAlign='left';
-  ctx.fillText('Goal: '+goal,W-pad.right-60,gy-6);
+  const gy=toY(goal);ctx.strokeStyle='rgba(6,182,212,.5)';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(pad.left,gy);ctx.lineTo(W-pad.right,gy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#06b6d4';ctx.font='11px -apple-system,sans-serif';ctx.textAlign='left';ctx.fillText('Goal: '+goal,W-pad.right-60,gy-6);
 
-  // Line
-  ctx.strokeStyle='#22c55e';ctx.lineWidth=2;
-  ctx.beginPath();
-  vals.forEach((v,i)=>{
-    const x=toX(i),y=toY(v);
-    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-  });
-  ctx.stroke();
+  ctx.strokeStyle='#22c55e';ctx.lineWidth=2;ctx.beginPath();
+  vals.forEach((v,i)=>{const x=toX(i),y=toY(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
 
-  // Dots
-  vals.forEach((v,i)=>{
-    const x=toX(i),y=toY(v);
-    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#22c55e';ctx.fill();
-    ctx.strokeStyle='#020617';ctx.lineWidth=2;ctx.stroke();
-  });
+  vals.forEach((v,i)=>{const x=toX(i),y=toY(v);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#22c55e';ctx.fill();ctx.strokeStyle='#020617';ctx.lineWidth=2;ctx.stroke();});
 
-  // Date labels
   ctx.fillStyle='#64748b';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='center';
-  const labelStep=Math.max(1,Math.floor(dates.length/5));
-  dates.forEach((d,i)=>{
-    if(i%labelStep===0||i===dates.length-1){
-      ctx.fillText(d.slice(5),toX(i),H-8);
-    }
-  });
+  const ls=Math.max(1,Math.floor(dates.length/5));
+  dates.forEach((d,i)=>{if(i%ls===0||i===dates.length-1)ctx.fillText(d.slice(5),toX(i),H-8);});
 }
 
 // ═══════════════════════════════════════════
@@ -1185,11 +778,7 @@ function drawWeightChart(){
 function render(){
   const app=document.getElementById('app');
   const dl=daysBetween(getToday(),TD);
-  const tabsHTML=TABS.map(t=>`
-    <button class="tab-btn ${state.tab===t?'active':''}" onclick="setTab('${t}')">
-      <span class="tab-icon">${TAB_ICONS[t]}</span>${TAB_LABELS[t]}
-    </button>
-  `).join('');
+  const tabsHTML=TABS.map(t=>`<button class="tab-btn ${state.tab===t?'active':''}" onclick="setTab('${t}')"><span class="tab-icon">${TAB_ICONS[t]}</span>${TAB_LABELS[t]}</button>`).join('');
 
   let content='';
   switch(state.tab){
@@ -1205,17 +794,15 @@ function render(){
     <div class="hdr"><div class="hdr-title">LOCK IN</div><div class="hdr-sub">${dl} days to honeymoon</div></div>
     <div class="content">${content}</div>
     <div class="tabs">${tabsHTML}</div>
-    ${renderModal()}
-  `;
+    ${renderModal()}`;
 
-  if(state.tab==='stats') setTimeout(drawWeightChart,50);
+  if(state.tab==='stats')setTimeout(drawWeightChart,50);
 }
 
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
-load();
-render();
+load();render();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
 </script>
 </body>
