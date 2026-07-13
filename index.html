@@ -103,6 +103,16 @@ label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px}
 .inline-stat-item{flex:1;min-width:80px;text-align:center;padding:10px;background:var(--surface2);border-radius:8px}
 .inline-stat-num{font-size:22px;font-weight:800}
 .inline-stat-label{font-size:11px;color:var(--text2);margin-top:2px}
+.photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.photo-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.photo-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.photo-card-info{padding:8px 10px}
+.photo-card-date{font-size:12px;font-weight:600;color:var(--cyan)}
+.photo-card-note{font-size:11px;color:var(--text2);margin-top:2px;word-break:break-word}
+.photo-card-delete{font-size:11px;color:var(--red);cursor:pointer;margin-top:4px;opacity:.7}
+.photo-full-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:300;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.photo-full-overlay img{max-width:95%;max-height:75vh;object-fit:contain;border-radius:8px}
+.photo-full-close{color:#fff;font-size:32px;position:absolute;top:16px;right:20px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -113,9 +123,9 @@ label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px}
 // ═══════════════════════════════════════════
 const TD='2026-11-28';
 const STORE_KEY='lockin-data';
-const TABS=['today','fuel','train','focus','recharge','stats'];
-const TAB_ICONS={today:'📊',fuel:'🍽',train:'💪',focus:'🎯',recharge:'🌙',stats:'📈'};
-const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',focus:'Focus',recharge:'Rest',stats:'Stats'};
+const TABS=['today','fuel','train','focus','recharge','photos','stats'];
+const TAB_ICONS={today:'📊',fuel:'🍽',train:'💪',focus:'🎯',recharge:'🌙',photos:'📸',stats:'📈'};
+const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',focus:'Focus',recharge:'Rest',photos:'Photos',stats:'Stats'};
 
 // ═══════════════════════════════════════════
 // STATE
@@ -124,7 +134,7 @@ let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null};
 let tempSleepQuality=0,tempEnergy=0;
 
 function defaults(){
-  return{config:{startWeight:305,goalWeight:270,startDate:'2026-07-08',calorieTarget:2100,proteinTarget:150},weights:{},meals:{},workouts:{},focus:{},sleep:{},photos:{}};
+  return{config:{startWeight:305,goalWeight:270,startDate:'2026-07-08',calorieTarget:2100,proteinTarget:150},weights:{},meals:{},workouts:{},focus:{},sleep:{},photos:[]};
 }
 
 function load(){
@@ -133,7 +143,7 @@ function load(){
     if(raw){
       const d=JSON.parse(raw);
       const def=defaults();
-      state.data={config:{...def.config,...(d.config||{})},weights:{...def.weights,...(d.weights||{})},meals:{...def.meals,...(d.meals||{})},workouts:{...def.workouts,...(d.workouts||{})},focus:{...def.focus,...(d.focus||{})},sleep:{...def.sleep,...(d.sleep||{})},photos:{...def.photos,...(d.photos||{})}};
+      state.data={config:{...def.config,...(d.config||{})},weights:{...def.weights,...(d.weights||{})},meals:{...def.meals,...(d.meals||{})},workouts:{...def.workouts,...(d.workouts||{})},focus:{...def.focus,...(d.focus||{})},sleep:{...def.sleep,...(d.sleep||{})},photos:Array.isArray(d.photos)?d.photos:(d.photos?[]:[])};
     }else{state.data=defaults();}
   }catch(e){state.data=defaults();}
   state.viewDate=getToday();
@@ -727,7 +737,7 @@ function importData(e){
           workouts:{...(state.data.workouts||{}),...(imp.workouts||{})},
           focus:{...(state.data.focus||{}),...(imp.focus||{})},
           sleep:{...(state.data.sleep||{}),...(imp.sleep||{})},
-          photos:{...(state.data.photos||{}),...(imp.photos||{})}
+          photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])]
         };
         save();render();alert('Data imported successfully!');
       }else{alert('Invalid backup file.');}
@@ -735,6 +745,93 @@ function importData(e){
   };
   reader.readAsText(file);
   e.target.value='';
+}
+
+function renderPhotos(){
+  const photos=state.data.photos||[];
+  const sorted=[...photos].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  const gridHTML=sorted.length>0?sorted.map((p,i)=>{
+    const idx=photos.indexOf(p);
+    return `<div class="photo-card">
+      <img src="${p.data}" onclick="viewPhoto(${idx})" alt="Progress photo">
+      <div class="photo-card-info">
+        <div class="photo-card-date">${p.date?fmtDate(p.date):'No date'}</div>
+        ${p.note?`<div class="photo-card-note">${p.note}</div>`:''}
+        <div class="photo-card-delete" onclick="deletePhoto(${idx})">✕ Delete</div>
+      </div>
+    </div>`;
+  }).join(''):'';
+
+  return `
+    <div class="card">
+      <div class="card-title">Progress Photos</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Track your transformation. Set the date to match when the photo was taken.</p>
+      <div class="form-group">
+        <label>Photo date</label>
+        <input type="date" id="photo-date" value="${getVD()}" max="${getToday()}">
+      </div>
+      <div class="form-group">
+        <label>Note (optional)</label>
+        <input type="text" id="photo-note" placeholder="e.g. Day 1 front, Post-workout side" maxlength="80">
+      </div>
+      <div style="display:flex;gap:8px">
+        <label class="btn btn-primary" style="text-align:center;flex:1;cursor:pointer">
+          📷 Take Photo
+          <input type="file" accept="image/*" capture="environment" style="display:none" onchange="capturePhoto(event)">
+        </label>
+        <label class="btn btn-secondary" style="text-align:center;flex:1;cursor:pointer">
+          🖼 Upload
+          <input type="file" accept="image/*" style="display:none" onchange="capturePhoto(event)">
+        </label>
+      </div>
+    </div>
+    ${sorted.length>0?`<div class="card"><div class="card-title">Gallery (${sorted.length})</div><div class="photo-grid">${gridHTML}</div></div>`:'<div class="card"><div class="empty-state">No photos yet. Take your first progress photo.</div></div>'}`;
+}
+
+function capturePhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const date=document.getElementById('photo-date')?.value||getToday();
+  const note=document.getElementById('photo-note')?.value?.trim()||'';
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    // Resize to save localStorage space
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const maxW=800,maxH=1200;
+      let w=img.width,h=img.height;
+      if(w>maxW){h=h*(maxW/w);w=maxW;}
+      if(h>maxH){w=w*(maxH/h);h=maxH;}
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      const data=canvas.toDataURL('image/jpeg',0.7);
+      if(!Array.isArray(state.data.photos))state.data.photos=[];
+      state.data.photos.push({data,date,note,ts:Date.now()});
+      save();render();
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
+
+function deletePhoto(i){
+  if(confirm('Delete this photo?')){
+    state.data.photos.splice(i,1);save();render();
+  }
+}
+
+function viewPhoto(i){
+  const p=state.data.photos[i];if(!p)return;
+  const overlay=document.createElement('div');
+  overlay.className='photo-full-overlay';
+  overlay.innerHTML=`<div class="photo-full-close" onclick="this.parentElement.remove()">✕</div>
+    <img src="${p.data}">
+    <div style="color:#fff;margin-top:12px;text-align:center;font-size:14px">${p.date?fmtDate(p.date):''} ${p.note?'— '+p.note:''}</div>`;
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
 }
 
 // ═══════════════════════════════════════════
@@ -787,6 +884,7 @@ function render(){
     case'train':content=renderTrain();break;
     case'focus':content=renderFocus();break;
     case'recharge':content=renderRecharge();break;
+    case'photos':content=renderPhotos();break;
     case'stats':content=renderStats();break;
   }
 
