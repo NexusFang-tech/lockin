@@ -466,7 +466,7 @@ function renderTrain(){
   const vd=getVD();
   const vdWorkouts=state.data.workouts[vd]||[];
   const loggedHTML=vdWorkouts.length>0?`<div class="card"><div class="card-title">${isViewingToday()?'Today\'s Training':fmtDate(vd)+' Training'}</div>
-    ${vdWorkouts.map((w,i)=>`<div class="log-entry"><span>${w.name} ${w.routine?'— '+w.routine:''}</span><span style="color:var(--green)">${w.duration||''}${w.duration?' min':''} ${w.calories?'· '+w.calories+' cal':''}</span></div>`).join('')}</div>`:'';
+    ${vdWorkouts.map((w,i)=>`<div class="log-entry"><span>${w.name} ${w.routine?'— '+w.routine:''}</span><span style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">${w.duration||''}${w.duration?' min':''} ${w.calories?'· '+w.calories+' cal':''}</span><span class="meal-delete" onclick="deleteWorkout('${vd}',${i})">✕</span></span></div>`).join('')}</div>`:'';
 
   return `
     ${renderDateNav()}
@@ -679,6 +679,14 @@ function logWorkout(){
   save();closeModal();
 }
 
+function deleteWorkout(date,i){
+  if(state.data.workouts[date]){
+    state.data.workouts[date].splice(i,1);
+    if(state.data.workouts[date].length===0)delete state.data.workouts[date];
+    save();render();
+  }
+}
+
 function addFocus(){
   const input=document.getElementById('focus-input');
   const text=input?.value?.trim();if(!text)return;
@@ -747,34 +755,55 @@ function importData(e){
   e.target.value='';
 }
 
+function photoWeek(date){return Math.max(1,Math.ceil((daysBetween('2026-07-08',date)+1)/7))}
+
 function renderPhotos(){
   const photos=state.data.photos||[];
-  const sorted=[...photos].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const latestW=getLatestWeight();
+  const curWeek=photoWeek(getToday());
 
-  const gridHTML=sorted.length>0?sorted.map((p,i)=>{
-    const idx=photos.indexOf(p);
-    return `<div class="photo-card">
-      <img src="${p.data}" onclick="viewPhoto(${idx})" alt="Progress photo">
-      <div class="photo-card-info">
-        <div class="photo-card-date">${p.date?fmtDate(p.date):'No date'}</div>
-        ${p.note?`<div class="photo-card-note">${p.note}</div>`:''}
-        <div class="photo-card-delete" onclick="deletePhoto(${idx})">✕ Delete</div>
+  // Group by week
+  const byWeek={};
+  photos.forEach((p,origIdx)=>{
+    const wk=p.week||photoWeek(p.date||'2026-07-08');
+    if(!byWeek[wk])byWeek[wk]=[];
+    byWeek[wk].push({...p,_idx:origIdx});
+  });
+
+  // Sort weeks ascending (week 1 first)
+  const weekNums=Object.keys(byWeek).map(Number).sort((a,b)=>a-b);
+
+  const galleryHTML=weekNums.map(wk=>{
+    const wkPhotos=byWeek[wk].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    return `<div style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:15px;font-weight:700;color:var(--cyan)">Week ${wk}</span>
+        <span style="font-size:12px;color:var(--text2)">${wkPhotos.length} photo${wkPhotos.length!==1?'s':''}</span>
       </div>
+      <div class="photo-grid">${wkPhotos.map(p=>`<div class="photo-card">
+        <img src="${p.data}" onclick="viewPhoto(${p._idx})" alt="">
+        <div class="photo-card-info">
+          <div class="photo-card-date">${p.date?fmtDate(p.date):'No date'}</div>
+          ${p.weight?`<div class="photo-card-note">${p.weight} lbs${p.position?' · '+p.position:''}</div>`:''}
+          ${p.note?`<div class="photo-card-note">${p.note}</div>`:''}
+          <div class="photo-card-delete" onclick="deletePhoto(${p._idx})">✕ Delete</div>
+        </div>
+      </div>`).join('')}</div>
     </div>`;
-  }).join(''):'';
+  }).join('');
 
   return `
     <div class="card">
-      <div class="card-title">Progress Photos</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Track your transformation. Set the date to match when the photo was taken.</p>
-      <div class="form-group">
-        <label>Photo date</label>
-        <input type="date" id="photo-date" value="${getVD()}" max="${getToday()}">
+      <div class="card-title">Add Progress Photo</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group"><label>Date</label><input type="date" id="photo-date" value="${getVD()}" max="${getToday()}"></div>
+        <div class="form-group"><label>Week</label><input type="number" id="photo-week" value="${curWeek}" min="1" max="52" inputmode="numeric"></div>
       </div>
-      <div class="form-group">
-        <label>Note (optional)</label>
-        <input type="text" id="photo-note" placeholder="e.g. Day 1 front, Post-workout side" maxlength="80">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group"><label>Weight (lbs)</label><input type="number" id="photo-weight" value="${latestW||''}" step="0.1" inputmode="decimal" placeholder="${latestW||'---'}"></div>
+        <div class="form-group"><label>Position</label><select id="photo-position"><option value="">Select...</option><option value="Front relaxed">Front relaxed</option><option value="Front flexed">Front flexed</option><option value="Back">Back</option><option value="Side left">Side left</option><option value="Side right">Side right</option></select></div>
       </div>
+      <div class="form-group"><label>Note (optional)</label><input type="text" id="photo-note" placeholder="e.g. Post-workout, morning, etc." maxlength="80"></div>
       <div style="display:flex;gap:8px">
         <label class="btn btn-primary" style="text-align:center;flex:1;cursor:pointer">
           📷 Take Photo
@@ -786,16 +815,18 @@ function renderPhotos(){
         </label>
       </div>
     </div>
-    ${sorted.length>0?`<div class="card"><div class="card-title">Gallery (${sorted.length})</div><div class="photo-grid">${gridHTML}</div></div>`:'<div class="card"><div class="empty-state">No photos yet. Take your first progress photo.</div></div>'}`;
+    ${weekNums.length>0?`<div class="card"><div class="card-title">Gallery (${photos.length})</div>${galleryHTML}</div>`:'<div class="card"><div class="empty-state">No photos yet. Take your first progress photo — future you will thank you.</div></div>'}`;
 }
 
 function capturePhoto(e){
   const file=e.target.files[0];if(!file)return;
   const date=document.getElementById('photo-date')?.value||getToday();
+  const week=parseInt(document.getElementById('photo-week')?.value)||photoWeek(date);
+  const weight=parseFloat(document.getElementById('photo-weight')?.value)||null;
+  const position=document.getElementById('photo-position')?.value||'';
   const note=document.getElementById('photo-note')?.value?.trim()||'';
   const reader=new FileReader();
   reader.onload=function(ev){
-    // Resize to save localStorage space
     const img=new Image();
     img.onload=function(){
       const canvas=document.createElement('canvas');
@@ -808,7 +839,7 @@ function capturePhoto(e){
       ctx.drawImage(img,0,0,w,h);
       const data=canvas.toDataURL('image/jpeg',0.7);
       if(!Array.isArray(state.data.photos))state.data.photos=[];
-      state.data.photos.push({data,date,note,ts:Date.now()});
+      state.data.photos.push({data,date,week,weight,position,note,ts:Date.now()});
       save();render();
     };
     img.src=ev.target.result;
@@ -829,7 +860,11 @@ function viewPhoto(i){
   overlay.className='photo-full-overlay';
   overlay.innerHTML=`<div class="photo-full-close" onclick="this.parentElement.remove()">✕</div>
     <img src="${p.data}">
-    <div style="color:#fff;margin-top:12px;text-align:center;font-size:14px">${p.date?fmtDate(p.date):''} ${p.note?'— '+p.note:''}</div>`;
+    <div style="color:#fff;margin-top:12px;text-align:center;font-size:14px">
+      ${p.date?fmtDate(p.date):''}${p.week?' · Week '+p.week:''}
+      ${p.weight?' · '+p.weight+' lbs':''}${p.position?' · '+p.position:''}
+      ${p.note?'<br>'+p.note:''}
+    </div>`;
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
 }
