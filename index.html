@@ -130,7 +130,7 @@ const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',focus:'Focus',recharge
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null};
+let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',editingPhoto:-1};
 let tempSleepQuality=0,tempEnergy=0;
 
 function defaults(){
@@ -757,20 +757,49 @@ function importData(e){
 
 function photoWeek(date){return Math.max(1,Math.ceil((daysBetween('2026-07-08',date)+1)/7))}
 
+const POSES=['Front relaxed','Front flexed','Side relaxed','Side flexed','Back relaxed','Back flexed','45° pose'];
+
+function setPhotoFilter(f){state.photoFilter=f;render();}
+
 function renderPhotos(){
   const photos=state.data.photos||[];
   const latestW=getLatestWeight();
   const curWeek=photoWeek(getToday());
+  const filter=state.photoFilter||'all';
+
+  // Edit modal
+  if(state.editingPhoto>=0&&photos[state.editingPhoto]){
+    const p=photos[state.editingPhoto];
+    const idx=state.editingPhoto;
+    return `<div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">Edit Photo <span style="cursor:pointer;font-size:18px;color:var(--text2)" onclick="state.editingPhoto=-1;render()">✕</span></div>
+      <div style="text-align:center;margin-bottom:12px"><img src="${p.data}" style="max-width:100%;max-height:300px;border-radius:10px;object-fit:contain" alt=""></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group"><label>Date</label><input type="date" id="edit-date" value="${p.date||''}" max="${getToday()}"></div>
+        <div class="form-group"><label>Week</label><input type="number" id="edit-week" value="${p.week||photoWeek(p.date||'2026-07-08')}" min="1" max="52" inputmode="numeric"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group"><label>Weight (lbs)</label><input type="number" id="edit-weight" value="${p.weight||''}" step="0.1" inputmode="decimal"></div>
+        <div class="form-group"><label>Pose</label><select id="edit-position">${['<option value="">Select...</option>',...POSES.map(ps=>`<option value="${ps}" ${p.position===ps?'selected':''}>${ps}</option>`)].join('')}</select></div>
+      </div>
+      <div class="form-group"><label>Note</label><input type="text" id="edit-note" value="${p.note||''}" maxlength="80"></div>
+      <button class="btn btn-primary" onclick="savePhotoEdit(${idx})">Save Changes</button>
+      <button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%" onclick="deletePhoto(${idx})">Delete Photo</button>
+    </div>`;
+  }
+
+  // Filter photos by pose
+  let filtered=photos.map((p,i)=>({...p,_idx:i}));
+  if(filter!=='all'){filtered=filtered.filter(p=>p.position===filter);}
 
   // Group by week
   const byWeek={};
-  photos.forEach((p,origIdx)=>{
+  filtered.forEach(p=>{
     const wk=p.week||photoWeek(p.date||'2026-07-08');
     if(!byWeek[wk])byWeek[wk]=[];
-    byWeek[wk].push({...p,_idx:origIdx});
+    byWeek[wk].push(p);
   });
 
-  // Sort weeks ascending (week 1 first)
   const weekNums=Object.keys(byWeek).map(Number).sort((a,b)=>a-b);
 
   const galleryHTML=weekNums.map(wk=>{
@@ -784,13 +813,24 @@ function renderPhotos(){
         <img src="${p.data}" onclick="viewPhoto(${p._idx})" alt="">
         <div class="photo-card-info">
           <div class="photo-card-date">${p.date?fmtDate(p.date):'No date'}</div>
-          ${p.weight?`<div class="photo-card-note">${p.weight} lbs${p.position?' · '+p.position:''}</div>`:''}
+          ${p.weight?`<div class="photo-card-note">${p.weight} lbs${p.position?' · '+p.position:''}</div>`:p.position?`<div class="photo-card-note">${p.position}</div>`:''}
           ${p.note?`<div class="photo-card-note">${p.note}</div>`:''}
-          <div class="photo-card-delete" onclick="deletePhoto(${p._idx})">✕ Delete</div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <div class="photo-card-delete" onclick="state.editingPhoto=${p._idx};render()">✏️ Edit</div>
+            <div class="photo-card-delete" onclick="deletePhoto(${p._idx})">✕ Delete</div>
+          </div>
         </div>
       </div>`).join('')}</div>
     </div>`;
   }).join('');
+
+  // Pose filter pills
+  const filterPills=['all',...POSES].map(f=>{
+    const label=f==='all'?'All':f;
+    const count=f==='all'?photos.length:photos.filter(p=>p.position===f).length;
+    if(f!=='all'&&count===0)return '';
+    return `<button class="pill ${filter===f?'active':''}" style="font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid ${filter===f?'var(--cyan)':'var(--border)'};background:${filter===f?'rgba(6,182,212,.15)':'var(--surface2)'};color:${filter===f?'var(--cyan)':'var(--text2)'};cursor:pointer;white-space:nowrap;flex-shrink:0" onclick="setPhotoFilter('${f}')">${label}${f!=='all'?' ('+count+')':''}</button>`;
+  }).filter(Boolean).join('');
 
   return `
     <div class="card">
@@ -801,7 +841,7 @@ function renderPhotos(){
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div class="form-group"><label>Weight (lbs)</label><input type="number" id="photo-weight" value="${latestW||''}" step="0.1" inputmode="decimal" placeholder="${latestW||'---'}"></div>
-        <div class="form-group"><label>Position</label><select id="photo-position"><option value="">Select...</option><option value="Front relaxed">Front relaxed</option><option value="Front flexed">Front flexed</option><option value="Back">Back</option><option value="Side left">Side left</option><option value="Side right">Side right</option></select></div>
+        <div class="form-group"><label>Pose</label><select id="photo-position">${['<option value="">Select...</option>',...POSES.map(ps=>`<option value="${ps}">${ps}</option>`)].join('')}</select></div>
       </div>
       <div class="form-group"><label>Note (optional)</label><input type="text" id="photo-note" placeholder="e.g. Post-workout, morning, etc." maxlength="80"></div>
       <div style="display:flex;gap:8px">
@@ -815,7 +855,21 @@ function renderPhotos(){
         </label>
       </div>
     </div>
-    ${weekNums.length>0?`<div class="card"><div class="card-title">Gallery (${photos.length})</div>${galleryHTML}</div>`:'<div class="card"><div class="empty-state">No photos yet. Take your first progress photo — future you will thank you.</div></div>'}`;
+    ${photos.length>0?`<div class="card"><div class="card-title" style="margin-bottom:8px">Gallery (${filter==='all'?photos.length:filtered.length+'/' +photos.length})</div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch">${filterPills}</div>
+      ${filtered.length>0?galleryHTML:'<div class="empty-state">No photos with this pose yet.</div>'}
+    </div>`:'<div class="card"><div class="empty-state">No photos yet. Take your first progress photo — future you will thank you.</div></div>'}`;
+}
+
+function savePhotoEdit(i){
+  const p=state.data.photos[i];if(!p)return;
+  p.date=document.getElementById('edit-date')?.value||p.date;
+  p.week=parseInt(document.getElementById('edit-week')?.value)||p.week;
+  p.weight=parseFloat(document.getElementById('edit-weight')?.value)||null;
+  p.position=document.getElementById('edit-position')?.value||'';
+  p.note=document.getElementById('edit-note')?.value?.trim()||'';
+  state.editingPhoto=-1;
+  save();render();
 }
 
 function capturePhoto(e){
@@ -850,7 +904,7 @@ function capturePhoto(e){
 
 function deletePhoto(i){
   if(confirm('Delete this photo?')){
-    state.data.photos.splice(i,1);save();render();
+    state.data.photos.splice(i,1);state.editingPhoto=-1;save();render();
   }
 }
 
@@ -864,6 +918,10 @@ function viewPhoto(i){
       ${p.date?fmtDate(p.date):''}${p.week?' · Week '+p.week:''}
       ${p.weight?' · '+p.weight+' lbs':''}${p.position?' · '+p.position:''}
       ${p.note?'<br>'+p.note:''}
+    </div>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button style="background:var(--surface2);border:1px solid var(--border);color:var(--cyan);padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove();state.editingPhoto=${i};render()">✏️ Edit</button>
+      <button style="background:var(--surface2);border:1px solid var(--border);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove()">Close</button>
     </div>`;
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
