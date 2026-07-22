@@ -909,22 +909,59 @@ function deletePhoto(i){
 }
 
 function viewPhoto(i){
-  const p=state.data.photos[i];if(!p)return;
+  const photos=state.data.photos;const p=photos[i];if(!p)return;
+  const filter=state.photoFilter||'all';
+
+  // Build navigable list based on current filter, sorted chronologically
+  const navList=photos.map((ph,idx)=>({...ph,_idx:idx}))
+    .filter(ph=>filter==='all'||ph.position===filter)
+    .sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.ts||0)-(b.ts||0));
+  let pos=navList.findIndex(ph=>ph._idx===i);
+  if(pos<0)pos=0;
+
   const overlay=document.createElement('div');
   overlay.className='photo-full-overlay';
-  overlay.innerHTML=`<div class="photo-full-close" onclick="this.parentElement.remove()">✕</div>
-    <img src="${p.data}">
-    <div style="color:#fff;margin-top:12px;text-align:center;font-size:14px">
-      ${p.date?fmtDate(p.date):''}${p.week?' · Week '+p.week:''}
-      ${p.weight?' · '+p.weight+' lbs':''}${p.position?' · '+p.position:''}
-      ${p.note?'<br>'+p.note:''}
-    </div>
-    <div style="display:flex;gap:10px;margin-top:10px">
-      <button style="background:var(--surface2);border:1px solid var(--border);color:var(--cyan);padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove();state.editingPhoto=${i};render()">✏️ Edit</button>
-      <button style="background:var(--surface2);border:1px solid var(--border);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove()">Close</button>
-    </div>`;
-  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
+
+  function showAt(p2){
+    const ph=navList[p2];if(!ph)return;
+    const idx=ph._idx;
+    overlay.innerHTML=`
+      <div class="photo-full-close" onclick="this.parentElement.remove()">✕</div>
+      ${navList.length>1?`<div style="position:absolute;top:50%;left:8px;transform:translateY(-50%);font-size:36px;color:rgba(255,255,255,${p2>0?'0.8':'0.15'});cursor:pointer;padding:8px;user-select:none;-webkit-user-select:none;z-index:2" onclick="event.stopPropagation();photoNav(-1)">‹</div>`:''}
+      ${navList.length>1?`<div style="position:absolute;top:50%;right:8px;transform:translateY(-50%);font-size:36px;color:rgba(255,255,255,${p2<navList.length-1?'0.8':'0.15'});cursor:pointer;padding:8px;user-select:none;-webkit-user-select:none;z-index:2" onclick="event.stopPropagation();photoNav(1)">›</div>`:''}
+      <img src="${ph.data}" style="pointer-events:none">
+      <div style="color:rgba(255,255,255,.5);font-size:12px;margin-top:8px">${p2+1} / ${navList.length}${filter!=='all'?' · '+filter:''}</div>
+      <div style="color:#fff;margin-top:4px;text-align:center;font-size:14px">
+        ${ph.date?fmtDate(ph.date):''}${ph.week?' · Week '+ph.week:''}
+        ${ph.weight?' · '+ph.weight+' lbs':''}${ph.position?' · '+ph.position:''}
+        ${ph.note?'<br>'+ph.note:''}
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button style="background:var(--surface2);border:1px solid var(--border);color:var(--cyan);padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove();state.editingPhoto=${idx};render()">✏️ Edit</button>
+        <button style="background:var(--surface2);border:1px solid var(--border);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove()">Close</button>
+      </div>`;
+  }
+
+  // Navigation function attached to window for onclick access
+  window.photoNav=function(dir){
+    const next=pos+dir;
+    if(next>=0&&next<navList.length){pos=next;showAt(pos);}
+  };
+
+  // Touch swipe
+  let touchX=0;
+  overlay.addEventListener('touchstart',function(e){touchX=e.touches[0].clientX;},{passive:true});
+  overlay.addEventListener('touchend',function(e){
+    const diff=e.changedTouches[0].clientX-touchX;
+    if(Math.abs(diff)>50){
+      if(diff<0&&pos<navList.length-1){pos++;showAt(pos);}
+      else if(diff>0&&pos>0){pos--;showAt(pos);}
+    }
+  });
+
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  showAt(pos);
 }
 
 // ═══════════════════════════════════════════
