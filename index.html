@@ -122,6 +122,9 @@ label{display:block;font-family:var(--font-ui);font-size:13px;font-weight:600;co
 .chip:active{transform:scale(.95);border-color:var(--yellow);color:var(--yellow)}
 .chip-macro{color:var(--text2);font-family:var(--font-mono);font-size:11px;margin-left:4px}
 .fav-row{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--surface2);border-radius:6px;margin-top:6px;font-size:13px}
+.water-ring{flex-shrink:0;line-height:0}
+.water-btn{flex:1;min-width:56px;background:var(--surface2);border:1px solid var(--border);color:var(--cyan);font-family:var(--font-ui);font-weight:700;font-size:15px;letter-spacing:.5px;padding:12px 0;border-radius:6px;cursor:pointer;transition:all .15s}
+.water-btn:active{transform:scale(.95);background:rgba(0,240,255,.12);border-color:var(--cyan)}
 .checkbox-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;cursor:pointer}
 .checkbox-row input{width:20px;height:20px;flex-shrink:0}
 .checkbox-row label{margin-bottom:0;text-transform:none;cursor:pointer}
@@ -172,7 +175,7 @@ let tempSleepQuality=0,tempEnergy=0;
 let QUICK=[]; // current quick-add meal list (rebuilt each render that shows chips)
 
 function defaults(){
-  return{config:{startWeight:305,goalWeight:270,startDate:'2026-07-08',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5},weights:{},meals:{},workouts:{},focus:{},sleep:{},photos:[],favorites:[]};
+  return{config:{startWeight:305,goalWeight:270,startDate:'2026-07-08',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},photos:[],favorites:[]};
 }
 
 function load(){
@@ -188,6 +191,7 @@ function load(){
         workouts:{...def.workouts,...(d.workouts||{})},
         focus:{...def.focus,...(d.focus||{})},
         sleep:{...def.sleep,...(d.sleep||{})},
+        water:{...def.water,...(d.water||{})},
         photos:Array.isArray(d.photos)?d.photos:[],
         favorites:Array.isArray(d.favorites)?d.favorites:[]
       };
@@ -491,6 +495,50 @@ function quickAdd(i){
   state.data.meals[vd].push({name:q.name,calories:q.calories,protein:q.protein});
   save();render();
 }
+// ── Hydration ──
+function addWater(oz){
+  const vd=getVD();
+  const cur=state.data.water[vd]||0;
+  const next=Math.max(0,cur+oz);
+  if(next===0)delete state.data.water[vd]; else state.data.water[vd]=next;
+  save();render();
+}
+function resetWater(){const vd=getVD();delete state.data.water[vd];save();render();}
+function renderHydration(){
+  const vd=getVD();
+  const oz=state.data.water[vd]||0;
+  const target=state.data.config.waterTarget||110;
+  const remaining=Math.max(0,target-oz);
+  const hit=oz>=target;
+  const R=52,C=2*Math.PI*R;
+  const off=C*(1-Math.min(1,oz/target));
+  const col=hit?'#00ff9c':'#00f0ff';
+  const glow=hit?'rgba(0,255,156,.6)':'rgba(0,240,255,.6)';
+  return `<div class="card"><div class="card-title">💧 Hydration</div>
+    <div style="display:flex;align-items:center;gap:18px">
+      <div class="water-ring">
+        <svg width="122" height="122" viewBox="0 0 128 128">
+          <circle cx="64" cy="64" r="${R}" fill="none" stroke="#161a2b" stroke-width="10"/>
+          <circle cx="64" cy="64" r="${R}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 64 64)" style="filter:drop-shadow(0 0 6px ${glow});transition:stroke-dashoffset .5s ease"/>
+          <text x="64" y="60" text-anchor="middle" fill="${col}" style="font-family:'Share Tech Mono',monospace;font-size:27px">${oz}</text>
+          <text x="64" y="83" text-anchor="middle" fill="#8790b8" style="font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:1px">/ ${target} OZ</text>
+        </svg>
+      </div>
+      <div style="flex:1">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:14px;color:${hit?'#00ff9c':'var(--text2)'};margin-bottom:10px">${hit?'✅ Target hit':remaining+' oz to go'}</div>
+        <div style="display:flex;gap:8px">
+          <button class="water-btn" onclick="addWater(8)">+8</button>
+          <button class="water-btn" onclick="addWater(16)">+16</button>
+          <button class="water-btn" onclick="addWater(24)">+24</button>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px">
+          <span style="font-size:12px;color:var(--text2);cursor:pointer" onclick="addWater(-8)">− undo 8</span>
+          <span style="font-size:12px;color:var(--text2);cursor:pointer" onclick="resetWater()">reset</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
 function addFavorite(name,cal,pro){
   if(!Array.isArray(state.data.favorites))state.data.favorites=[];
   if(!state.data.favorites.some(f=>f.name.toLowerCase()===name.toLowerCase())){
@@ -561,6 +609,8 @@ function renderToday(){
   const vdCals=vdMeals.reduce((s,m)=>s+(m.calories||0),0);
   const vdProtein=vdMeals.reduce((s,m)=>s+(m.protein||0),0);
   const vdWorkouts=state.data.workouts[vd]||[];
+  const vdWater=state.data.water[vd]||0;
+  const waterT=state.data.config.waterTarget||110;
 
   // Heatmap — last 35 days from TODAY (always anchored to real today)
   const now=new Date();
@@ -615,6 +665,8 @@ function renderToday(){
       <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(vdCals/state.data.config.calorieTarget)*100)}%;background:${vdCals>state.data.config.calorieTarget?'var(--red)':'var(--green)'};box-shadow:0 0 8px ${vdCals>state.data.config.calorieTarget?'rgba(255,56,96,.5)':'rgba(0,255,156,.5)'}"></div></div>
       <div class="stat-row" style="margin-top:4px"><span class="stat-label">Protein</span><span class="stat-value">${vdProtein}g <span style="font-size:13px;color:var(--text2)">/ ${state.data.config.proteinTarget}g</span></span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(vdProtein/state.data.config.proteinTarget)*100)}%;background:var(--cyan);box-shadow:0 0 8px rgba(0,240,255,.5)"></div></div>
+      <div class="stat-row" style="margin-top:4px"><span class="stat-label">Water</span><span class="stat-value">${vdWater}oz <span style="font-size:13px;color:var(--text2)">/ ${waterT}oz</span></span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(vdWater/waterT)*100)}%;background:#38bdf8;box-shadow:0 0 8px rgba(56,189,248,.5)"></div></div>
       <div class="stat-row" style="margin-top:4px"><span class="stat-label">Workouts</span><span class="stat-value">${vdWorkouts.length>0?vdWorkouts.map(w=>'<span class="tag tag-green">'+w.name+'</span>').join(' '):'None'}</span></div>
     </div>`;
 }
@@ -634,6 +686,7 @@ function renderFuel(){
       <div class="stat-row" style="margin-top:8px"><span class="stat-label">Protein</span><span class="stat-value" style="color:var(--cyan)">${totalPro}g / ${proT}g</span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(totalPro/proT)*100)}%;background:var(--cyan);box-shadow:0 0 8px rgba(0,240,255,.5)"></div></div>
     </div>
+    ${renderHydration()}
     ${renderQuickChips('fuel')}
     <div class="card"><div class="card-title">Meals Logged</div>
       ${meals.length>0?meals.map((m,i)=>`<div class="meal-item"><div class="meal-info"><div class="meal-name">${m.name}</div><div class="meal-macros">${m.calories} cal · ${m.protein}g protein</div></div><div class="meal-delete" onclick="deleteMeal(${i})">✕</div></div>`).join(''):'<div class="empty-state">No meals logged. Get fueling.</div>'}
@@ -774,6 +827,7 @@ function renderStats(){
       <div class="form-group"><label>Calorie target</label><input type="number" value="${state.data.config.calorieTarget}" onchange="state.data.config.calorieTarget=+this.value;save();render()" inputmode="numeric"></div>
       <div class="form-group"><label>Protein target (g)</label><input type="number" value="${state.data.config.proteinTarget}" onchange="state.data.config.proteinTarget=+this.value;save();render()" inputmode="numeric"></div>
       <div class="form-group"><label>Sleep target (hrs)</label><input type="number" value="${state.data.config.sleepTarget||7.5}" step="0.5" onchange="state.data.config.sleepTarget=+this.value;save();render()" inputmode="decimal"></div>
+      <div class="form-group"><label>Water target (oz)</label><input type="number" value="${state.data.config.waterTarget||110}" step="8" onchange="state.data.config.waterTarget=+this.value;save();render()" inputmode="numeric"></div>
       <div class="form-group"><label>Goal weight (lbs)</label><input type="number" value="${state.data.config.goalWeight}" onchange="state.data.config.goalWeight=+this.value;save();render()" inputmode="numeric" step="1"></div>
       <div class="form-group"><label>Start weight (lbs)</label><input type="number" value="${state.data.config.startWeight}" onchange="state.data.config.startWeight=+this.value;save();render()" inputmode="numeric" step="0.1"></div>
     </div>
@@ -953,6 +1007,7 @@ function importData(e){
           workouts:{...(state.data.workouts||{}),...(imp.workouts||{})},
           focus:{...(state.data.focus||{}),...(imp.focus||{})},
           sleep:{...(state.data.sleep||{}),...(imp.sleep||{})},
+          water:{...(state.data.water||{}),...(imp.water||{})},
           photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])],
           favorites:(Array.isArray(imp.favorites)&&imp.favorites.length)?imp.favorites:(Array.isArray(state.data.favorites)?state.data.favorites:[])
         };
