@@ -200,7 +200,22 @@ function load(){
   state.viewDate=getToday();
 }
 
-function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state.data));}catch(e){}}
+let photosInIDB=false;
+function save(){
+  try{
+    if(photosInIDB){const {photos,...rest}=state.data;localStorage.setItem(STORE_KEY,JSON.stringify(rest));}
+    else{localStorage.setItem(STORE_KEY,JSON.stringify(state.data));}
+  }catch(e){console.warn('LOCK IN: localStorage save failed',e);}
+}
+// ── IndexedDB photo store (base64 photos are too big for localStorage's ~5MB cap) ──
+const IDB_NAME='lockin-db',IDB_STORE='photos';
+function genPhotoId(ts){return 'p_'+(ts||Date.now())+'_'+Math.random().toString(36).slice(2,7);}
+function idbOpen(){return new Promise((res,rej)=>{try{const req=indexedDB.open(IDB_NAME,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(IDB_STORE))db.createObjectStore(IDB_STORE,{keyPath:'id'});};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);}catch(e){rej(e);}});}
+function idbAll(){return idbOpen().then(db=>new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readonly');const r=t.objectStore(IDB_STORE).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error);}));}
+function idbPut(photo){return idbOpen().then(db=>new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readwrite');t.objectStore(IDB_STORE).put(photo);t.oncomplete=()=>res(true);t.onerror=()=>rej(t.error);}));}
+function idbPutAll(arr){return idbOpen().then(db=>new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readwrite');const s=t.objectStore(IDB_STORE);arr.forEach(p=>s.put(p));t.oncomplete=()=>res(true);t.onerror=()=>rej(t.error);}));}
+function idbDelete(id){return idbOpen().then(db=>new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readwrite');t.objectStore(IDB_STORE).delete(id);t.oncomplete=()=>res(true);t.onerror=()=>rej(t.error);}));}
+function persistPhoto(p){idbPut(p).catch(e=>{console.warn('photo save failed',e);alert('That photo could not be saved — your device storage may be full. Your other data is safe.');});}
 function getToday(){return new Date().toISOString().slice(0,10)}
 function getVD(){return state.viewDate||getToday()}
 function isViewingToday(){return getVD()===getToday()}
@@ -1008,10 +1023,12 @@ function importData(e){
           focus:{...(state.data.focus||{}),...(imp.focus||{})},
           sleep:{...(state.data.sleep||{}),...(imp.sleep||{})},
           water:{...(state.data.water||{}),...(imp.water||{})},
-          photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])],
+          photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])].map(p=>(p&&p.id)?p:{...p,id:genPhotoId(p&&p.ts)}),
           favorites:(Array.isArray(imp.favorites)&&imp.favorites.length)?imp.favorites:(Array.isArray(state.data.favorites)?state.data.favorites:[])
         };
-        save();render();alert('Data imported successfully!');
+        save();render();
+        if(photosInIDB)idbPutAll(state.data.photos).catch(()=>{});
+        alert('Data imported successfully!');
       }else{alert('Invalid backup file.');}
     }catch(err){alert('Error reading file.');}
   };
@@ -1132,8 +1149,10 @@ function savePhotoEdit(i){
   p.weight=parseFloat(document.getElementById('edit-weight')?.value)||null;
   p.position=document.getElementById('edit-position')?.value||'';
   p.note=document.getElementById('edit-note')?.value?.trim()||'';
+  if(!p.id)p.id=genPhotoId(p.ts);
   state.editingPhoto=-1;
-  save();render();
+  render();
+  if(photosInIDB)persistPhoto(p); else save();
 }
 
 function capturePhoto(e){
@@ -1157,8 +1176,10 @@ function capturePhoto(e){
       ctx.drawImage(img,0,0,w,h);
       const data=canvas.toDataURL('image/jpeg',0.7);
       if(!Array.isArray(state.data.photos))state.data.photos=[];
-      state.data.photos.push({data,date,week,weight,position,note,ts:Date.now()});
-      save();render();
+      const photo={id:genPhotoId(),data,date,week,weight,position,note,ts:Date.now()};
+      state.data.photos.push(photo);
+      render();
+      if(photosInIDB)persistPhoto(photo); else save();
     };
     img.src=ev.target.result;
   };
@@ -1168,7 +1189,10 @@ function capturePhoto(e){
 
 function deletePhoto(i){
   if(confirm('Delete this photo?')){
-    state.data.photos.splice(i,1);state.editingPhoto=-1;save();render();
+    const p=state.data.photos[i];
+    state.data.photos.splice(i,1);state.editingPhoto=-1;
+    render();
+    if(photosInIDB&&p&&p.id)idbDelete(p.id).catch(()=>{}); else save();
   }
 }
 
@@ -1305,10 +1329,37 @@ function render(){
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
-load();render();
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(reg=>{if(reg&&reg.update)reg.update();}).catch(()=>{});
+async function initPhotos(){
+  try{
+    let idbPhotos=await idbAll();
+    const lsPhotos=Array.isArray(state.data.photos)?state.data.photos:[];
+    // One-time migration: photos still living in localStorage move into IndexedDB
+    if(idbPhotos.length===0 && lsPhotos.length>0){
+      const withIds=lsPhotos.map(p=>({...p,id:p.id||genPhotoId(p.ts)}));
+      await idbPutAll(withIds);
+      idbPhotos=withIds;
+    }
+    idbPhotos=idbPhotos.map(p=>p.id?p:{...p,id:genPhotoId(p.ts)});
+    idbPhotos.sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.ts||0)-(b.ts||0));
+    state.data.photos=idbPhotos;
+    photosInIDB=true;
+    save(); // rewrite localStorage WITHOUT photos — frees the ~5MB quota for good
+  }catch(e){
+    console.warn('LOCK IN: IndexedDB unavailable, keeping photos in localStorage',e);
+    if(!Array.isArray(state.data.photos))state.data.photos=[];
+    photosInIDB=false;
+  }
 }
+async function boot(){
+  load();
+  render();            // paint immediately
+  await initPhotos();  // migrate/load photos out of localStorage
+  render();            // repaint with photos from IndexedDB
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').then(reg=>{if(reg&&reg.update)reg.update();}).catch(()=>{});
+  }
+}
+boot();
 </script>
 </body>
 </html>
