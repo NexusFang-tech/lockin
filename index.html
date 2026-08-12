@@ -153,14 +153,24 @@ label{display:block;font-family:var(--font-ui);font-size:13px;font-weight:600;co
 .photo-full-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);z-index:300;display:flex;align-items:center;justify-content:center;flex-direction:column}
 .photo-full-overlay img{max-width:95%;max-height:75vh;object-fit:contain;border-radius:6px}
 .photo-full-close{color:#fff;font-size:32px;position:absolute;top:16px;right:20px;cursor:pointer}
+.pill-label{font-family:var(--font-ui);font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin:2px 0 6px}
+.pill-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pill-row::-webkit-scrollbar{display:none}
+.pill{font-family:var(--font-ui);font-weight:600;font-size:11px;padding:6px 11px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.pill.active-pose{border-color:var(--cyan);background:rgba(0,240,255,.15);color:var(--cyan)}
+.pill.active-week{border-color:var(--pink);background:rgba(255,45,120,.15);color:var(--pink)}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
 // ═══════════════════════════════════════════
-// LOCK IN v5 — Cyberpunk Wellness Command Center
+// LOCK IN v6 — Cyberpunk Wellness Command Center
 // ═══════════════════════════════════════════
+// v6 changes:
+//   • Photos: multi-select WEEK filter alongside the pose filter (compare Week 1 vs Week 5 of one pose)
+//   • Projections: robust Theil–Sen trend (28-day window) replaces least-squares — water spikes no longer
+//     blow up the ETA. Adds a sanity guard + an ETA window (robust pace ↔ since-start pace).
 // Goal date + label are user-settable (see config.goalDate / config.goalLabel)
 function goalDateStr(){return (state.data&&state.data.config&&state.data.config.goalDate)||'';}
 function goalLabelStr(){return (state.data&&state.data.config&&state.data.config.goalLabel)||'goal';}
@@ -173,7 +183,7 @@ const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',focus:'Focus',recharge
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',editingPhoto:-1};
+let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1};
 let tempSleepQuality=0,tempEnergy=0;
 let QUICK=[]; // current quick-add meal list (rebuilt each render that shows chips)
 
@@ -434,7 +444,7 @@ function rollingAvgSeries(entries,win){
     return {date:e.date,avg:avg};
   });
 }
-// Least-squares slope in lbs/day over given entries (x = days since first)
+// Least-squares slope in lbs/day over given entries (x = days since first). Kept as a degenerate fallback.
 function trendSlope(entries){
   if(entries.length<2)return null;
   const x0=new Date(entries[0].date+'T12:00:00').getTime();
@@ -448,31 +458,80 @@ function trendSlope(entries){
   if(denom===0)return null;
   return (n*sxy-sx*sy)/denom;
 }
+// Theil–Sen robust slope (median of ALL pairwise slopes), lbs/day.
+// Median-of-slopes resists outliers: a 3–4 day water spike is a minority of the pairs,
+// so it can't drag the trend the way least-squares does. This is the fix for the
+// "goal in 2.5 years" artifact that appears after a salty weekend.
+function theilSenSlope(entries){
+  if(!entries||entries.length<2)return null;
+  const pts=entries.map(e=>({x:new Date(e.date+'T12:00:00').getTime()/864e5,y:e.w}));
+  const slopes=[];
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+    const dx=pts[j].x-pts[i].x;
+    if(dx!==0)slopes.push((pts[j].y-pts[i].y)/dx);
+  }
+  if(!slopes.length)return null;
+  slopes.sort((a,b)=>a-b);
+  const m=Math.floor(slopes.length/2);
+  return slopes.length%2?slopes[m]:(slopes[m-1]+slopes[m])/2;
+}
 function getTrajectory(){
   const entries=sortedWeightEntries();
   if(entries.length<3)return null;
-  const recent=entries.slice(-14);
-  const slope=trendSlope(recent);
-  if(slope===null)return null;
+  const today=getToday();
+
+  // ── Robust pace: Theil–Sen over the last 28 days (needs ≥5 pts, else last 10 entries) ──
+  const win=entries.filter(e=>daysBetween(e.date,today)<=28);
+  const recent=win.length>=5?win:entries.slice(-Math.min(entries.length,10));
+  let slope=theilSenSlope(recent);
+  if(slope===null)slope=trendSlope(recent); // degenerate fallback only
+
   const roll=rollingAvgSeries(entries,7);
   const smoothedLatest=round1(roll[roll.length-1].avg);
   const goal=state.data.config.goalWeight;
   const weekly=round1(slope*7);
-  const today=getToday();
-  let projGoalDate=null,daysToGoal=null;
-  if(slope<-0.002 && smoothedLatest>goal){
-    daysToGoal=Math.ceil((smoothedLatest-goal)/(-slope));
-    const dt=new Date(today+'T12:00:00');dt.setDate(dt.getDate()+daysToGoal);
-    projGoalDate=dt.toISOString().slice(0,10);
-  }
-  const gd=state.data.config.goalDate;
-  let projGoal=null,daysToGoalDt=null;
-  if(gd){daysToGoalDt=daysBetween(today,gd);if(!isNaN(daysToGoalDt))projGoal=round1(smoothedLatest+slope*daysToGoalDt);}
-  // "Average since start" — endpoint-to-endpoint, matches naive (total lost / total weeks) math
+
+  // ── Since-start endpoint pace (naive: total lost / total weeks) ──
   const firstE=entries[0],lastE=entries[entries.length-1];
   const elapsed=Math.max(1,daysBetween(firstE.date,lastE.date));
-  const sinceStartWeekly=round1((lastE.w-firstE.w)/elapsed*7);
-  return {smoothedLatest,weekly,slope,projGoalDate,daysToGoal,projGoal,goalTargetDate:gd,goal,reachedGoal:smoothedLatest<=goal,sinceStartWeekly};
+  const sinceStartDaily=(lastE.w-firstE.w)/elapsed;
+  const sinceStartWeekly=round1(sinceStartDaily*7);
+
+  const gd=state.data.config.goalDate;
+  const daysToGoalDt=gd?daysBetween(today,gd):null;
+
+  // ── ETA helpers with sanity guard ──
+  const CAP=730; // never project further than ~2 years; beyond that we call it "flat" instead of a scary number
+  const etaDays=(dailySlope)=>{
+    if(smoothedLatest<=goal)return 0;
+    if(dailySlope>=-0.005)return null;              // flat or gaining → no finite ETA
+    const d=Math.ceil((smoothedLatest-goal)/(-dailySlope));
+    return (d>CAP||!isFinite(d))?null:d;
+  };
+  const etaDate=(days)=>{
+    if(days==null)return null;
+    const dt=new Date(today+'T12:00:00');dt.setDate(dt.getDate()+days);
+    return dt.toISOString().slice(0,10);
+  };
+
+  const daysToGoal=etaDays(slope);
+  const projGoalDate=etaDate(daysToGoal);
+
+  // ── ETA window: robust pace ↔ since-start pace (brackets reality) ──
+  const dR=etaDays(slope),dS=etaDays(sinceStartDaily);
+  const both=[dR,dS].filter(v=>v!=null);
+  const etaEarly=both.length?etaDate(Math.min(...both)):null;
+  const etaLate=both.length?etaDate(Math.max(...both)):null;
+
+  // ── Projected weight on the goal date (robust slope) ──
+  let projGoal=null;
+  if(daysToGoalDt!=null&&!isNaN(daysToGoalDt))projGoal=round1(smoothedLatest+slope*daysToGoalDt);
+
+  const flat=slope>=-0.02 && smoothedLatest>goal; // water-dominated stall right now
+
+  return {smoothedLatest,weekly,slope,sinceStartWeekly,
+          projGoalDate,daysToGoal,projGoal,goalTargetDate:gd,goal,
+          reachedGoal:smoothedLatest<=goal,etaEarly,etaLate,flat};
 }
 
 // ═══════════════════════════════════════════
@@ -595,24 +654,31 @@ function openDatePicker(){
 function renderTrajectory(full){
   const t=getTrajectory();
   if(!t){return `<div class="card"><div class="card-title">📉 Trajectory</div><div class="empty-state">Log a few more weigh-ins to unlock your smoothed trend & projection.</div></div>`;}
-  const down=t.slope<0;
-  const rateColor=down?'var(--green)':'var(--amber)';
+  const rateColor=t.weekly<0?'var(--green)':'var(--amber)';
   const rateTxt=`${t.weekly>0?'+':''}${t.weekly}/wk`;
   const sinceTxt=`${t.sinceStartWeekly>0?'+':''}${t.sinceStartWeekly}/wk`;
-  const goalTxt=t.reachedGoal?'🎯 Hit':(t.projGoalDate?fmtShort(t.projGoalDate):'—');
+  const etaTxt=t.reachedGoal?'🎯 Hit':(t.flat?'flat':(t.projGoalDate?fmtShort(t.projGoalDate):'—'));
   const onTrack=t.projGoal!=null && t.projGoal<=t.goal;
   const honeyColor=onTrack?'var(--green)':'var(--amber)';
   const gLabel=goalLabelStr();
-  return `<div class="card"><div class="card-title">📉 Trajectory <span style="font-family:var(--font-ui);font-weight:600;color:var(--text2);font-size:11px;letter-spacing:.5px">· 7-day smoothed</span></div>
+  const hasWindow=t.etaEarly&&t.etaLate&&t.etaEarly!==t.etaLate;
+  return `<div class="card"><div class="card-title">📉 Trajectory <span style="font-family:var(--font-ui);font-weight:600;color:var(--text2);font-size:11px;letter-spacing:.5px">· robust trend</span></div>
     <div class="inline-stat">
       <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${t.smoothedLatest}</div><div class="inline-stat-label">Trend wt</div></div>
-      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${rateColor}">${rateTxt}</div><div class="inline-stat-label">14-day pace</div></div>
-      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--yellow);font-size:16px">${goalTxt}</div><div class="inline-stat-label">Hit ${t.goal}</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${rateColor}">${rateTxt}</div><div class="inline-stat-label">Trend pace</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--yellow);font-size:16px">${etaTxt}</div><div class="inline-stat-label">Hit ${t.goal}</div></div>
     </div>
     <div class="stat-row" style="margin-top:10px"><span class="stat-label">Avg since start</span><span class="stat-value" style="color:var(--text2)">${sinceTxt}</span></div>
+    ${full&&hasWindow?`<div class="stat-row"><span class="stat-label">ETA window</span><span class="stat-value" style="color:var(--cyan);font-size:15px">${fmtShort(t.etaEarly)} – ${fmtShort(t.etaLate)}</span></div>`:''}
     ${t.goalTargetDate&&t.projGoal!=null?`<div class="stat-row"><span class="stat-label">Projected on ${fmtShort(t.goalTargetDate)}</span><span class="stat-value" style="color:${honeyColor}">${t.projGoal} lbs ${onTrack?'✓':'⚠'}</span></div>`:''}
     ${full&&t.daysToGoal?`<div class="stat-row"><span class="stat-label">Days to ${t.goal} at this pace</span><span class="stat-value">${t.daysToGoal}</span></div>`:''}
-    ${full&&t.projGoal!=null?`<p style="font-size:12px;color:var(--text2);margin-top:10px">${onTrack?`On pace to be at or below ${t.goal} by your ${gLabel} date. Hold the line.`:`Current pace lands you around ${t.projGoal} on your ${gLabel} date — a touch above ${t.goal}. Tightening sleep or adding one cardio session closes it.`} <span style="color:var(--text2)">The since-start average runs hotter because week 1 shed water weight — the 14-day pace is your real fat-loss rate.</span></p>`:''}
+    ${full?`<p style="font-size:12px;color:var(--text2);margin-top:10px">${
+      t.flat
+        ? `Trend is water-flat right now — the projection pauses until a few clean days clear the water. Your underlying fat-loss trend hasn't changed; this is the sodium artifact, not a real stall.`
+        : (onTrack
+            ? `On pace to reach ${t.goal} before your ${gLabel} date. The trend pace is a median-based (robust) fit over the last 28 days, so one salty weekend no longer throws the projection off.`
+            : `Current robust pace lands you near ${t.projGoal} on your ${gLabel} date — a touch above ${t.goal}. Tightening sleep or adding one cardio session closes it.`)
+    } ${hasWindow?`<span style="color:var(--text2)">The ETA window brackets your robust recent pace against your since-start average — reality usually lands inside it.</span>`:''}</p>`:''}
   </div>`;
 }
 
@@ -1049,7 +1115,24 @@ function photoWeek(date){return Math.max(1,Math.ceil((daysBetween('2026-07-08',d
 
 const POSES=['Front relaxed','Front flexed','Side relaxed','Side flexed','Back relaxed','Back flexed','45° pose'];
 
+// ── Photo filtering: pose (single-select) + weeks (multi-select) ──
+function photoWeekOf(p){return p.week||photoWeek(p.date||'2026-07-08');}
+function filteredPhotos(){
+  const photos=state.data.photos||[];
+  const pose=state.photoFilter||'all';
+  const weeks=Array.isArray(state.photoWeeks)?state.photoWeeks:[];
+  return photos.map((p,i)=>({...p,_idx:i}))
+    .filter(p=>pose==='all'||p.position===pose)
+    .filter(p=>weeks.length===0||weeks.includes(photoWeekOf(p)));
+}
 function setPhotoFilter(f){state.photoFilter=f;render();}
+function togglePhotoWeek(wk){
+  if(!Array.isArray(state.photoWeeks))state.photoWeeks=[];
+  const i=state.photoWeeks.indexOf(wk);
+  if(i>=0)state.photoWeeks.splice(i,1); else state.photoWeeks.push(wk);
+  render();
+}
+function clearPhotoWeeks(){state.photoWeeks=[];render();}
 
 function renderPhotos(){
   const photos=state.data.photos||[];
@@ -1078,18 +1161,25 @@ function renderPhotos(){
     </div>`;
   }
 
-  // Filter photos by pose
-  let filtered=photos.map((p,i)=>({...p,_idx:i}));
-  if(filter!=='all'){filtered=filtered.filter(p=>p.position===filter);}
+  // Weeks available for the currently-selected pose (so we never show empty week pills)
+  const poseSet=photos.filter(p=>filter==='all'||p.position===filter);
+  const availableWeeks=[...new Set(poseSet.map(photoWeekOf))].sort((a,b)=>a-b);
+
+  // Prune any selected weeks that no longer apply to the current pose (prevents a stuck filter)
+  let weeksSel=Array.isArray(state.photoWeeks)?state.photoWeeks:[];
+  const pruned=weeksSel.filter(w=>availableWeeks.includes(w));
+  if(pruned.length!==weeksSel.length){state.photoWeeks=pruned;weeksSel=pruned;}
+
+  const filtered=filteredPhotos();
+  const anyFilter=filter!=='all'||weeksSel.length>0;
 
   // Group by week
   const byWeek={};
   filtered.forEach(p=>{
-    const wk=p.week||photoWeek(p.date||'2026-07-08');
+    const wk=photoWeekOf(p);
     if(!byWeek[wk])byWeek[wk]=[];
     byWeek[wk].push(p);
   });
-
   const weekNums=Object.keys(byWeek).map(Number).sort((a,b)=>a-b);
 
   const galleryHTML=weekNums.map(wk=>{
@@ -1114,13 +1204,25 @@ function renderPhotos(){
     </div>`;
   }).join('');
 
-  // Pose filter pills
-  const filterPills=['all',...POSES].map(f=>{
+  // Pose filter pills (single-select)
+  const posePills=['all',...POSES].map(f=>{
     const label=f==='all'?'All':f;
     const count=f==='all'?photos.length:photos.filter(p=>p.position===f).length;
     if(f!=='all'&&count===0)return '';
-    return `<button class="pill ${filter===f?'active':''}" style="font-family:var(--font-ui);font-weight:600;font-size:11px;padding:6px 10px;border-radius:6px;border:1px solid ${filter===f?'var(--cyan)':'var(--border)'};background:${filter===f?'rgba(0,240,255,.15)':'var(--surface2)'};color:${filter===f?'var(--cyan)':'var(--text2)'};cursor:pointer;white-space:nowrap;flex-shrink:0" onclick="setPhotoFilter('${f}')">${label}${f!=='all'?' ('+count+')':''}</button>`;
+    return `<button class="pill ${filter===f?'active-pose':''}" onclick="setPhotoFilter('${f}')">${label}${f!=='all'?' ('+count+')':''}</button>`;
   }).filter(Boolean).join('');
+
+  // Week filter pills (multi-select) — only meaningful when the pose spans 2+ weeks
+  const weekPills=availableWeeks.length>1?`
+    <div class="pill-label">Weeks · tap to compare</div>
+    <div class="pill-row">
+      <button class="pill ${weeksSel.length===0?'active-week':''}" onclick="clearPhotoWeeks()">All</button>
+      ${availableWeeks.map(wk=>{
+        const on=weeksSel.includes(wk);
+        const c=poseSet.filter(p=>photoWeekOf(p)===wk).length;
+        return `<button class="pill ${on?'active-week':''}" onclick="togglePhotoWeek(${wk})">W${wk} (${c})</button>`;
+      }).join('')}
+    </div>`:'';
 
   return `
     <div class="card">
@@ -1145,9 +1247,11 @@ function renderPhotos(){
         </label>
       </div>
     </div>
-    ${photos.length>0?`<div class="card"><div class="card-title" style="margin-bottom:8px">Gallery (${filter==='all'?photos.length:filtered.length+'/' +photos.length})</div>
-      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch">${filterPills}</div>
-      ${filtered.length>0?galleryHTML:'<div class="empty-state">No photos with this pose yet.</div>'}
+    ${photos.length>0?`<div class="card"><div class="card-title" style="margin-bottom:8px">Gallery (${anyFilter?filtered.length+'/'+photos.length:photos.length})</div>
+      <div class="pill-label">Pose</div>
+      <div class="pill-row">${posePills}</div>
+      ${weekPills}
+      ${filtered.length>0?galleryHTML:'<div class="empty-state">No photos match this filter. Try "All" weeks or a different pose.</div>'}
     </div>`:'<div class="card"><div class="empty-state">No photos yet. Take your first progress photo — future you will thank you.</div></div>'}`;
 }
 
@@ -1208,13 +1312,14 @@ function deletePhoto(i){
 function viewPhoto(i){
   const photos=state.data.photos;const p=photos[i];if(!p)return;
   const filter=state.photoFilter||'all';
+  const weeksSel=Array.isArray(state.photoWeeks)?state.photoWeeks:[];
 
-  // Build navigable list based on current filter, sorted chronologically
-  const navList=photos.map((ph,idx)=>({...ph,_idx:idx}))
-    .filter(ph=>filter==='all'||ph.position===filter)
-    .sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.ts||0)-(b.ts||0));
+  // Build navigable list from the SAME filter as the gallery, sorted chronologically
+  const navList=filteredPhotos().sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.ts||0)-(b.ts||0));
   let pos=navList.findIndex(ph=>ph._idx===i);
   if(pos<0)pos=0;
+
+  const filterTag=(filter!=='all'?' · '+filter:'')+(weeksSel.length?' · W'+[...weeksSel].sort((a,b)=>a-b).join(',W'):'');
 
   const overlay=document.createElement('div');
   overlay.className='photo-full-overlay';
@@ -1228,7 +1333,7 @@ function viewPhoto(i){
       ${navList.length>1?`<div style="position:absolute;top:50%;left:8px;transform:translateY(-50%);font-size:36px;color:rgba(255,255,255,${p2>0?'0.8':'0.15'});cursor:pointer;padding:8px;user-select:none;-webkit-user-select:none;z-index:2" onclick="event.stopPropagation();photoNav(-1)">‹</div>`:''}
       ${navList.length>1?`<div style="position:absolute;top:50%;right:8px;transform:translateY(-50%);font-size:36px;color:rgba(255,255,255,${p2<navList.length-1?'0.8':'0.15'});cursor:pointer;padding:8px;user-select:none;-webkit-user-select:none;z-index:2" onclick="event.stopPropagation();photoNav(1)">›</div>`:''}
       <img src="${ph.data}" style="pointer-events:none">
-      <div style="color:rgba(255,255,255,.5);font-family:var(--font-mono);font-size:12px;margin-top:8px">${p2+1} / ${navList.length}${filter!=='all'?' · '+filter:''}</div>
+      <div style="color:rgba(255,255,255,.5);font-family:var(--font-mono);font-size:12px;margin-top:8px">${p2+1} / ${navList.length}${filterTag}</div>
       <div style="color:#fff;margin-top:4px;text-align:center;font-size:14px">
         ${ph.date?fmtDate(ph.date):''}${ph.week?' · Week '+ph.week:''}
         ${ph.weight?' · '+ph.weight+' lbs':''}${ph.position?' · '+ph.position:''}
