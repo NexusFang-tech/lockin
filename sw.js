@@ -1,10 +1,10 @@
-// LOCK IN service worker — v3
-// Strategy change: the app document (index.html) is now NETWORK-FIRST.
-// That means when you push new code to GitHub, the next time you open the app
-// online it fetches the fresh HTML automatically — no more clearing Safari data.
-// Everything still works fully offline via the cache fallback.
+// LOCK IN service worker — v4
+// Strategy: the app document (index.html) is NETWORK-FIRST.
+// When you push new code to GitHub, the next time you open the app online it fetches
+// the fresh HTML automatically — no more clearing Safari data. Still fully offline
+// via the cache fallback. Cache name bumped to v4 so the v6 app code lands cleanly.
 
-const CACHE='lockin-v3';
+const CACHE='lockin-v4';
 const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',e=>{
