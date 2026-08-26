@@ -159,6 +159,55 @@ label{display:block;font-family:var(--font-ui);font-size:13px;font-weight:600;co
 .pill{font-family:var(--font-ui);font-weight:600;font-size:11px;padding:6px 11px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
 .pill.active-pose{border-color:var(--cyan);background:rgba(0,240,255,.15);color:var(--cyan)}
 .pill.active-week{border-color:var(--pink);background:rgba(255,45,120,.15);color:var(--pink)}
+
+/* ── v7: SVG icon alignment + phase card + disciplined polish ── */
+.tab-icon{font-size:20px;display:flex;align-items:center;justify-content:center;line-height:0}
+.tab-icon svg{width:21px;height:21px}
+.tab-btn{gap:3px;font-weight:700;letter-spacing:.6px}
+.tab-btn.active svg{filter:drop-shadow(0 0 6px currentColor)}
+.workout-group-title{display:flex;align-items:center;gap:8px}
+.workout-group-title svg{width:17px;height:17px}
+.core-addon-title{display:flex;align-items:center;gap:8px}
+.core-addon-title svg{width:16px;height:16px}
+.card-title svg{width:15px;height:15px}
+.streak-badge svg{width:15px;height:15px}
+/* Header — sharper, more "system readout" */
+.hdr-title{letter-spacing:10px}
+.hdr-sub{text-transform:uppercase;letter-spacing:2px;font-size:11px}
+/* Phase card */
+.phase-card::before{border-top-color:var(--green)}
+.phase-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:10px}
+.phase-label{font-family:var(--font-display);font-size:26px;font-weight:900;letter-spacing:3px;line-height:1}
+.phase-tag{font-family:var(--font-ui);font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
+.phase-track{flex:1;max-width:52%}
+.phase-track-bar{height:7px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.phase-track-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.phase-track-cap{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-top:5px;text-align:right;letter-spacing:.5px}
+.phase-blurb{font-size:12.5px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+.phase-guide{font-family:var(--font-mono);font-size:11px;color:var(--cyan);background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.18);border-radius:6px;padding:8px 10px;letter-spacing:.5px}
+.phase-flip{margin-top:12px;padding:12px;border:1px solid rgba(0,255,156,.3);background:rgba(0,255,156,.06);border-radius:8px}
+.phase-flip-msg{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--text);line-height:1.45}
+.phase-flip-msg svg{width:16px;height:16px;color:var(--green);margin-top:1px;flex-shrink:0}
+.phase-next{margin-top:12px;font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:.5px}
+.phase-switch{display:flex;gap:6px;margin-top:12px}
+.phase-pill{flex:1;padding:8px 4px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:6px;font-family:var(--font-ui);font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .15s}
+.phase-pill.active{background:rgba(255,255,255,.03)}
+
+/* ── v8: body map ── */
+.bm-card::before{border-top-color:var(--cyan)}
+.bm-toggle{display:flex;gap:6px;margin-bottom:6px}
+.bm-tog{flex:1;padding:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:6px;font-family:var(--font-ui);font-weight:700;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .15s}
+.bm-tog.active{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.2)}
+.bm-frame{position:relative;background:radial-gradient(circle at 50% 25%,rgba(0,240,255,.04),transparent 70%);border:1px solid var(--border);border-radius:8px;margin:8px 0;overflow:hidden}
+.bm-frame::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,240,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.05) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
+.bm-prompt{text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text2);letter-spacing:1px;padding:10px 0 2px}
+.bm-panel{margin-top:6px}
+.bm-panel-head{font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.bm-installing{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;opacity:.7;animation:bmpulse 1.4s ease-in-out infinite}
+@keyframes bmpulse{0%,100%{opacity:.35}50%{opacity:.9}}
+.modality-sep{font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:3px;color:var(--text2);text-transform:uppercase;text-align:center;margin:18px 0 12px;position:relative}
+.modality-sep::before,.modality-sep::after{content:'';position:absolute;top:50%;width:28%;height:1px;background:var(--border)}
+.modality-sep::before{left:0}.modality-sep::after{right:0}
 </style>
 </head>
 <body>
@@ -176,21 +225,21 @@ function goalDateStr(){return (state.data&&state.data.config&&state.data.config.
 function goalLabelStr(){return (state.data&&state.data.config&&state.data.config.goalLabel)||'goal';}
 function daysToGoalDate(){const gd=goalDateStr();if(!gd)return null;const n=daysBetween(getToday(),gd);return isNaN(n)?null:n;}
 const STORE_KEY='lockin-data';
-const TABS=['today','fuel','train','focus','recharge','photos','stats'];
-const TAB_ICONS={today:'📊',fuel:'🍽',train:'💪',focus:'🎯',recharge:'🌙',photos:'📸',stats:'📈'};
-const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',focus:'Focus',recharge:'Rest',photos:'Photos',stats:'Stats'};
+const TABS=['today','fuel','train','recharge','photos','stats'];
+const TAB_ICONS={today:'today',fuel:'fuel',train:'train',recharge:'recharge',photos:'photos',stats:'stats'};
+const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',recharge:'Rest',photos:'Photos',stats:'Stats'};
 
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1};
+let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1,bodyRegion:null,bodyView:'front'};
 let tempSleepQuality=0,tempEnergy=0;
 let QUICK=[]; // current quick-add meal list (rebuilt each render that shows chips)
 
 function defaults(){
   const sd='2026-07-08';
   const gd=new Date(sd+'T12:00:00');gd.setDate(gd.getDate()+90); // neutral 90-day default, not anyone's specific date
-  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},photos:[],favorites:[]};
+  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},photos:[],favorites:[]};
 }
 
 function load(){
@@ -252,6 +301,31 @@ function shiftDate(days){
 // ═══════════════════════════════════════════
 // WORKOUT DATABASE
 // ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// ICONS — inline SVG, inherit currentColor (disciplined, no emoji)
+// ═══════════════════════════════════════════
+const _svg=(p,vb)=>`<svg viewBox="${vb||'0 0 24 24'}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="flex-shrink:0">${p}</svg>`;
+const ICON={
+  // section headers
+  barbell:_svg('<path d="M4 9v6M7 6v12M17 6v12M20 9v6M7 12h10"/>'),
+  legs:_svg('<path d="M9 3v7l-2 11M15 3v7l2 11M9 10h6"/>'),
+  golf:_svg('<path d="M12 3v12"/><path d="M12 5l6 2-6 2"/><circle cx="12" cy="19" r="2"/>'),
+  plane:_svg('<path d="M10.5 13.5 3 12l1-2 6 .5 4-6 2 .5-2.5 6.5L21 13l-.5 2-6.5-1-2 5-1.5-.5z"/>'),
+  heart:_svg('<path d="M12 20s-7-4.5-9-9a4.5 4.5 0 0 1 8-3 4.5 4.5 0 0 1 8 3c-2 4.5-9 9-9 9z"/>'),
+  home:_svg('<path d="M4 11l8-6 8 6M6 10v9h12v-9"/>'),
+  core:_svg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>'),
+  phase:_svg('<path d="M3 17l5-5 4 3 6-7"/><path d="M17 8h4v4"/>'),
+  streak:_svg('<path d="M12 3c1 3 4 4 4 8a4 4 0 0 1-8 0c0-1 .3-2 1-3 .5 2 1.5 2.5 2 2 .5-.5-1-3 1-7z"/>'),
+  // tab bar
+  today:_svg('<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>'),
+  fuel:_svg('<path d="M6 3v7a2 2 0 0 0 4 0V3M8 10v11M17 3c-1.5 0-2.5 2-2.5 5s1 4 2.5 4v9"/>'),
+  train:_svg('<path d="M4 9v6M7 6v12M17 6v12M20 9v6M7 12h10"/>'),
+  focus:_svg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/>'),
+  recharge:_svg('<path d="M20 14a8 8 0 1 1-8.5-11 6 6 0 0 0 8.5 11z"/>'),
+  photos:_svg('<rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.2-2h5.6L16 6"/>'),
+  stats:_svg('<path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-6"/>'),
+};
+
 const WORKOUTS={
   gym:[
     {name:'Back & Biceps',routines:[
@@ -382,6 +456,79 @@ const WORKOUTS={
       {name:'Bird Dogs',sets:'3×10/side',note:'Extend opposite arm and leg. Pause at full extension.'},
       {name:'Russian Twists',sets:'3×20',note:'Feet elevated. Touch floor each side. Use a light DB or plate.'},
       {name:'Farmer Carries',sets:'3×40yd',note:'Heavy DBs. Walk tall, shoulders packed, core braced.'}
+    ]}
+  ],
+  pfLegs:[
+    {id:'pf-quad',name:'Quad Emphasis',desc:'Planet Fitness — quad-dominant leg builder',exercises:[
+      {name:'Leg Press',sets:'4×10-12',note:'Feet low and shoulder-width for quads. Full depth, control the negative. Your PF anchor lift — add plates over time.'},
+      {name:'Hack Squat Machine (or Smith Squat)',sets:'4×10',note:'If no hack squat, use the Smith machine: feet slightly forward, brace hard. Go to parallel.'},
+      {name:'Leg Extension',sets:'4×12-15',note:'Squeeze at the top for 1 sec. Last set: drop-set (drop weight twice, 8 reps each).'},
+      {name:'Walking DB Lunges',sets:'3×12/leg',note:'Long stride for your height. Grab the heaviest DBs PF has. Torso tall.'},
+      {name:'Standing Calf Raise (or Leg Press Calf)',sets:'4×15-20',note:'Full stretch at bottom, pause at top. Calves need volume — don\'t rush.'}
+    ]},
+    {id:'pf-posterior',name:'Posterior Chain',desc:'Planet Fitness — hamstrings & glutes',exercises:[
+      {name:'Seated or Lying Leg Curl',sets:'4×12',note:'Slow 3-sec negative. This is the hamstring builder — don\'t use momentum.'},
+      {name:'DB Romanian Deadlift',sets:'4×10',note:'Hinge at the hips, soft knees, feel the hamstring stretch. Heavy DBs, flat back.'},
+      {name:'Smith Machine Hip Thrust (or Glute Bridge)',sets:'3×12',note:'Pad the bar. Drive through heels, squeeze glutes hard at the top, pause 1 sec.'},
+      {name:'Hip Abductor Machine',sets:'3×15',note:'Lean forward slightly to hit glute medius. Squeeze at the widest point.'},
+      {name:'Seated Calf Raise (or single-leg)',sets:'4×15',note:'Targets soleus. Slow and deep.'}
+    ]},
+    {id:'pf-circuit',name:'Volume Circuit',desc:'Planet Fitness — higher-rep machine burnout',exercises:[
+      {name:'Leg Press (feet high & wide)',sets:'4×15',note:'High-wide stance shifts load to glutes/hams. Higher reps today — chase the pump.'},
+      {name:'Leg Extension',sets:'3×15',note:'Moderate weight, constant tension, no lockout rest.'},
+      {name:'Leg Curl',sets:'3×15',note:'Match the extension volume — keep quad/ham balance.'},
+      {name:'Hip Adductor Machine',sets:'3×15',note:'Inner thigh. Control both directions.'},
+      {name:'Bodyweight Walking Lunges',sets:'2×20/leg',note:'Finisher. No weight — just burn the legs out.'},
+      {name:'Calf Raise (any variation)',sets:'4×20',note:'High reps to close. Full range every rep.'}
+    ]}
+  ],
+  golfPower:[
+    {id:'golf-rotate',name:'Rotational Power',desc:'Clubhead speed — explosive rotation',exercises:[
+      {name:'Cable Rotational Chop (high-to-low)',sets:'4×8/side',note:'Explosive OUT, controlled back. Rotate from the hips and core, not the arms. Mimics the downswing.'},
+      {name:'Cable Rotational Lift (low-to-high)',sets:'3×8/side',note:'Reverse of the chop — builds the backswing loading pattern.'},
+      {name:'Med Ball / KB Rotational Throw or Swing',sets:'4×6/side',note:'If PF has med balls, throw hard against a wall. No ball? Hold a KB and swing explosively across the body. This is your SPEED work — be violent, rest fully.'},
+      {name:'Cable or Band Pallof Press',sets:'3×10/side',note:'Anti-rotation. Resist the pull, brace the core. Builds the stability that lets you swing FASTER without losing balance.'},
+      {name:'Landmine Rotation (or KB around-the-world)',sets:'3×8/side',note:'Full-body rotational power. Drive through the hips.'}
+    ]},
+    {id:'golf-hips',name:'Hip Drive & Base',desc:'Distance comes from the ground up',exercises:[
+      {name:'DB Romanian Deadlift',sets:'4×8',note:'The hip hinge IS the golf swing\'s power source. Load the hamstrings, explode up.'},
+      {name:'Smith Jump Squat (or bodyweight)',sets:'4×5',note:'Explosive — leave the ground. Trains ground force, which is what launches the ball. Light or bodyweight, max speed.'},
+      {name:'Walking DB Lunges',sets:'3×10/leg',note:'Single-leg stability and drive — you transfer weight to the lead leg through impact.'},
+      {name:'Hip Abductor Machine',sets:'3×15',note:'Strong glutes = a stable, powerful lead side through the ball.'},
+      {name:'Cable or Band Anti-Rotation Hold',sets:'3×20s/side',note:'Brace and hold. Core stiffness = efficient energy transfer to the clubhead.'}
+    ]},
+    {id:'golf-speed',name:'Speed & Grip',desc:'Fast-twitch + forearm/grip for control',exercises:[
+      {name:'Med Ball Slam or Overhead Throw',sets:'5×5',note:'Full-body explosive. If no ball, use a light KB for fast overhead-to-floor swings. Pure speed intent.'},
+      {name:'Cable Speed Chop (light & FAST)',sets:'4×10/side',note:'Lighter weight than the power day — prioritize BAR SPEED. Move as fast as you can with control.'},
+      {name:'Farmer Carry (heavy DBs)',sets:'3×40yd',note:'Grip, forearms, and a braced core. A strong grip = more control and clubhead stability.'},
+      {name:'Wrist Curl + Reverse Wrist Curl',sets:'3×15 each',note:'Forearm balance protects the wrists and adds control through impact.'},
+      {name:'Plate Pinch or Static Bar Hold',sets:'3×30s',note:'Crush grip. Golf demands grip endurance over 18 holes.'}
+    ]}
+  ],
+  travel:[
+    {id:'travel-hotel',name:'Hotel Gym — Full Body',desc:'Dumbbells + basic machines, ~40 min',exercises:[
+      {name:'DB Goblet Squat',sets:'4×12',note:'Hold one DB at your chest. Full depth. Legs without a rack.'},
+      {name:'DB Bench or Floor Press',sets:'4×10',note:'Flat bench if available, floor press if not. Neutral grip is shoulder-friendly.'},
+      {name:'DB Single-Arm Row',sets:'4×10/side',note:'Brace on the bench. Pull to the hip, squeeze the back.'},
+      {name:'DB Romanian Deadlift',sets:'3×12',note:'Hinge, hamstring stretch, flat back.'},
+      {name:'DB Shoulder Press',sets:'3×10',note:'Seated or standing. Full lockout.'},
+      {name:'DB Curl + Overhead Tricep Extension',sets:'3×12 each',note:'Superset the arms to save time.'},
+      {name:'Plank + Treadmill Incline Walk',sets:'10-15 min',note:'Finish with core and a brisk incline walk if there\'s a treadmill.'}
+    ]},
+    {id:'travel-room',name:'In-Room — Zero Equipment',desc:'Bodyweight anywhere, ~25 min, 3-4 rounds',exercises:[
+      {name:'Push-ups',sets:'4×AMRAP',note:'Vary the hand width each round — wide, standard, diamond. Chest to floor.'},
+      {name:'Bulgarian Split Squat (foot on bed/chair)',sets:'4×12/leg',note:'Rear foot elevated on the bed. Brutal legs, no weight needed.'},
+      {name:'Pike Push-ups',sets:'3×10',note:'Hips high, press through the shoulders. Hits delts.'},
+      {name:'Chair/Bed Dips',sets:'3×15',note:'Hands on the edge, lower under control. Triceps.'},
+      {name:'Reverse Lunges',sets:'3×15/leg',note:'Step back, drop the knee, drive up through the front heel.'},
+      {name:'Plank + Mountain Climbers + Bicycle Crunch',sets:'3 rounds',note:'45s each, back to back. Core finisher.'},
+      {name:'Burpees',sets:'3×15',note:'Optional conditioning burst if you want the heart rate up.'}
+    ]},
+    {id:'travel-outdoor',name:'Outdoor Cardio & Conditioning',desc:'No gym needed — get outside',exercises:[
+      {name:'Brisk Walk or Ruck',sets:'30-60 min',note:'Fastest way to bank a deficit on the road. Throw a loaded backpack on to make it a ruck — great for a big frame.'},
+      {name:'Hill or Stair Sprints',sets:'8-12 rounds',note:'Find a hill, parking deck, or stadium stairs. Hard up, walk down. Low-impact power conditioning.'},
+      {name:'Beach/Park Circuit',sets:'4 rounds',note:'20 squats + 15 push-ups + 20 lunges + 30s plank. Repeat. Perfect for Carolina Beach or a lakeside morning.'},
+      {name:'Incline Walk Intervals',sets:'25-35 min',note:'If you find a boardwalk or trail with elevation, alternate 3 min hard / 2 min easy.'}
     ]}
   ]
 };
@@ -720,8 +867,8 @@ function renderToday(){
     ${renderDateNav()}
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <span class="streak-badge">🔥 ${streak} day streak</span>
-        <span style="font-family:var(--font-mono);font-size:13px;color:var(--text2)">${dl==null?'set goal date':(dl>0?dl+' days left':(dl===0?'goal day 🎯':'past goal'))}</span>
+        <span class="streak-badge">${ICON.streak||''} ${streak} day streak</span>
+        <span style="font-family:var(--font-mono);font-size:13px;color:var(--text2)">${dl==null?'set goal date':(dl>0?dl+' days left':(dl===0?'goal day':'past goal'))}</span>
       </div>
       <div class="inline-stat">
         <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--green)">${latestWeight||'--'}</div><div class="inline-stat-label">Current lbs</div></div>
@@ -782,26 +929,115 @@ function renderFuel(){
     <button class="btn btn-primary" onclick="showModal('add-meal')">+ Log Meal</button>`;
 }
 
+// ═══════════════════════════════════════════
+// BODY MAP — Cyberware-install muscle selector
+// ═══════════════════════════════════════════
+// Region -> which split/routines it installs. Front & back views expose different regions.
+const BODY_REGIONS={
+  chest:{label:'Chest & Triceps',split:'Chest & Triceps',accent:'var(--pink)'},
+  back:{label:'Back & Biceps',split:'Back & Biceps',accent:'var(--cyan)'},
+  shoulders:{label:'Shoulders & Arms',split:'Shoulders & Arms',accent:'var(--amber)'},
+  arms:{label:'Shoulders & Arms',split:'Shoulders & Arms',accent:'var(--amber)'},
+  legs:{label:'Legs',split:'Legs',accent:'var(--green)',pf:true},
+  core:{label:'Core',split:null,core:true,accent:'var(--purple)'}
+};
+const FRONT_REGIONS=['shoulders','chest','arms','core','legs'];
+const BACK_REGIONS=['back','arms','core','legs'];
+function selectBodyRegion(r){ state.bodyRegion = (state.bodyRegion===r? null : r); render(); }
+function setBodyView(v){ state.bodyView=v; state.bodyRegion=null; render(); }
+// geometric mannequin — symmetric humanoid, tappable segments
+function bodySVG(){
+  const active=state.bodyRegion;
+  const on=state.bodyView==='front'?FRONT_REGIONS:BACK_REGIONS;
+  const seg=(id,pts)=>{
+    const usable=on.includes(id);
+    const isOn=active===id;
+    const acc=BODY_REGIONS[id]?BODY_REGIONS[id].accent:'var(--cyan)';
+    const fill=isOn?acc:(usable?'rgba(0,240,255,0.06)':'rgba(255,255,255,0.02)');
+    const stroke=isOn?acc:(usable?'rgba(0,240,255,0.35)':'rgba(255,255,255,0.08)');
+    const style=isOn?`filter:drop-shadow(0 0 8px ${acc});`:'';
+    const click=usable?`onclick="selectBodyRegion('${id}')"`:'';
+    const op=isOn?'0.9':(usable?'1':'0.5');
+    return `<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="1.4" ${click} style="cursor:${usable?'pointer':'default'};${style}transition:all .2s" opacity="${op}"/>`;
+  };
+  // coords: viewBox 0 0 220 400, center x=110
+  return `<svg viewBox="0 0 220 400" width="100%" height="330" style="display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="bgGlow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="rgba(0,240,255,0.05)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+    <rect x="0" y="0" width="220" height="400" fill="url(#bgGlow)"/>
+    <!-- head + neck (visual only) -->
+    <circle cx="110" cy="40" r="22" fill="rgba(255,255,255,0.02)" stroke="rgba(0,240,255,0.25)" stroke-width="1.4"/>
+    <rect x="100" y="60" width="20" height="12" fill="rgba(255,255,255,0.02)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
+    ${seg('shoulders','52,74 88,68 92,90 56,96')}
+    ${seg('shoulders','168,74 132,68 128,90 164,96')}
+    ${seg('chest','76,92 144,92 140,140 80,140')}
+    ${seg('core','82,142 138,142 132,208 88,208')}
+    ${seg('arms','44,92 62,94 58,168 40,164')}
+    ${seg('arms','176,92 158,94 162,168 180,164')}
+    <!-- forearms visual -->
+    <polygon points="40,166 56,170 50,232 36,226" fill="rgba(255,255,255,0.02)" stroke="rgba(0,240,255,0.12)" stroke-width="1"/>
+    <polygon points="180,166 164,170 170,232 184,226" fill="rgba(255,255,255,0.02)" stroke="rgba(0,240,255,0.12)" stroke-width="1"/>
+    ${state.bodyView==='back'?seg('back','78,92 142,92 138,204 82,204'):''}
+    ${seg('legs','84,212 106,212 102,300 82,300')}
+    ${seg('legs','136,212 114,212 118,300 138,300')}
+    <!-- shins visual -->
+    <polygon points="84,302 100,302 98,378 86,378" fill="rgba(255,255,255,0.02)" stroke="rgba(0,240,255,0.12)" stroke-width="1"/>
+    <polygon points="136,302 120,302 122,378 134,378" fill="rgba(255,255,255,0.02)" stroke="rgba(0,240,255,0.12)" stroke-width="1"/>
+  </svg>`;
+}
+function renderBodyMap(){
+  const r=state.bodyRegion;
+  const info=r?BODY_REGIONS[r]:null;
+  let panel='';
+  if(info){
+    let routines=[];
+    if(info.core){ routines=WORKOUTS.coreAddon.map(x=>({cat:'coreAddon',x})); }
+    else if(info.split){
+      const g=WORKOUTS.gym.find(gg=>gg.name===info.split);
+      if(g) routines=g.routines.map(x=>({cat:'gym',x}));
+      if(info.pf) routines=routines.concat(WORKOUTS.pfLegs.map(x=>({cat:'pfLegs',x})));
+    }
+    panel=`<div class="bm-panel">
+      <div class="bm-panel-head" style="color:${info.accent}">${info.label}<span class="bm-installing">INSTALL ▸</span></div>
+      ${routines.map(({cat,x})=>`<div class="workout-card" onclick="showWorkoutDetail('${cat}','${x.id}')">
+        <div class="workout-card-name">${x.name}</div><div class="workout-card-desc">${x.desc}</div></div>`).join('')}
+    </div>`;
+  } else {
+    panel=`<div class="bm-prompt">▸ Select a region to install today&#39;s work</div>`;
+  }
+  return `<div class="card bm-card">
+    <div class="card-title" style="display:flex;align-items:center;gap:7px">${ICON.barbell} Train — Body Map</div>
+    <div class="bm-toggle">
+      <button class="bm-tog ${state.bodyView==='front'?'active':''}" onclick="setBodyView('front')">FRONT</button>
+      <button class="bm-tog ${state.bodyView==='back'?'active':''}" onclick="setBodyView('back')">BACK</button>
+    </div>
+    <div class="bm-frame">${bodySVG()}</div>
+    ${panel}
+  </div>`;
+}
 function renderTrain(){
   const vd=getVD();
   const vdWorkouts=state.data.workouts[vd]||[];
   const loggedHTML=vdWorkouts.length>0?`<div class="card"><div class="card-title">${isViewingToday()?'Today\'s Training':fmtDate(vd)+' Training'}</div>
     ${vdWorkouts.map((w,i)=>`<div class="log-entry"><span>${w.name} ${w.routine?'— '+w.routine:''}</span><span style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">${w.duration||''}${w.duration?' min':''} ${w.calories?'· '+w.calories+' cal':''}</span><span class="meal-delete" onclick="deleteWorkout('${vd}',${i})">✕</span></span></div>`).join('')}</div>`:'';
 
+  const wgTitle=(icon,label,accent,extra)=>`<div class="workout-group-title" style="color:${accent||'var(--cyan)'}">${ICON[icon]||''}<span>${label}</span>${extra||''}</div>`;
   return `
     ${renderDateNav()}
     ${loggedHTML}
-    <div class="workout-group"><div class="workout-group-title">🏋️ Gym Splits</div>
-      ${WORKOUTS.gym.map(g=>`<div class="workout-card" onclick="showModal('gym-split-${g.name.replace(/[^a-zA-Z]/g,'')}')"><div class="workout-card-name">${g.name}</div><div class="workout-card-desc">${g.routines.length} routines — tap to choose</div></div>`).join('')}
+    ${renderBodyMap()}
+    <div class="modality-sep">MODALITIES</div>
+    <div class="workout-group">${wgTitle('golf','Golf Power','var(--amber)','<span style="font-size:11px;font-weight:400;color:var(--text2);margin-left:6px">— clubhead speed</span>')}
+      ${WORKOUTS.golfPower.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('golfPower','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
     </div>
-    <div class="workout-group"><div class="workout-group-title">🫀 Cardio</div>
+    <div class="workout-group">${wgTitle('plane','Travel','var(--purple)','<span style="font-size:11px;font-weight:400;color:var(--text2);margin-left:6px">— on the road</span>')}
+      ${WORKOUTS.travel.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('travel','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
+    </div>
+    <div class="workout-group">${wgTitle('heart','Cardio','var(--pink)')}
       ${WORKOUTS.cardio.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('cardio','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
     </div>
-    <div class="workout-group"><div class="workout-group-title">🏠 Home</div>
+    <div class="workout-group">${wgTitle('home','Home','var(--cyan)')}
       ${WORKOUTS.home.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('home','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
-    </div>
-    <div class="core-addon"><div class="core-addon-title">🎯 Core Add-On <span style="font-size:11px;font-weight:400;color:var(--text2)">— stack onto any upper body day</span></div>
-      ${WORKOUTS.coreAddon.map(c=>`<div class="workout-card" onclick="showWorkoutDetail('coreAddon','${c.id}')"><div class="workout-card-name">${c.name}</div><div class="workout-card-desc">${c.desc}</div></div>`).join('')}
     </div>`;
 }
 
@@ -885,6 +1121,66 @@ function renderRecharge(){
     ${histHTML?`<div class="card"><div class="card-title">Sleep History</div>${histHTML}</div>`:''}`;
 }
 
+// ═══════════════════════════════════════════
+// PHASE ENGINE — Cut → Lean Bulk → Maintain
+// ═══════════════════════════════════════════
+const PHASES={
+  cut:{key:'cut',label:'CUT',color:'var(--cyan)',tag:'Fat loss',
+    blurb:'Strip fat, hold muscle. Calorie deficit, high protein, train heavy to keep every pound of muscle you own.',
+    guide:'Deficit · 150g+ protein · train to retain'},
+  leanbulk:{key:'leanbulk',label:'LEAN BULK',color:'var(--green)',tag:'Build',
+    blurb:'Add muscle slowly and cleanly. Slight surplus, progressive overload. The scale goes UP on purpose — mostly muscle.',
+    guide:'Slight surplus · progressive overload · ~2-3 lb/mo'},
+  maintain:{key:'maintain',label:'MAINTAIN',color:'var(--yellow)',tag:'Hold',
+    blurb:'Lock the physique in. Eat at maintenance, keep training hard, fine-tune with small cuts or builds.',
+    guide:'Maintenance calories · hold the line'}
+};
+// Suggests a phase from the smoothed trend weight vs the user's targets.
+function getPhaseStatus(){
+  const cur=(state.data.config.phase)||'cut';
+  const t=getTrajectory();
+  const goal=state.data.config.goalWeight;
+  const lean=state.data.config.leanTarget||Math.max(goal-40,200);
+  const trend=t?t.smoothedLatest:getLatestWeight();
+  let suggested=cur, reason='';
+  if(trend!=null){
+    // Once the trend is at/below the "reveal" (lean) weight, it's time to stop cutting.
+    if(trend<=lean){ suggested='maintain'; reason=`Trend weight (${trend}) reached your reveal target (${lean}). Time to stop cutting — hold here, then build.`; }
+    else { suggested='cut'; reason=`${round1(trend-lean)} lbs of trend weight to your reveal target (${lean}).`; }
+  }
+  const canFlip=suggested!==cur;
+  // progress from start weight → lean target
+  const start=state.data.config.startWeight||trend;
+  const pct=(trend!=null&&start>lean)?Math.max(0,Math.min(100,round1(((start-trend)/(start-lean))*100))):0;
+  return {cur,suggested,canFlip,reason,trend,lean,goal,pct};
+}
+function setPhase(p){ if(PHASES[p]){ state.data.config.phase=p; save(); render(); } }
+function renderPhase(){
+  const s=getPhaseStatus();
+  const P=PHASES[s.cur]||PHASES.cut;
+  return `<div class="card phase-card">
+    <div class="card-title" style="display:flex;align-items:center;gap:7px;color:${P.color}">${ICON.phase} Phase</div>
+    <div class="phase-head">
+      <div>
+        <div class="phase-label" style="color:${P.color};text-shadow:0 0 14px ${P.color}">${P.label}</div>
+        <div class="phase-tag">${P.tag}</div>
+      </div>
+      <div class="phase-track">
+        <div class="phase-track-bar"><div class="phase-track-fill" style="width:${s.pct}%;background:${P.color};box-shadow:0 0 10px ${P.color}"></div></div>
+        <div class="phase-track-cap">${s.pct}% to reveal · ${s.lean} lbs</div>
+      </div>
+    </div>
+    <p class="phase-blurb">${P.blurb}</p>
+    <div class="phase-guide">${P.guide}</div>
+    ${s.canFlip?`<div class="phase-flip">
+        <div class="phase-flip-msg">${ICON.phase}<span>Suggested: flip to <b style="color:${PHASES[s.suggested].color}">${PHASES[s.suggested].label}</b> — ${s.reason}</span></div>
+        <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px" onclick="setPhase('${s.suggested}')">Flip to ${PHASES[s.suggested].label}</button>
+      </div>`:`<div class="phase-next">On track · ${s.reason}</div>`}
+    <div class="phase-switch">
+      ${Object.values(PHASES).map(x=>`<button class="phase-pill ${s.cur===x.key?'active':''}" style="${s.cur===x.key?`border-color:${x.color};color:${x.color}`:''}" onclick="setPhase('${x.key}')">${x.label}</button>`).join('')}
+    </div>
+  </div>`;
+}
 function renderStats(){
   const latestW=getLatestWeight();const startW=state.data.config.startWeight;const goalW=state.data.config.goalWeight;
   const totalLost=latestW?round1(startW-latestW):0;const streak=getCurrentStreak();const longest=getLongestStreak();
@@ -900,16 +1196,17 @@ function renderStats(){
       <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${totalLost>0?'-':''}${Math.abs(totalLost)}</div><div class="inline-stat-label">Lost</div></div>
       <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--yellow)">${goalW}</div><div class="inline-stat-label">Goal</div></div>
     </div></div>
+    ${renderPhase()}
     ${renderTrajectory(true)}
     <div class="card"><div class="card-title">Weight Trend</div><div class="chart-container"><canvas id="weight-chart"></canvas></div>
       <div class="chart-legend"><span><span class="legend-dot" style="background:var(--green)"></span>Daily</span><span><span class="legend-dot" style="background:var(--cyan)"></span>7-day avg</span><span><span class="legend-dot" style="background:var(--yellow)"></span>Goal</span></div>
     </div>
     <div class="card"><div class="card-title">Consistency</div>
-      <div class="stat-row"><span class="stat-label">🔥 Current streak</span><span class="stat-value" style="color:var(--green)">${streak} days</span></div>
-      <div class="stat-row"><span class="stat-label">🏆 Longest streak</span><span class="stat-value" style="color:var(--amber)">${longest} days</span></div>
-      <div class="stat-row"><span class="stat-label">💪 Workout days</span><span class="stat-value">${workoutDays}</span></div>
-      <div class="stat-row"><span class="stat-label">🍽 Meals logged</span><span class="stat-value">${totalMeals}</span></div>
-      <div class="stat-row"><span class="stat-label">🎯 Focus completion</span><span class="stat-value" style="color:${focusRate>=80?'var(--green)':focusRate>=50?'var(--amber)':'var(--red)'}">${focusRate}%</span></div>
+      <div class="stat-row"><span class="stat-label">Current streak</span><span class="stat-value" style="color:var(--green)">${streak} days</span></div>
+      <div class="stat-row"><span class="stat-label">Longest streak</span><span class="stat-value" style="color:var(--amber)">${longest} days</span></div>
+      <div class="stat-row"><span class="stat-label">Workout days</span><span class="stat-value">${workoutDays}</span></div>
+      <div class="stat-row"><span class="stat-label">Meals logged</span><span class="stat-value">${totalMeals}</span></div>
+      <div class="stat-row"><span class="stat-label">Focus completion</span><span class="stat-value" style="color:${focusRate>=80?'var(--green)':focusRate>=50?'var(--amber)':'var(--red)'}">${focusRate}%</span></div>
     </div>
     <div class="card"><div class="card-title">Settings</div>
       <div class="form-group"><label>Calorie target</label><input type="number" value="${state.data.config.calorieTarget}" onchange="state.data.config.calorieTarget=+this.value;save();render()" inputmode="numeric"></div>
@@ -920,10 +1217,11 @@ function renderStats(){
       <div class="form-group"><label>Goal date</label><input type="date" value="${state.data.config.goalDate||''}" onchange="state.data.config.goalDate=this.value;save();render()"></div>
       <div class="form-group"><label>Goal label (e.g. honeymoon, vacation, reunion)</label><input type="text" value="${state.data.config.goalLabel||'goal'}" maxlength="24" onchange="state.data.config.goalLabel=(this.value||'').trim()||'goal';save();render()"></div>
       <div class="form-group"><label>Start weight (lbs)</label><input type="number" value="${state.data.config.startWeight}" onchange="state.data.config.startWeight=+this.value;save();render()" inputmode="numeric" step="0.1"></div>
+      <div class="form-group"><label>Reveal target (lbs) — where you flip out of the cut</label><input type="number" value="${state.data.config.leanTarget||225}" onchange="state.data.config.leanTarget=+this.value;save();render()" inputmode="numeric" step="1"></div>
     </div>
     <div class="card"><div class="card-title">Data</div>
-      <button class="btn btn-secondary btn-sm" onclick="exportData()" style="margin-bottom:8px">📥 Export JSON Backup</button>
-      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file').click()">📤 Import JSON Backup</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportData()" style="margin-bottom:8px">Export JSON Backup</button>
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file').click()">Import JSON Backup</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
     </div>`;
 }
@@ -1018,6 +1316,9 @@ function showWorkoutDetail(category,id){
   else if(category==='cardio')workout=WORKOUTS.cardio.find(c=>c.id===id);
   else if(category==='home')workout=WORKOUTS.home.find(c=>c.id===id);
   else if(category==='coreAddon'){workout=WORKOUTS.coreAddon.find(c=>c.id===id);if(workout)workout={...workout,isCore:true};}
+  else if(category==='pfLegs')workout=WORKOUTS.pfLegs.find(c=>c.id===id);
+  else if(category==='golfPower')workout=WORKOUTS.golfPower.find(c=>c.id===id);
+  else if(category==='travel')workout=WORKOUTS.travel.find(c=>c.id===id);
   if(workout){state.selectedWorkout=workout;state.modal='workout-detail';render();}
 }
 
@@ -1419,14 +1720,13 @@ function render(){
   const app=document.getElementById('app');
   const dtg=daysToGoalDate();const gl=goalLabelStr();
   const subTxt=dtg==null?'set your goal date in stats':(dtg>0?dtg+' days to '+gl:(dtg===0?gl+' is today 🎯':gl+' date has passed'));
-  const tabsHTML=TABS.map(t=>`<button class="tab-btn ${state.tab===t?'active':''}" onclick="setTab('${t}')"><span class="tab-icon">${TAB_ICONS[t]}</span>${TAB_LABELS[t]}</button>`).join('');
+  const tabsHTML=TABS.map(t=>`<button class="tab-btn ${state.tab===t?'active':''}" onclick="setTab('${t}')"><span class="tab-icon">${ICON[TAB_ICONS[t]]||''}</span>${TAB_LABELS[t]}</button>`).join('');
 
   let content='';
   switch(state.tab){
     case'today':content=renderToday();break;
     case'fuel':content=renderFuel();break;
     case'train':content=renderTrain();break;
-    case'focus':content=renderFocus();break;
     case'recharge':content=renderRecharge();break;
     case'photos':content=renderPhotos();break;
     case'stats':content=renderStats();break;
