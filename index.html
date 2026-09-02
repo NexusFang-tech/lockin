@@ -208,14 +208,37 @@ label{display:block;font-family:var(--font-ui);font-size:13px;font-weight:600;co
 .modality-sep{font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:3px;color:var(--text2);text-transform:uppercase;text-align:center;margin:18px 0 12px;position:relative}
 .modality-sep::before,.modality-sep::after{content:'';position:absolute;top:50%;width:28%;height:1px;background:var(--border)}
 .modality-sep::before{left:0}.modality-sep::after{right:0}
+
+/* ── v9: Goals / Cookie Jar (repurposed Focus tab) ── */
+.goal-term-switch{display:flex;gap:8px;margin-bottom:14px}
+.goal-term-btn{flex:1;padding:12px 4px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:6px;font-family:var(--font-ui);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.goal-term-btn.active-short{border-color:var(--cyan);color:var(--cyan);background:rgba(0,240,255,.1);box-shadow:0 0 12px rgba(0,240,255,.18)}
+.goal-term-btn.active-long{border-color:var(--pink);color:var(--pink);background:rgba(255,45,120,.1);box-shadow:0 0 12px rgba(255,45,120,.18)}
+.goal-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:8px}
+.goal-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:15px;color:#04120c;font-weight:700}
+.goal-check:active{transform:scale(.88)}
+.goal-item .goal-text{flex:1;font-size:15px;line-height:1.35}
+.goal-delete{color:var(--text2);font-size:18px;cursor:pointer;padding:4px 8px}
+.jar-wrap{display:flex;flex-wrap:wrap;gap:9px;margin-top:2px}
+.goal-badge{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:8px;font-family:var(--font-ui);font-weight:700;font-size:13px;letter-spacing:.3px;line-height:1.2;max-width:100%}
+.goal-badge .gb-check{font-size:13px;flex-shrink:0}
+.goal-badge .gb-date{font-family:var(--font-mono);font-weight:400;font-size:10px;opacity:.7;flex-shrink:0}
+.goal-badge .gb-undo{margin-left:1px;opacity:.5;cursor:pointer;font-size:15px;flex-shrink:0}
+.goal-badge .gb-undo:active{opacity:1}
+.jar-count{font-family:var(--font-mono);font-size:12px;color:var(--text2);font-weight:400;letter-spacing:.5px}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
 // ═══════════════════════════════════════════
-// LOCK IN v6 — Cyberpunk Wellness Command Center
+// LOCK IN v9 — Cyberpunk Wellness Command Center
 // ═══════════════════════════════════════════
+// v9 changes:
+//   • Focus tab repurposed into GOALS — Short-Term / Long-Term goals with a pill toggle.
+//     Completed goals drop into a colorful "Cookie Jar" (David Goggins, Can't Hurt Me).
+//     Stats tab tracks short-term & long-term goals completed.
+//   (Prior focus history is preserved in the data model so old streaks/momentum stay intact.)
 // v6 changes:
 //   • Photos: multi-select WEEK filter alongside the pose filter (compare Week 1 vs Week 5 of one pose)
 //   • Projections: robust Theil–Sen trend (28-day window) replaces least-squares — water spikes no longer
@@ -225,21 +248,21 @@ function goalDateStr(){return (state.data&&state.data.config&&state.data.config.
 function goalLabelStr(){return (state.data&&state.data.config&&state.data.config.goalLabel)||'goal';}
 function daysToGoalDate(){const gd=goalDateStr();if(!gd)return null;const n=daysBetween(getToday(),gd);return isNaN(n)?null:n;}
 const STORE_KEY='lockin-data';
-const TABS=['today','fuel','train','recharge','photos','stats'];
-const TAB_ICONS={today:'today',fuel:'fuel',train:'train',recharge:'recharge',photos:'photos',stats:'stats'};
-const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',recharge:'Rest',photos:'Photos',stats:'Stats'};
+const TABS=['today','fuel','train','goals','recharge','photos','stats'];
+const TAB_ICONS={today:'today',fuel:'fuel',train:'train',goals:'goals',recharge:'recharge',photos:'photos',stats:'stats'};
+const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',goals:'Goals',recharge:'Rest',photos:'Photos',stats:'Stats'};
 
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1,bodyRegion:null,bodyView:'front'};
+let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1,bodyRegion:null,bodyView:'front',goalTerm:'short'};
 let tempSleepQuality=0,tempEnergy=0;
 let QUICK=[]; // current quick-add meal list (rebuilt each render that shows chips)
 
 function defaults(){
   const sd='2026-07-08';
   const gd=new Date(sd+'T12:00:00');gd.setDate(gd.getDate()+90); // neutral 90-day default, not anyone's specific date
-  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},photos:[],favorites:[]};
+  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},photos:[],favorites:[],goals:{short:[],long:[]}};
 }
 
 function load(){
@@ -257,7 +280,8 @@ function load(){
         sleep:{...def.sleep,...(d.sleep||{})},
         water:{...def.water,...(d.water||{})},
         photos:Array.isArray(d.photos)?d.photos:[],
-        favorites:Array.isArray(d.favorites)?d.favorites:[]
+        favorites:Array.isArray(d.favorites)?d.favorites:[],
+        goals:(d.goals&&typeof d.goals==='object')?{short:Array.isArray(d.goals.short)?d.goals.short:[],long:Array.isArray(d.goals.long)?d.goals.long:[]}:{short:[],long:[]}
       };
     }else{state.data=defaults();}
   }catch(e){state.data=defaults();}
@@ -321,6 +345,7 @@ const ICON={
   fuel:_svg('<path d="M6 3v7a2 2 0 0 0 4 0V3M8 10v11M17 3c-1.5 0-2.5 2-2.5 5s1 4 2.5 4v9"/>'),
   train:_svg('<path d="M4 9v6M7 6v12M17 6v12M20 9v6M7 12h10"/>'),
   focus:_svg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/>'),
+  goals:_svg('<path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 20h6l-1-3h-4z"/>'),
   recharge:_svg('<path d="M20 14a8 8 0 1 1-8.5-11 6 6 0 0 0 8.5 11z"/>'),
   photos:_svg('<rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.2-2h5.6L16 6"/>'),
   stats:_svg('<path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-6"/>'),
@@ -532,6 +557,45 @@ const WORKOUTS={
     ]}
   ]
 };
+
+// ═══════════════════════════════════════════
+// GOALS / COOKIE JAR  (repurposed Focus tab)
+// ═══════════════════════════════════════════
+// Inspired by David Goggins' "Cookie Jar" (Can't Hurt Me): every completed goal is a
+// win you can reach back into when things get hard. Short-term & long-term, each a list.
+function escapeHTML(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function genGoalId(){return 'g_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);}
+function ensureGoals(){
+  if(!state.data.goals||typeof state.data.goals!=='object')state.data.goals={short:[],long:[]};
+  if(!Array.isArray(state.data.goals.short))state.data.goals.short=[];
+  if(!Array.isArray(state.data.goals.long))state.data.goals.long=[];
+}
+// Stable, varied neon color per completed goal (hashed from its id → always the same badge color)
+const GOAL_BADGE_PALETTE=[
+  {hex:'#00f0ff',rgb:'0,240,255'},   // cyan
+  {hex:'#ff2d78',rgb:'255,45,120'},  // pink
+  {hex:'#fcee0a',rgb:'252,238,10'},  // yellow
+  {hex:'#00ff9c',rgb:'0,255,156'},   // green
+  {hex:'#b026ff',rgb:'176,38,255'},  // purple
+  {hex:'#ffb020',rgb:'255,176,32'},  // amber
+  {hex:'#ff00ff',rgb:'255,0,255'},   // magenta
+  {hex:'#3b82f6',rgb:'59,130,246'}   // blue
+];
+function badgeColorFor(id){
+  const s=String(id);let h=0;
+  for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;
+  return GOAL_BADGE_PALETTE[h%GOAL_BADGE_PALETTE.length];
+}
+function mergeGoals(a,b){
+  const seen=new Set(),out=[];
+  [...(a||[]),...(b||[])].forEach(g=>{
+    if(!g)return;
+    const id=g.id||genGoalId();
+    if(seen.has(id))return;
+    seen.add(id);out.push({...g,id});
+  });
+  return out;
+}
 
 // ═══════════════════════════════════════════
 // STREAK / MOMENTUM
@@ -1041,29 +1105,61 @@ function renderTrain(){
     </div>`;
 }
 
-function renderFocus(){
-  const vd=getVD();
-  const items=state.data.focus[vd]||[];
-  const doneCount=items.filter(i=>i.done).length;
-  const completionPct=items.length>0?Math.round((doneCount/items.length)*100):0;
-
-  // History
-  const dates=Object.keys(state.data.focus).sort().reverse().slice(0,7);
-  const histRows=dates.filter(d=>d!==vd).map(d=>{
-    const it=state.data.focus[d];const dn=it.filter(i=>i.done).length;const t=it.length;const p=t>0?Math.round((dn/t)*100):0;
-    return `<div class="log-entry"><span>${fmtDate(d)}</span><span style="color:${p===100?'var(--green)':p>0?'var(--amber)':'var(--red)'}">${dn}/${t} (${p}%)</span></div>`;
-  }).join('');
+// ═══════════════════════════════════════════
+// GOALS TAB — Short-Term / Long-Term + Cookie Jar
+// ═══════════════════════════════════════════
+function renderGoals(){
+  ensureGoals();
+  const term=state.goalTerm||'short';
+  const g=state.data.goals;
+  const list=g[term]||[];
+  const active=list.filter(x=>!x.done);
+  const doneThis=list.filter(x=>x.done)
+    .slice().sort((a,b)=>(b.completed||'').localeCompare(a.completed||''));
+  const accent=term==='short'?'var(--cyan)':'var(--pink)';
+  const termLabel=term==='short'?'Short-Term':'Long-Term';
+  const placeholder=term==='short'?'e.g. Do one unassisted pull up':'e.g. Do 10 unassisted pull ups';
+  const blurb=term==='short'
+    ?'The next targets right in front of you. Knock them down one at a time.'
+    :'The big ones — where all those short-term wins are taking you.';
 
   return `
-    ${renderDateNav()}
-    <div class="card"><div class="card-title">${isViewingToday()?'Today\'s':fmtDate(vd)} Non-Negotiables</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">What are the 1–3 things that MUST happen?</p>
-      ${items.length>0?`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--text2)">${doneCount}/${items.length} complete</span><span style="color:var(--green);font-weight:700">${completionPct}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${completionPct}%;background:var(--green);box-shadow:0 0 8px rgba(0,255,156,.5)"></div></div></div>`:''}
-      ${items.map((item,i)=>`<div class="focus-item"><div class="focus-check ${item.done?'done':''}" onclick="toggleFocus(${i})">${item.done?'✓':''}</div><div class="focus-text ${item.done?'done':''}">${item.text}</div><div class="focus-delete" onclick="deleteFocus(${i})">✕</div></div>`).join('')}
-      ${items.length>=3?'<p style="font-size:12px;color:var(--text2);text-align:center;margin-top:8px">Max 3 — focus means choosing.</p>':''}
+    <div class="goal-term-switch">
+      <button class="goal-term-btn ${term==='short'?'active-short':''}" onclick="setGoalTerm('short')">Short-Term</button>
+      <button class="goal-term-btn ${term==='long'?'active-long':''}" onclick="setGoalTerm('long')">Long-Term</button>
     </div>
-    ${items.length<3?`<div class="card"><div class="form-group"><input type="text" id="focus-input" placeholder="What must get done?" maxlength="100"></div><button class="btn btn-primary" onclick="addFocus()">+ Add Focus Item</button></div>`:''}
-    ${histRows?`<div class="card"><div class="card-title">Recent Focus</div>${histRows}</div>`:''}`;
+
+    <div class="card">
+      <div class="card-title" style="color:${accent}">${termLabel} Goals</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">${blurb}</p>
+      ${active.length>0?active.map(goal=>`
+        <div class="goal-item">
+          <div class="goal-check" style="border-color:${accent}" onclick="toggleGoal('${term}','${goal.id}')"></div>
+          <div class="goal-text">${escapeHTML(goal.text)}</div>
+          <div class="goal-delete" onclick="deleteGoal('${term}','${goal.id}')">✕</div>
+        </div>`).join(''):`<div class="empty-state">No active ${termLabel.toLowerCase()} goals yet. Add one below.</div>`}
+      <div class="form-group" style="margin-top:12px">
+        <input type="text" id="goal-input" placeholder="${placeholder}" maxlength="90" onkeydown="if(event.key==='Enter')addGoal()">
+      </div>
+      <button class="btn btn-primary" onclick="addGoal()">+ Add ${termLabel} Goal</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:7px;justify-content:space-between">
+        <span style="display:flex;align-items:center;gap:7px">${ICON.goals||''} Cookie Jar</span>
+        <span class="jar-count">${doneThis.length} banked</span>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Every goal you complete drops a cookie in the jar. When it gets hard, reach in and remember everything you've already done.</p>
+      ${doneThis.length>0?`<div class="jar-wrap">${doneThis.map(goal=>{
+        const col=badgeColorFor(goal.id);
+        return `<span class="goal-badge" style="background:rgba(${col.rgb},.12);border:1px solid rgba(${col.rgb},.5);color:${col.hex};box-shadow:0 0 10px rgba(${col.rgb},.22)">
+          <span class="gb-check">✓</span>
+          <span>${escapeHTML(goal.text)}</span>
+          ${goal.completed?`<span class="gb-date">${fmtShort(goal.completed)}</span>`:''}
+          <span class="gb-undo" onclick="uncompleteGoal('${term}','${goal.id}')" title="Move back to active">↺</span>
+        </span>`;
+      }).join('')}</div>`:'<div class="empty-state">The jar is empty. Go earn your first cookie.</div>'}
+    </div>`;
 }
 
 function renderSleepInsight(){
@@ -1190,6 +1286,10 @@ function renderStats(){
   Object.keys(state.data.focus).forEach(d=>{const it=state.data.focus[d]||[];focusTotal+=it.length;focusDone+=it.filter(i=>i.done).length;});
   const focusRate=focusTotal>0?Math.round((focusDone/focusTotal)*100):0;
 
+  // Cookie Jar counts
+  const shortDone=(((state.data.goals||{}).short)||[]).filter(g=>g.done).length;
+  const longDone=(((state.data.goals||{}).long)||[]).filter(g=>g.done).length;
+
   return `
     <div class="card"><div class="card-title">Progress</div><div class="inline-stat">
       <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--green)">${latestW||'--'}</div><div class="inline-stat-label">Current</div></div>
@@ -1206,7 +1306,12 @@ function renderStats(){
       <div class="stat-row"><span class="stat-label">Longest streak</span><span class="stat-value" style="color:var(--amber)">${longest} days</span></div>
       <div class="stat-row"><span class="stat-label">Workout days</span><span class="stat-value">${workoutDays}</span></div>
       <div class="stat-row"><span class="stat-label">Meals logged</span><span class="stat-value">${totalMeals}</span></div>
-      <div class="stat-row"><span class="stat-label">Focus completion</span><span class="stat-value" style="color:${focusRate>=80?'var(--green)':focusRate>=50?'var(--amber)':'var(--red)'}">${focusRate}%</span></div>
+      ${focusTotal>0?`<div class="stat-row"><span class="stat-label">Focus completion (legacy)</span><span class="stat-value" style="color:${focusRate>=80?'var(--green)':focusRate>=50?'var(--amber)':'var(--red)'}">${focusRate}%</span></div>`:''}
+    </div>
+    <div class="card"><div class="card-title" style="display:flex;align-items:center;gap:7px">${ICON.goals||''} Cookie Jar</div>
+      <div class="stat-row"><span class="stat-label">Short-term goals completed</span><span class="stat-value" style="color:var(--cyan)">${shortDone}</span></div>
+      <div class="stat-row"><span class="stat-label">Long-term goals completed</span><span class="stat-value" style="color:var(--pink)">${longDone}</span></div>
+      <div class="stat-row"><span class="stat-label">Total banked</span><span class="stat-value" style="color:var(--yellow)">${shortDone+longDone}</span></div>
     </div>
     <div class="card"><div class="card-title">Settings</div>
       <div class="form-group"><label>Calorie target</label><input type="number" value="${state.data.config.calorieTarget}" onchange="state.data.config.calorieTarget=+this.value;save();render()" inputmode="numeric"></div>
@@ -1340,24 +1445,36 @@ function deleteWorkout(date,i){
   }
 }
 
-function addFocus(){
-  const input=document.getElementById('focus-input');
-  const text=input?.value?.trim();if(!text)return;
-  const vd=getVD();
-  if(!state.data.focus[vd])state.data.focus[vd]=[];
-  if(state.data.focus[vd].length>=3)return;
-  state.data.focus[vd].push({text,done:false});
+// ── Goals actions ──
+function setGoalTerm(t){state.goalTerm=t;render();}
+function addGoal(){
+  const input=document.getElementById('goal-input');
+  const text=input?.value?.trim();
+  if(!text)return;
+  ensureGoals();
+  const term=state.goalTerm||'short';
+  state.data.goals[term].push({id:genGoalId(),text,done:false,created:getToday(),completed:null});
   save();render();
 }
-
-function toggleFocus(i){
-  const vd=getVD();
-  if(state.data.focus[vd]&&state.data.focus[vd][i]){state.data.focus[vd][i].done=!state.data.focus[vd][i].done;save();render();}
+function toggleGoal(term,id){
+  ensureGoals();
+  const goal=(state.data.goals[term]||[]).find(x=>x.id===id);
+  if(!goal)return;
+  goal.done=true;goal.completed=getToday();
+  save();render();
 }
-
-function deleteFocus(i){
-  const vd=getVD();
-  if(state.data.focus[vd]){state.data.focus[vd].splice(i,1);save();render();}
+function uncompleteGoal(term,id){
+  ensureGoals();
+  const goal=(state.data.goals[term]||[]).find(x=>x.id===id);
+  if(!goal)return;
+  goal.done=false;goal.completed=null;
+  save();render();
+}
+function deleteGoal(term,id){
+  ensureGoals();
+  const arr=state.data.goals[term]||[];
+  const i=arr.findIndex(x=>x.id===id);
+  if(i>=0){arr.splice(i,1);save();render();}
 }
 
 function setSleepQuality(n){
@@ -1400,7 +1517,11 @@ function importData(e){
           sleep:{...(state.data.sleep||{}),...(imp.sleep||{})},
           water:{...(state.data.water||{}),...(imp.water||{})},
           photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])].map(p=>(p&&p.id)?p:{...p,id:genPhotoId(p&&p.ts)}),
-          favorites:(Array.isArray(imp.favorites)&&imp.favorites.length)?imp.favorites:(Array.isArray(state.data.favorites)?state.data.favorites:[])
+          favorites:(Array.isArray(imp.favorites)&&imp.favorites.length)?imp.favorites:(Array.isArray(state.data.favorites)?state.data.favorites:[]),
+          goals:{
+            short:mergeGoals((state.data.goals||{}).short,(imp.goals||{}).short),
+            long:mergeGoals((state.data.goals||{}).long,(imp.goals||{}).long)
+          }
         };
         save();render();
         if(photosInIDB)idbPutAll(state.data.photos).catch(()=>{});
@@ -1497,7 +1618,7 @@ function renderPhotos(){
           ${p.weight?`<div class="photo-card-note">${p.weight} lbs${p.position?' · '+p.position:''}</div>`:p.position?`<div class="photo-card-note">${p.position}</div>`:''}
           ${p.note?`<div class="photo-card-note">${p.note}</div>`:''}
           <div style="display:flex;gap:8px;margin-top:4px">
-            <div class="photo-card-delete" onclick="state.editingPhoto=${p._idx};render()">✏️ Edit</div>
+            <div class="photo-card-delete" onclick="state.editingPhoto=${p._idx};render()">✏ Edit</div>
             <div class="photo-card-delete" onclick="deletePhoto(${p._idx})">✕ Delete</div>
           </div>
         </div>
@@ -1641,7 +1762,7 @@ function viewPhoto(i){
         ${ph.note?'<br>'+ph.note:''}
       </div>
       <div style="display:flex;gap:10px;margin-top:10px">
-        <button style="background:var(--surface2);border:1px solid var(--border);color:var(--cyan);padding:8px 16px;border-radius:6px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove();state.editingPhoto=${idx};render()">✏️ Edit</button>
+        <button style="background:var(--surface2);border:1px solid var(--border);color:var(--cyan);padding:8px 16px;border-radius:6px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove();state.editingPhoto=${idx};render()">✏ Edit</button>
         <button style="background:var(--surface2);border:1px solid var(--border);color:#fff;padding:8px 16px;border-radius:6px;font-size:14px;cursor:pointer" onclick="this.closest('.photo-full-overlay').remove()">Close</button>
       </div>`;
   }
@@ -1727,6 +1848,7 @@ function render(){
     case'today':content=renderToday();break;
     case'fuel':content=renderFuel();break;
     case'train':content=renderTrain();break;
+    case'goals':content=renderGoals();break;
     case'recharge':content=renderRecharge();break;
     case'photos':content=renderPhotos();break;
     case'stats':content=renderStats();break;
