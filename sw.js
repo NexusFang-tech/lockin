@@ -1,17 +1,28 @@
-// LOCK IN service worker — v6
-// Strategy: the app document (index.html) is NETWORK-FIRST.
-// When you push new code to GitHub, the next time you open the app online it fetches
-// the fresh HTML automatically — no more clearing Safari data. Still fully offline
-// via the cache fallback. Cache name bumped to v6 so the v8 app code lands cleanly.
+// ═══════════════════════════════════════════
+// LOCK IN — Service Worker
+// Cache: lockin-v7  (serves the v9 app code — Goals / Cookie Jar)
+// Strategy: network-first for the document (so new HTML lands on the
+//   next online load), cache-first for static shell assets.
+// ═══════════════════════════════════════════
+const CACHE='lockin-v7';
+const SHELL=[
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
 
-const CACHE='lockin-v6';
-const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
-
+// Install — pre-cache the shell, then take over immediately.
 self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).catch(()=>{}));
-  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c=>c.addAll(SHELL).catch(()=>{/* some icons may be absent; ignore */}))
+      .then(()=>self.skipWaiting())
+  );
 });
 
+// Activate — purge every old cache version so stale HTML can't linger.
 self.addEventListener('activate',e=>{
   e.waitUntil(
     caches.keys()
@@ -23,39 +34,32 @@ self.addEventListener('activate',e=>{
 self.addEventListener('fetch',e=>{
   const req=e.request;
   if(req.method!=='GET')return;
-  let url;
-  try{url=new URL(req.url);}catch(err){return;}
 
-  // NETWORK-FIRST for the app document so code updates apply on next online load
-  const isDoc = req.mode==='navigate'
-    || req.destination==='document'
-    || url.pathname.endsWith('/')
-    || url.pathname.endsWith('index.html');
+  const isDoc=req.mode==='navigate' ||
+              (req.headers.get('accept')||'').includes('text/html');
 
   if(isDoc){
+    // Network-first: always try to pull the freshest HTML; fall back to cache offline.
     e.respondWith(
       fetch(req)
-        .then(resp=>{
-          const clone=resp.clone();
-          caches.open(CACHE).then(c=>c.put('./index.html',clone)).catch(()=>{});
-          return resp;
+        .then(res=>{
+          const copy=res.clone();
+          caches.open(CACHE).then(c=>c.put('./index.html',copy)).catch(()=>{});
+          return res;
         })
-        .catch(()=>caches.match('./index.html').then(r=>r||caches.match('./')))
+        .catch(()=>caches.match(req).then(r=>r||caches.match('./index.html')))
     );
     return;
   }
 
-  // STALE-WHILE-REVALIDATE for same-origin assets (icons, manifest, sw itself)
+  // Static assets: cache-first, then network (and cache what we fetch).
   e.respondWith(
-    caches.match(req).then(cached=>{
-      const fetching=fetch(req).then(resp=>{
-        if(resp && resp.status===200 && url.origin===self.location.origin){
-          const clone=resp.clone();
-          caches.open(CACHE).then(c=>c.put(req,clone)).catch(()=>{});
-        }
-        return resp;
-      }).catch(()=>cached);
-      return cached||fetching;
-    })
+    caches.match(req).then(cached=>
+      cached || fetch(req).then(res=>{
+        const copy=res.clone();
+        caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{});
+        return res;
+      }).catch(()=>cached)
+    )
   );
 });
