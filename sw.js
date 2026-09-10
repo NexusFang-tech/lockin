@@ -1,10 +1,11 @@
 // ═══════════════════════════════════════════
 // LOCK IN — Service Worker
-// Cache: lockin-v7  (serves the v9 app code — Goals / Cookie Jar)
+// Cache: lockin-v10  (serves the v10 app code — Execution Score, Energy
+//   Balance, weigh-in guard, water flag, waist tracking, birthday milestone)
 // Strategy: network-first for the document (so new HTML lands on the
 //   next online load), cache-first for static shell assets.
 // ═══════════════════════════════════════════
-const CACHE='lockin-v7';
+const CACHE='lockin-v10';
 const SHELL=[
   './',
   './index.html',
