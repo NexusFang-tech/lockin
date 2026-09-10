@@ -262,7 +262,7 @@ let QUICK=[]; // current quick-add meal list (rebuilt each render that shows chi
 function defaults(){
   const sd='2026-07-08';
   const gd=new Date(sd+'T12:00:00');gd.setDate(gd.getDate()+90); // neutral 90-day default, not anyone's specific date
-  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},photos:[],favorites:[],goals:{short:[],long:[]}};
+  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225,restingBase:2583,activeHaircut:0.18,typicalActive:500,birthdayDate:'2027-01-28',birthdayLabel:'34th birthday',waistTarget:36},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},active:{},waist:{},photos:[],favorites:[],goals:{short:[],long:[]}};
 }
 
 function load(){
@@ -279,6 +279,8 @@ function load(){
         focus:{...def.focus,...(d.focus||{})},
         sleep:{...def.sleep,...(d.sleep||{})},
         water:{...def.water,...(d.water||{})},
+        active:{...def.active,...(d.active||{})},
+        waist:{...def.waist,...(d.waist||{})},
         photos:Array.isArray(d.photos)?d.photos:[],
         favorites:Array.isArray(d.favorites)?d.favorites:[],
         goals:(d.goals&&typeof d.goals==='object')?{short:Array.isArray(d.goals.short)?d.goals.short:[],long:Array.isArray(d.goals.long)?d.goals.long:[]}:{short:[],long:[]}
@@ -641,6 +643,84 @@ function getLatestWeight(){
 }
 
 // ═══════════════════════════════════════════
+// ENERGY BALANCE + EXECUTION ENGINE (v10)
+// ═══════════════════════════════════════════
+function dayEnergy(date){
+  const d=state.data,cfg=d.config;
+  const meals=d.meals[date]||[];
+  const intake=meals.reduce((s,m)=>s+(m.calories||0),0);
+  const hasMeals=meals.length>0;
+  const activeRaw=(d.active&&d.active[date]!=null)?d.active[date]:null;
+  const usedActive=activeRaw!=null?activeRaw:(cfg.typicalActive||500);
+  const isEstimated=activeRaw==null;
+  const haircut=cfg.activeHaircut!=null?cfg.activeHaircut:0.18;
+  const adjActive=Math.round(usedActive*(1-haircut));
+  const tdee=(cfg.restingBase||2583)+adjActive;
+  const deficit=hasMeals?(tdee-intake):null;
+  return{intake,hasMeals,activeRaw,usedActive,isEstimated,adjActive,tdee,deficit};
+}
+function rollingDeficit(days){
+  const today=new Date();let totalDef=0,counted=0,estDays=0;
+  for(let i=0;i<days;i++){
+    const dt=new Date(today);dt.setDate(dt.getDate()-i);
+    const ds=dt.toISOString().slice(0,10);
+    const e=dayEnergy(ds);
+    if(e.deficit!=null){totalDef+=e.deficit;counted++;if(e.isEstimated)estDays++;}
+  }
+  const avgDef=counted>0?Math.round(totalDef/counted):null;
+  const projectedWeeklyLoss=avgDef!=null?Math.round((avgDef*7/3500)*10)/10:null;
+  return{avgDef,counted,estDays,projectedWeeklyLoss};
+}
+function executionScore(date){
+  const d=state.data,cfg=d.config;
+  const meals=d.meals[date]||[];
+  if(meals.length===0)return null;
+  const protein=meals.reduce((s,m)=>s+(m.protein||0),0);
+  const water=d.water[date]||0;
+  const workouts=d.workouts[date]||[];
+  const sleep=d.sleep[date];
+  const e=dayEnergy(date);
+  const parts={};
+  if(e.deficit!=null){
+    if(e.deficit>=300)parts.deficit=30;
+    else if(e.deficit>=0)parts.deficit=Math.round(30*(e.deficit/300)*0.7+9);
+    else parts.deficit=Math.max(0,Math.round(15+e.deficit/100));
+  }else parts.deficit=0;
+  const proT=cfg.proteinTarget||150;
+  parts.protein=Math.min(30,Math.round((protein/proT)*30));
+  const waterT=cfg.waterTarget||110;
+  parts.water=Math.min(20,Math.round((water/waterT)*20));
+  parts.training=workouts.length>0?10:0;
+  const sleepT=cfg.sleepTarget||7.5;
+  parts.sleep=sleep?Math.min(10,Math.round((sleep.hours/sleepT)*10)):0;
+  const score=Math.min(100,parts.deficit+parts.protein+parts.water+parts.training+parts.sleep);
+  return{score,parts};
+}
+function weeklyExecution(){
+  const today=new Date();let sum=0,n=0;
+  for(let i=0;i<7;i++){
+    const dt=new Date(today);dt.setDate(dt.getDate()-i);
+    const ds=dt.toISOString().slice(0,10);
+    const s=executionScore(ds);
+    if(s){sum+=s.score;n++;}
+  }
+  return n>0?{avg:Math.round(sum/n),days:n}:null;
+}
+function waterFlagFor(date){
+  const d=state.data;
+  const dates=Object.keys(d.weights).sort();
+  const idx=dates.indexOf(date);
+  if(idx<1)return null;
+  const jump=d.weights[date]-d.weights[dates[idx-1]];
+  if(jump<=0.3)return null;
+  const e=dayEnergy(dates[idx-1]);
+  if(e.deficit!=null&&e.deficit>0){
+    return `Scale up ${Math.round(jump*10)/10} lb but the prior day logged a deficit — almost certainly water, not fat.`;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════
 // TRAJECTORY / TREND ENGINE
 // ═══════════════════════════════════════════
 function sortedWeightEntries(){
@@ -862,6 +942,50 @@ function openDatePicker(){
 // ═══════════════════════════════════════════
 // RENDERERS
 // ═══════════════════════════════════════════
+function renderExecutionCard(){
+  const wk=weeklyExecution();
+  const todayScore=executionScore(getToday());
+  if(!wk&&!todayScore)return '';
+  const col=v=>v>=85?'var(--green)':v>=65?'var(--amber)':'var(--red)';
+  const t=todayScore?todayScore.score:null;
+  const p=todayScore?todayScore.parts:null;
+  const bar=(val,max,c)=>`<div style="flex:1"><div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.min(100,(val/max)*100)}%;background:${c};border-radius:3px;box-shadow:0 0 6px ${c}"></div></div></div>`;
+  return `<div class="card"><div class="card-title">⚡ Execution Score</div>
+    <div class="inline-stat">
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${wk?col(wk.avg):'var(--text2)'}">${wk?wk.avg:'--'}</div><div class="inline-stat-label">7-day avg</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${t!=null?col(t):'var(--text2)'}">${t!=null?t:'--'}</div><div class="inline-stat-label">Today</div></div>
+    </div>
+    ${p?`<div style="margin-top:12px;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px"><span style="color:var(--text2);width:64px">Deficit</span>${bar(p.deficit,30,'var(--green)')}<span style="font-family:var(--font-mono);color:var(--text2);width:34px;text-align:right">${p.deficit}/30</span></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px"><span style="color:var(--text2);width:64px">Protein</span>${bar(p.protein,30,'var(--cyan)')}<span style="font-family:var(--font-mono);color:var(--text2);width:34px;text-align:right">${p.protein}/30</span></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px"><span style="color:var(--text2);width:64px">Water</span>${bar(p.water,20,'#38bdf8')}<span style="font-family:var(--font-mono);color:var(--text2);width:34px;text-align:right">${p.water}/20</span></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px"><span style="color:var(--text2);width:64px">Training</span>${bar(p.training,10,'var(--pink)')}<span style="font-family:var(--font-mono);color:var(--text2);width:34px;text-align:right">${p.training}/10</span></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px"><span style="color:var(--text2);width:64px">Sleep</span>${bar(p.sleep,10,'var(--purple)')}<span style="font-family:var(--font-mono);color:var(--text2);width:34px;text-align:right">${p.sleep}/10</span></div>
+    </div>`:''}
+    <p style="font-size:11.5px;color:var(--text2);margin-top:10px;line-height:1.5">This scores what you <b>control</b> — deficit, protein, water, training, sleep. When the scale lies (water, travel, sodium), this tells you the truth: did you execute? Chase this number, not the daily scale.</p>
+  </div>`;
+}
+function renderEnergyCard(){
+  const vd=getVD();
+  const e=dayEnergy(vd);
+  const roll=rollingDeficit(14);
+  const defCol=e.deficit==null?'var(--text2)':e.deficit>0?'var(--green)':'var(--red)';
+  return `<div class="card"><div class="card-title">🔥 Energy Balance</div>
+    <div class="inline-stat">
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--text2);font-size:18px">${e.tdee}</div><div class="inline-stat-label">TDEE${e.isEstimated?' (est)':''}</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber);font-size:18px">${e.intake}</div><div class="inline-stat-label">Eaten</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${defCol};font-size:18px">${e.deficit==null?'--':(e.deficit>0?'-':'+')+Math.abs(e.deficit)}</div><div class="inline-stat-label">Deficit</div></div>
+    </div>
+    <div class="stat-row" style="margin-top:10px"><span class="stat-label">Active (${e.isEstimated?'est':'logged'})</span><span class="stat-value" style="font-size:14px">${e.usedActive} → ${e.adjActive} <span style="color:var(--text2);font-size:11px">post-haircut</span></span></div>
+    ${!isViewingToday()?'':`<div class="form-group" style="margin-top:8px"><div style="display:flex;gap:8px">
+      <input type="number" id="active-in" placeholder="Apple Watch active cal" value="${e.activeRaw!=null?e.activeRaw:''}" inputmode="numeric" style="flex:1">
+      <button class="btn btn-primary btn-sm" onclick="logActive()">Set</button>
+    </div></div>`}
+    ${roll.avgDef!=null?`<div class="stat-row"><span class="stat-label">14-day avg deficit</span><span class="stat-value" style="color:${roll.avgDef>0?'var(--green)':'var(--red)'}">${roll.avgDef>0?'-':'+'}${Math.abs(roll.avgDef)}/day</span></div>
+    <div class="stat-row"><span class="stat-label">→ Projected fat loss</span><span class="stat-value" style="color:var(--cyan)">${roll.projectedWeeklyLoss>0?roll.projectedWeeklyLoss:'0'} lb/wk</span></div>
+    <p style="font-size:11.5px;color:var(--text2);margin-top:8px;line-height:1.5">Your real deficit over 14 days — the fat-loss engine underneath the scale noise. ${roll.estDays>0?`(${roll.estDays} day${roll.estDays>1?'s':''} used an estimated burn — log active cals for precision.)`:''} Haircut: ${Math.round((state.data.config.activeHaircut||0.18)*100)}% off Apple Watch active.</p>`:'<p style="font-size:11.5px;color:var(--text2);margin-top:8px">Log meals + active calories to see your true rolling deficit.</p>'}
+  </div>`;
+}
 function renderTrajectory(full){
   const t=getTrajectory();
   if(!t){return `<div class="card"><div class="card-title">📉 Trajectory</div><div class="empty-state">Log a few more weigh-ins to unlock your smoothed trend & projection.</div></div>`;}
@@ -941,6 +1065,8 @@ function renderToday(){
       </div>
     </div>
     ${renderTrajectory(false)}
+    ${renderExecutionCard()}
+    ${renderEnergyCard()}
     <div class="card">
       <div class="card-title">Momentum</div>
       <div class="heatmap">${cells.join('')}</div>
@@ -956,6 +1082,7 @@ function renderToday(){
     <div class="card">
       <div class="card-title">${isViewingToday()?'Today\'s Snapshot':fmtDate(vd)}</div>
       <div class="stat-row"><span class="stat-label">Weight</span><span class="stat-value">${w?w+' lbs':'—'}</span></div>
+      ${w&&waterFlagFor(vd)?`<div class="coach-note" style="color:var(--cyan);background:rgba(0,240,255,.06);margin-top:6px">💧 ${waterFlagFor(vd)}</div>`:''}
       ${!w?`<div class="form-group" style="margin-top:8px"><div style="display:flex;gap:8px">
         <input type="number" id="weight-in" placeholder="Weigh in (lbs)" step="0.1" inputmode="decimal" style="flex:1">
         <button class="btn btn-primary btn-sm" onclick="logWeight()">Log</button>
@@ -1323,6 +1450,23 @@ function renderStats(){
       <div class="form-group"><label>Goal label (e.g. honeymoon, vacation, reunion)</label><input type="text" value="${state.data.config.goalLabel||'goal'}" maxlength="24" onchange="state.data.config.goalLabel=(this.value||'').trim()||'goal';save();render()"></div>
       <div class="form-group"><label>Start weight (lbs)</label><input type="number" value="${state.data.config.startWeight}" onchange="state.data.config.startWeight=+this.value;save();render()" inputmode="numeric" step="0.1"></div>
       <div class="form-group"><label>Reveal target (lbs) — where you flip out of the cut</label><input type="number" value="${state.data.config.leanTarget||225}" onchange="state.data.config.leanTarget=+this.value;save();render()" inputmode="numeric" step="1"></div>
+      <div style="height:1px;background:var(--border);margin:14px 0"></div>
+      <div class="form-group"><label>Resting baseline (cal/day)</label><input type="number" value="${state.data.config.restingBase||2583}" onchange="state.data.config.restingBase=+this.value;save();render()" inputmode="numeric" step="1"></div>
+      <div class="form-group"><label>Active-calorie haircut (%)</label><input type="number" value="${Math.round((state.data.config.activeHaircut||0.18)*100)}" onchange="state.data.config.activeHaircut=Math.max(0,Math.min(50,+this.value))/100;save();render()" inputmode="numeric" step="1"></div>
+      <div class="form-group"><label>Typical active burn (fallback, cal)</label><input type="number" value="${state.data.config.typicalActive||500}" onchange="state.data.config.typicalActive=+this.value;save();render()" inputmode="numeric" step="10"></div>
+      <div class="form-group"><label>Birthday milestone date</label><input type="date" value="${state.data.config.birthdayDate||'2027-01-28'}" onchange="state.data.config.birthdayDate=this.value;save();render()"></div>
+    </div>
+    <div class="card"><div class="card-title">📏 Waist Tracking</div>
+      ${(()=>{const dates=Object.keys(state.data.waist||{}).sort();const latest=dates.length?state.data.waist[dates[dates.length-1]]:null;const first=dates.length?state.data.waist[dates[0]]:null;const lost=(latest!=null&&first!=null)?round1(first-latest):null;return `<div class="inline-stat">
+        <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${latest!=null?latest+'"':'--'}</div><div class="inline-stat-label">Current</div></div>
+        <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--green)">${lost!=null?(lost>0?'-':'')+Math.abs(lost)+'"':'--'}</div><div class="inline-stat-label">Lost</div></div>
+        <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--yellow)">${state.data.config.waistTarget||36}"</div><div class="inline-stat-label">Target</div></div>
+      </div>`;})()}
+      <div class="form-group" style="margin-top:12px"><div style="display:flex;gap:8px">
+        <input type="number" id="waist-in" placeholder="Waist (inches)" step="0.25" inputmode="decimal" style="flex:1">
+        <button class="btn btn-primary btn-sm" onclick="logWaist()">Log</button>
+      </div></div>
+      <p style="font-size:11.5px;color:var(--text2);line-height:1.5">As you lean out and add muscle, the scale lies more — waist is often the truer signal. Measure at the navel, morning, relaxed. Weekly is plenty.</p>
     </div>
     <div class="card"><div class="card-title">Data</div>
       <button class="btn btn-secondary btn-sm" onclick="exportData()" style="margin-bottom:8px">Export JSON Backup</button>
@@ -1393,7 +1537,24 @@ function jumpToDate(){
 function logWeight(){
   const v=parseFloat(document.getElementById('weight-in')?.value);
   if(!v||v<50||v>600)return;
+  // v10 sanity guard: flag any entry that differs from the most recent weigh-in by >5 lb
+  const dates=Object.keys(state.data.weights).sort();
+  if(dates.length){
+    const last=state.data.weights[dates[dates.length-1]];
+    const diff=Math.abs(round1(v)-last);
+    if(diff>5){
+      if(!confirm(`That's ${diff.toFixed(1)} lb from your last weigh-in (${last}). Did you mean ${round1(v)}?\n\nTap OK to save it, Cancel to fix.`))return;
+    }
+  }
   state.data.weights[getVD()]=round1(v);
+  save();render();
+}
+
+function logActive(){
+  const v=parseInt(document.getElementById('active-in')?.value);
+  const vd=getVD();
+  if(!v||v<0){delete state.data.active[vd];}
+  else state.data.active[vd]=v;
   save();render();
 }
 
@@ -1494,6 +1655,13 @@ function logSleep(){
   tempSleepQuality=0;tempEnergy=0;save();render();
 }
 
+function logWaist(){
+  const v=parseFloat(document.getElementById('waist-in')?.value);
+  if(!v||v<20||v>70)return;
+  state.data.waist[getVD()]=round1(v);
+  save();render();
+}
+
 function exportData(){
   const blob=new Blob([JSON.stringify(state.data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);const a=document.createElement('a');
@@ -1516,6 +1684,8 @@ function importData(e){
           focus:{...(state.data.focus||{}),...(imp.focus||{})},
           sleep:{...(state.data.sleep||{}),...(imp.sleep||{})},
           water:{...(state.data.water||{}),...(imp.water||{})},
+          active:{...(state.data.active||{}),...(imp.active||{})},
+          waist:{...(state.data.waist||{}),...(imp.waist||{})},
           photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])].map(p=>(p&&p.id)?p:{...p,id:genPhotoId(p&&p.ts)}),
           favorites:(Array.isArray(imp.favorites)&&imp.favorites.length)?imp.favorites:(Array.isArray(state.data.favorites)?state.data.favorites:[]),
           goals:{
@@ -1840,7 +2010,9 @@ function drawWeightChart(){
 function render(){
   const app=document.getElementById('app');
   const dtg=daysToGoalDate();const gl=goalLabelStr();
-  const subTxt=dtg==null?'set your goal date in stats':(dtg>0?dtg+' days to '+gl:(dtg===0?gl+' is today 🎯':gl+' date has passed'));
+  let subTxt=dtg==null?'set your goal date in stats':(dtg>0?dtg+' days to '+gl:(dtg===0?gl+' is today 🎯':gl+' date has passed'));
+  const bd=state.data.config.birthdayDate;
+  if(bd){const bdDays=daysBetween(getToday(),bd);if(bdDays>0&&(dtg==null||bdDays<dtg)){subTxt=bdDays+' days to '+(state.data.config.birthdayLabel||'birthday')+' · healthiest of my life';}}
   const tabsHTML=TABS.map(t=>`<button class="tab-btn ${state.tab===t?'active':''}" onclick="setTab('${t}')"><span class="tab-icon">${ICON[TAB_ICONS[t]]||''}</span>${TAB_LABELS[t]}</button>`).join('');
 
   let content='';
