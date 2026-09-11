@@ -306,7 +306,13 @@ function idbPut(photo){return idbOpen().then(db=>new Promise((res,rej)=>{const t
 function idbPutAll(arr){return idbOpen().then(db=>new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readwrite');const s=t.objectStore(IDB_STORE);arr.forEach(p=>s.put(p));t.oncomplete=()=>res(true);t.onerror=()=>rej(t.error);}));}
 function idbDelete(id){return idbOpen().then(db=>new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readwrite');t.objectStore(IDB_STORE).delete(id);t.oncomplete=()=>res(true);t.onerror=()=>rej(t.error);}));}
 function persistPhoto(p){idbPut(p).catch(e=>{console.warn('photo save failed',e);alert('That photo could not be saved — your device storage may be full. Your other data is safe.');});}
-function getToday(){return new Date().toISOString().slice(0,10)}
+function localDateStr(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function getToday(){return localDateStr(new Date())}
 function getVD(){return state.viewDate||getToday()}
 function isViewingToday(){return getVD()===getToday()}
 function daysBetween(a,b){return Math.ceil((new Date(b)-new Date(a))/(864e5))}
@@ -317,7 +323,7 @@ function fmtShort(d){const dt=new Date(d+'T12:00:00');return dt.toLocaleDateStri
 function shiftDate(days){
   const d=new Date(getVD()+'T12:00:00');
   d.setDate(d.getDate()+days);
-  const ds=d.toISOString().slice(0,10);
+  const ds=localDateStr(d);
   const today=getToday();
   if(ds>today) return; // can't go into future
   state.viewDate=ds;
@@ -617,7 +623,7 @@ function getCurrentStreak(){
   if(getActivityLevel(getToday())>0)streak++;
   d.setDate(d.getDate()-1);
   while(true){
-    const ds=d.toISOString().slice(0,10);
+    const ds=localDateStr(d);
     if(getActivityLevel(ds)>0){streak++;d.setDate(d.getDate()-1);}
     else break;
     if(streak>365)break;
@@ -663,7 +669,7 @@ function rollingDeficit(days){
   const today=new Date();let totalDef=0,counted=0,estDays=0;
   for(let i=0;i<days;i++){
     const dt=new Date(today);dt.setDate(dt.getDate()-i);
-    const ds=dt.toISOString().slice(0,10);
+    const ds=localDateStr(dt);
     const e=dayEnergy(ds);
     if(e.deficit!=null){totalDef+=e.deficit;counted++;if(e.isEstimated)estDays++;}
   }
@@ -700,7 +706,7 @@ function weeklyExecution(){
   const today=new Date();let sum=0,n=0;
   for(let i=0;i<7;i++){
     const dt=new Date(today);dt.setDate(dt.getDate()-i);
-    const ds=dt.toISOString().slice(0,10);
+    const ds=localDateStr(dt);
     const s=executionScore(ds);
     if(s){sum+=s.score;n++;}
   }
@@ -1042,7 +1048,7 @@ function renderToday(){
   while(startDay.getDay()!==0)startDay.setDate(startDay.getDate()-1);
   const cells=[];const d2=new Date(startDay);
   while(d2<=now||cells.length%7!==0){
-    const ds=d2.toISOString().slice(0,10);
+    const ds=localDateStr(d2);
     const level=getActivityLevel(ds);
     const isToday=ds===getToday();
     const isFuture=d2>now;
