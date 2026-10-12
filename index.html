@@ -308,6 +308,33 @@ label{display:block;font-family:var(--font-ui);font-size:13px;font-weight:600;co
 .wr-sess{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .cal-note{font-size:11.5px;color:var(--text2);line-height:1.5;margin-top:8px}
 .edit-link{font-size:12px;color:var(--cyan);cursor:pointer;margin-left:8px;font-family:var(--font-ui);letter-spacing:.5px}
+/* ── Lock-In Mission ── */
+.ms-card{border-color:color-mix(in srgb,var(--msc) 45%,var(--border))}
+.ms-card::before{border-top-color:var(--msc);border-left-color:var(--msc);opacity:.9}
+.ms-top{display:flex;gap:12px;align-items:flex-start}
+.ms-kicker{font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:2px}
+.ms-mode{font-family:var(--font-display);font-size:21px;font-weight:900;letter-spacing:2px;line-height:1.15;margin:4px 0 6px}
+.ms-line{font-size:13px;color:var(--text2);line-height:1.45}
+.ms-list{margin-top:12px}
+.ms-item{display:flex;align-items:flex-start;gap:10px;padding:10px 4px;min-height:44px;border-bottom:1px solid rgba(40,48,77,.5)}
+.ms-item:last-child{border-bottom:none}
+.ms-item.tap{cursor:pointer}
+.ms-item.tap:active{background:rgba(255,255,255,.03)}
+.ms-box{width:22px;height:22px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#04120c;margin-top:1px}
+.ms-item.ok .ms-box{background:var(--green);border-color:var(--green);box-shadow:0 0 8px rgba(0,255,156,.4)}
+.ms-item.tap:not(.ok) .ms-box{border-style:dashed;border-color:var(--text2)}
+.ms-lbl{display:block;font-size:14px;font-weight:600;line-height:1.3}
+.ms-item.ok .ms-lbl{color:var(--text2)}
+.ms-sub{display:block;font-size:11.5px;color:var(--text2);margin-top:2px;line-height:1.4}
+.ms-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text2);opacity:.6;margin-top:4px}
+.ms-kit{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ms-chip{font-family:var(--font-ui);font-weight:700;font-size:12px;letter-spacing:.5px;padding:10px 12px;min-height:40px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer}
+.ms-chip span{font-family:var(--font-mono);font-weight:400;color:var(--text2);font-size:11px;margin-left:4px}
+.ms-chip.on{border-color:var(--yellow);color:var(--yellow);background:rgba(252,238,10,.08)}
+.ms-grid{display:grid;gap:4px;margin-top:14px}
+.ms-foot{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-top:8px}
+.ms-rules{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;background:rgba(0,0,0,.2);font-size:12.5px;line-height:1.5;display:flex;flex-direction:column;gap:6px;color:var(--text2)}
+.ms-rules b{color:var(--text);font-family:var(--font-ui);letter-spacing:.5px;margin-right:4px}
 </style>
 </head>
 <body>
@@ -341,14 +368,14 @@ const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',goals:'Goals',recharge
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1,bodyRegion:null,bodyView:'front',goalTerm:'short',wRange:'90',liftSel:null,reviewWeek:null,lxOpen:{},lxExtra:{},editWeight:false};
+let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1,bodyRegion:null,bodyView:'front',goalTerm:'short',msRules:false,msHideSetup:false,wRange:'90',liftSel:null,reviewWeek:null,lxOpen:{},lxExtra:{},editWeight:false};
 let tempSleepQuality=0,tempEnergy=0;
 let QUICK=[]; // current quick-add meal list (rebuilt each render that shows chips)
 
 function defaults(){
   const sd='2026-07-08';
   const gd=new Date(sd+'T12:00:00');gd.setDate(gd.getDate()+90); // neutral 90-day default, not anyone's specific date
-  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225,restingBase:2583,activeHaircut:0.18,typicalActive:500,birthdayDate:'2027-01-28',birthdayLabel:'34th birthday',waistTarget:36,deficitTarget:500,scoreBasis:'calibrated'},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},active:{},resting:{},waist:{},lifts:{},photos:[],favorites:[],goals:{short:[],long:[]}};
+  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225,restingBase:2583,activeHaircut:0.18,typicalActive:500,birthdayDate:'2027-01-28',birthdayLabel:'34th birthday',waistTarget:36,deficitTarget:500,scoreBasis:'calibrated'},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},active:{},resting:{},waist:{},lifts:{},missionChecks:{},photos:[],favorites:[],goals:{short:[],long:[]}};
 }
 
 function load(){
@@ -369,6 +396,7 @@ function load(){
         waist:{...def.waist,...(d.waist||{})},
         resting:{...def.resting,...(d.resting||{})},
         lifts:{...def.lifts,...(d.lifts||{})},
+        missionChecks:{...def.missionChecks,...(d.missionChecks||{})},
         photos:Array.isArray(d.photos)?d.photos:[],
         favorites:Array.isArray(d.favorites)?d.favorites:[],
         goals:(d.goals&&typeof d.goals==='object')?{short:Array.isArray(d.goals.short)?d.goals.short:[],long:Array.isArray(d.goals.long)?d.goals.long:[]}:{short:[],long:[]}
@@ -1324,7 +1352,7 @@ function calibrationEnding(end){
 function calibrationAt(date){const today=getToday();const e=addDays(date,14);return calibrationEnding(e>today?today:e);}
 
 // ── Daily Debrief ───────────────────────────────────────────
-const ESTIMATE_RX=/pizza|pasta|rigatoni|farfalle|mac|burger|fries|fried|wing|cook ?out|zaxby|zaki|chick-?fil|cfa|sandwich|sub\b|jimmy|taco|burrito|nacho|calamari|mozz|cake|pudding|cookie|brownie|ice cream|dessert|pulled pork|bbq|shawarma|gyro|restaurant|takeout|out\b|sushi|poke|pad thai|hibachi|lo mein|fried rice|grilled cheese|biscuit|donut|muffin/i;
+const ESTIMATE_RX=/pizza|pasta|rigatoni|farfalle|mac|burger|fries|fried|wing|cook ?out|zaxby|zaki|chick-?fil|cfa|sandwich|sub\b|jimmy|taco|burrito|nacho|calamari|mozz|cake|pudding|cookie|brownie|ice cream|dessert|pulled pork|bbq|shawarma|gyro|restaurant|sushi|poke|pad thai|hibachi|lo mein|fried rice|grilled cheese|biscuit|donut|muffin|takeout|eating out/i;
 const SALTY_RX=/pizza|sausage|bacon|pepperoni|cook ?out|zaxby|zaki|fries|wing|soy|ramen|pulled pork|bbq|pickle|feta|deli|ham\b|salami|jerky|shawarma|gyro|calamari|mozz|mac|sushi|poke|pad thai|hibachi|chinese|lo mein|fried rice|chips/i;
 const ALCOHOL_RX=/\bbeers?\b|\bipa\b|lager|\bale\b|stout|pilsner|\bwine\b|cocktail|margarita|seltzer|whiskey|bourbon|\bshots?\b|\bpints?\b|mimosa|\bvodka\b(?!\s*(rigatoni|pasta|sauce))|tequila|\brum\b/i;
 function dayDebrief(date){
@@ -1842,6 +1870,7 @@ function renderSettings(){
       <div class="stat-row"><span class="stat-label">Meals logged</span><span class="stat-value">${totalMeals}</span></div>
       <div class="stat-row"><span class="stat-label">Cookie Jar (short · long)</span><span class="stat-value" style="color:var(--yellow)">${shortDone} · ${longDone}</span></div>
     </div>
+    ${renderMissionSettings()}
     <div class="card"><div class="card-title">Targets</div>
       ${num('Calorie target','calorieTarget')}
       ${num('Protein target (g)','proteinTarget')}
@@ -1870,6 +1899,205 @@ function renderSettings(){
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
       <p class="cal-note">Never clear Safari website data for this app — updates arrive on their own when you close and reopen it.</p>
     </div>`;
+}
+
+// ═══════════════════════════════════════════
+// LOCK-IN MISSION — a dated reset plan with an auto-scoring daily checklist
+// config.mission = {start, awayFrom, awayTo, lockDays}   ·   data.missionChecks = {date:{key:true}}
+// Modes: pre (before trip) · away (travel/event) · reentry (first day back) · locked · checkpoint (last day)
+// ═══════════════════════════════════════════
+const CAL_FLOOR=1800;
+function missionCfg(){const m=state.data.config.mission;return (m&&m.start)?m:null;}
+function missionEnd(m){
+  const lock=+m.lockDays||14;
+  if(m.awayTo&&m.awayTo>=m.start)return addDays(m.awayTo,lock);
+  return addDays(m.start,lock-1);
+}
+function missionMode(date){
+  const m=missionCfg();if(!m)return null;
+  const end=missionEnd(m);
+  if(date<m.start||date>end)return null;
+  if(date===end)return 'checkpoint';
+  if(m.awayFrom&&m.awayTo&&date>=m.awayFrom&&date<=m.awayTo)return 'away';
+  if(m.awayTo&&date===addDays(m.awayTo,1))return 'reentry';
+  if(m.awayFrom&&date<m.awayFrom)return 'pre';
+  return 'locked';
+}
+const MODE_META={
+  pre:{label:'PRE-TRIP',color:'var(--cyan)',line:'Bank clean days before the wedding. Known numbers, protein first, move.'},
+  away:{label:'WEDDING MODE',color:'var(--purple)',line:'Enjoy it. Protein first, 3 vodka sodas max, water between drinks, dance it off.'},
+  reentry:{label:'RE-ENTRY · DAY 1',color:'var(--amber)',line:'The scale will read 2–5 lb high from travel water and sodium. Ignore it — today is Day 1.'},
+  locked:{label:'LOCKED IN',color:'var(--green)',line:'Known numbers. Protein first. Move every day. One planned social meal per week.'},
+  checkpoint:{label:'CHECKPOINT',color:'var(--yellow)',line:'Export a backup (⚙ → Data) and send it to Claude for the review. Then set the next mission.'}
+};
+function missionChecks(date){if(!state.data.missionChecks)state.data.missionChecks={};return state.data.missionChecks[date]||{};}
+function socialUsedThisWeek(date){
+  const ws=weekStart(date);const mc=state.data.missionChecks||{};
+  for(let i=0;i<7;i++){const d=addDays(ws,i);if(d!==date&&mc[d]&&mc[d].social)return d;}
+  return null;
+}
+function cardioOn(date){return (state.data.workouts[date]||[]).some(w=>workoutMuscles(w).some(([m])=>m==='cardio'));}
+function cardioWeek(date){const ws=weekStart(date);let c=0;for(let i=0;i<7;i++){const d=addDays(ws,i);if(d<=date&&cardioOn(d))c++;}return c;}
+function missionItems(date){
+  const mode=missionMode(date);if(!mode)return [];
+  const d=state.data,cfg=d.config;
+  const meals=d.meals[date]||[],intake=dayIntake(date),pro=dayProtein(date);
+  const proT=cfg.proteinTarget||150,waterT=cfg.waterTarget||110,sleepT=cfg.sleepTarget||7.5,calT=cfg.calorieTarget||2100;
+  const water=d.water[date]||0,sleep=d.sleep[date],wos=d.workouts[date]||[];
+  const lifted=wos.some(w=>sessionTypeOf(w));
+  const hasSets=!!((d.lifts||{})[date]&&Object.keys(d.lifts[date]).length);
+  const mc=missionChecks(date);
+  const est=meals.filter(x=>ESTIMATE_RX.test(x.name||''));
+  const items=[];
+  const auto=(k,label,ok,sub)=>items.push({k,label,ok:!!ok,auto:true,sub});
+  const man=(k,label,sub)=>items.push({k,label,ok:!!mc[k],auto:false,sub});
+  if(mode==='away'){
+    auto('protein',`Protein ${pro}/${proT}g`,pro>=proT,'Protein first at every meal — eggs, meat, shakes, bars in the bag.');
+    auto('water',`Water ${water}/${waterT} oz`,water>=waterT,'One full glass of water between every drink.');
+    man('drinks','Drinks ≤ 3 — vodka soda only','~100 cal each. None on non-event days.');
+    man('plate','One plate, protein first — no grazing','At the reception: protein + veg, one carb, skip the second trip.');
+    man('move','Moved: walking, calisthenics or dancing','In-room circuit in the morning if you can — 25 min.');
+    man('log','Logged everything, estimated HIGH','Unsure? Round up. Honest numbers > pretty numbers.');
+    return items;
+  }
+  const isSun=new Date(date+'T12:00:00').getDay()===0;
+  if(mode==='checkpoint')man('export','Export backup (⚙ → Data) & send to Claude','The 14-day review: real pace, adjust targets, set the next mission.');
+  auto('weigh','Weigh-in logged',d.weights[date]!=null,mode==='reentry'?'Expect it high — this is the new baseline, not a verdict.':'Morning, after the bathroom, before food.');
+  auto('protein',`Protein ${pro}/${proT}g`,pro>=proT,'40g+ at every meal.');
+  if(mc.social){
+    auto('known','Social meal — logged & padded +30%',meals.length>0,'Your one planned off-plan meal this week. Back to known numbers tomorrow.');
+    auto('cal',`Calories ${intake} (social cap ${calT+600})`,meals.length>0&&intake<=calT+600&&intake>=CAL_FLOOR-300);
+  }else{
+    auto('known',`Known-numbers day${est.length?` (${est.length} estimate-heavy item${est.length>1?'s':''})`:''}`,meals.length>0&&est.length===0,'Weighed or labeled foods only. Oils, butter, cheese & sauce weighed.');
+    auto('cal',`Calories ${intake} in range ${CAL_FLOOR}–${calT}`,meals.length>0&&intake<=calT&&intake>=CAL_FLOOR,intake&&intake<CAL_FLOOR?'Under the floor — eat; recovery and muscle need it.':'');
+  }
+  if(isSun)man('rest','Rest day: easy walk, stretch, prep the week','Prep chicken + rice for Mon–Wed.');
+  else{
+    auto('train',`Trained${lifted?'':' — Next Up on the Train tab'}`,wos.length>0);
+    if(lifted)auto('sets','Sets logged in the app',hasSets,'Progressive overload is what keeps muscle on a cut.');
+    const cw=cardioWeek(date);
+    if(cw<3||cardioOn(date))auto('cardio',`Cardio 25+ min (${cw}/3 this week)`,cardioOn(date),'Incline walk or Stairmaster after lifting.');
+  }
+  man('walk','Walk after lunch & dinner (8k+ steps)','10 minutes each. NEAT beats the gym for fat loss at a desk job.');
+  auto('water',`Water ${water}/${waterT} oz`,water>=waterT);
+  auto('sleep',`Sleep logged ≥ ${sleepT}h`,sleep&&sleep.hours>=sleepT);
+  return items;
+}
+function missionDayPct(date){const it=missionItems(date);if(!it.length)return null;return Math.round(it.filter(i=>i.ok).length/it.length*100);}
+function toggleMission(date,k){
+  if(!state.data.missionChecks)state.data.missionChecks={};
+  const mc=state.data.missionChecks[date]=state.data.missionChecks[date]||{};
+  if(k==='social'&&!mc.social){const used=socialUsedThisWeek(date);if(used&&!confirm(`You already used this week's social meal on ${fmtShort(used)}. Use another one anyway?`))return;}
+  mc[k]=!mc[k];if(!mc[k])delete mc[k];
+  if(!Object.keys(mc).length)delete state.data.missionChecks[date];
+  save();render();
+}
+function quickMeal(name,cal,pro){const vd=getVD();(state.data.meals[vd]=state.data.meals[vd]||[]).push({name,calories:cal,protein:pro});save();render();}
+const STAPLES=[{name:'Chobani + banana',calories:245,protein:21},{name:'Chicken 8oz + rice 4oz',calories:525,protein:73},{name:'Fairlife shake',calories:230,protein:42},{name:'Barebells',calories:200,protein:20},{name:'Cheese sticks',calories:140,protein:12}];
+function staplesLoaded(){const f=(state.data.favorites||[]).map(x=>x.name.toLowerCase());return STAPLES.every(s=>f.includes(s.name.toLowerCase()));}
+function loadStaples(){STAPLES.forEach(s=>addFavorite(s.name,s.calories,s.protein));save();render();}
+function missionStreak(){
+  const m=missionCfg();if(!m)return 0;let n=0;let d=addDays(getToday(),-1);
+  if((missionDayPct(getToday())||0)>=80)n++;
+  while(d>=m.start){const p=missionDayPct(d);if(p!=null&&p>=80){n++;d=addDays(d,-1);}else break;}
+  return n;
+}
+function renderMission(){
+  const vd=getVD();const m=missionCfg();
+  if(!m)return state.tab==='today'&&isViewingToday()?renderMissionSetup():'';
+  const mode=missionMode(vd);if(!mode)return '';
+  const meta=MODE_META[mode];const end=missionEnd(m);
+  const dayN=daysBetween(m.start,vd)+1,total=daysBetween(m.start,end)+1;
+  const items=missionItems(vd);const done=items.filter(i=>i.ok).length;const pct=Math.round(done/items.length*100);
+  const mc=missionChecks(vd);
+  const R=26,C=2*Math.PI*R,off=C*(1-pct/100);
+  const ringCol=pct>=80?'#00ff9c':pct>=50?'#ffb020':'#00f0ff';
+  // mission grid
+  const cells=[];for(let i=0;i<total;i++){const d=addDays(m.start,i);const md=missionMode(d);const p=d<=getToday()?missionDayPct(d):null;
+    const bg=p==null?'var(--surface2)':p>=80?'rgba(0,255,156,.75)':p>=50?'rgba(255,176,32,.6)':'rgba(255,56,96,.45)';
+    const bd=d===vd?'2px solid var(--yellow)':md==='away'?'1px solid rgba(176,38,255,.8)':md==='checkpoint'?'1px solid var(--yellow)':'1px solid var(--border)';
+    cells.push(`<div title="${d}" onclick="state.viewDate='${d<=getToday()?d:vd}';render()" style="aspect-ratio:1;border-radius:3px;background:${bg};border:${bd};cursor:pointer"></div>`);}
+  const good=[...Array(total).keys()].map(i=>addDays(m.start,i)).filter(d=>d<=getToday()&&(missionDayPct(d)||0)>=80).length;
+  const elapsed=Math.min(total,daysBetween(m.start,getToday())+1);
+  const socialBtn=(mode==='locked'||mode==='pre'||mode==='reentry')?`<button class="ms-chip ${mc.social?'on':''}" onclick="toggleMission('${vd}','social')">${mc.social?'★ Social meal day':'☆ Use this week\'s social meal'}</button>`:'';
+  const awayKit=mode==='away'?`<div class="ms-kit">
+      <button class="ms-chip" onclick="quickMeal('Vodka soda',100,0)">+ Vodka soda <span>100·0g</span></button>
+      <button class="ms-chip" onclick="showWorkoutDetail('travel','travel-room')">In-room circuit ▸</button>
+      <button class="ms-chip" onclick="showWorkoutDetail('travel','travel-outdoor')">Walk / outdoor ▸</button>
+    </div>`:'';
+  return `<div class="card ms-card" style="--msc:${meta.color}">
+    <div class="ms-top">
+      <div style="flex:1;min-width:0">
+        <div class="ms-kicker">LOCK-IN MISSION · DAY ${dayN}/${total}</div>
+        <div class="ms-mode" style="color:${meta.color};text-shadow:0 0 12px ${meta.color}">${meta.label}</div>
+        <div class="ms-line">${meta.line}</div>
+      </div>
+      <svg width="64" height="64" viewBox="0 0 64 64" style="flex-shrink:0"><circle cx="32" cy="32" r="${R}" fill="none" stroke="#161a2b" stroke-width="6"/><circle cx="32" cy="32" r="${R}" fill="none" stroke="${ringCol}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" fill="${ringCol}" style="font-family:'Share Tech Mono',monospace;font-size:15px">${pct}%</text></svg>
+    </div>
+    ${awayKit}
+    <div class="ms-list">${items.map(it=>`<div class="ms-item ${it.ok?'ok':''} ${it.auto?'':'tap'}" ${it.auto?'':`onclick="toggleMission('${vd}','${it.k}')"`}>
+        <span class="ms-box">${it.ok?'✓':''}</span>
+        <span style="flex:1;min-width:0"><span class="ms-lbl">${it.label}</span>${it.sub?`<span class="ms-sub">${it.sub}</span>`:''}</span>
+        <span class="ms-tag">${it.auto?'AUTO':'TAP'}</span>
+      </div>`).join('')}</div>
+    ${socialBtn?`<div class="ms-kit">${socialBtn}</div>`:''}
+    <div class="ms-grid" style="grid-template-columns:repeat(${Math.min(total,11)},1fr)">${cells.join('')}</div>
+    <div class="ms-foot"><span>${good}/${elapsed} days ≥80%</span><span>streak ${missionStreak()}</span><span>checkpoint ${fmtShort(end)}</span></div>
+    <div class="ms-kit" style="margin-top:10px">
+      ${staplesLoaded()?'':`<button class="ms-chip" onclick="loadStaples()">+ Load known-numbers staples to Quick Add</button>`}
+      <button class="ms-chip" onclick="state.msRules=!state.msRules;render()">${state.msRules?'Hide':'Show'} the rules</button>
+    </div>
+    ${state.msRules?`<div class="ms-rules">
+      <div><b>Floor</b> Never under ${CAL_FLOOR} honestly logged. Under-eating costs muscle, sleep and recovery.</div>
+      <div><b>Ceiling</b> After week 2, losing &gt;2.5 lb/wk for two weeks straight → eat ~200 more.</div>
+      <div><b>Known numbers</b> 5–6 days/week: weighed or labeled foods. Weigh oil, butter, cheese, sauce.</div>
+      <div><b>One social meal</b> per week, planned, logged +30%. Two drinks max that night.</div>
+      <div><b>Move</b> Cardio 3×/wk (25–30 min) + walks after lunch & dinner. Two leg days a week.</div>
+      <div><b>Never</b> skip meals to "make up", cut water, or chase the scale. Next day = normal plan.</div>
+      <div><b>Judge</b> the weekly trend, never one morning. Travel/salt/alcohol = 2–5 lb of water.</div>
+    </div>`:''}
+  </div>`;
+}
+function renderMissionSetup(){
+  if(state.msHideSetup)return '';
+  const today=getToday();
+  return `<div class="card ms-card" style="--msc:var(--yellow)">
+    <div class="ms-kicker">NEW</div>
+    <div class="ms-mode" style="color:var(--yellow)">START A LOCK-IN MISSION</div>
+    <div class="ms-line" style="margin-bottom:12px">A dated reset with a daily checklist that scores itself from what you log. Add trip dates and it switches to travel mode automatically.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label>Start</label><input type="date" id="ms-start" value="${today}"></div>
+      <div class="form-group"><label>Lock-in days after trip</label><input type="number" id="ms-days" value="14" inputmode="numeric"></div>
+      <div class="form-group"><label>Away from (optional)</label><input type="date" id="ms-from"></div>
+      <div class="form-group"><label>Away to</label><input type="date" id="ms-to"></div>
+    </div>
+    <button class="btn btn-primary" onclick="startMission()">Start Mission</button>
+    <div style="text-align:center;margin-top:8px"><span class="edit-link" onclick="state.msHideSetup=true;render()">not now</span></div>
+  </div>`;
+}
+function startMission(){
+  const g=id=>document.getElementById(id)?.value||'';
+  const start=g('ms-start')||getToday();let from=g('ms-from'),to=g('ms-to');
+  if(from&&!to)to=from; if(to&&!from)from=to;
+  if(from&&to&&to<from){const t=from;from=to;to=t;}
+  state.data.config.mission={start,awayFrom:from||'',awayTo:to||'',lockDays:Math.max(3,Math.min(60,parseInt(g('ms-days'))||14))};
+  save();render();
+}
+function endMission(){if(!confirm('End this mission? Your logged data stays; only the checklist plan is cleared.'))return;delete state.data.config.mission;save();render();}
+function renderMissionSettings(){
+  const m=missionCfg();
+  if(!m)return `<div class="card"><div class="card-title">Lock-In Mission</div><p class="cal-note" style="margin:0 0 10px">No active mission.</p><button class="btn btn-secondary btn-sm" style="width:100%" onclick="state.msHideSetup=false;setTab('today')">Set one up on Today</button></div>`;
+  const upd=(k)=>`onchange="state.data.config.mission.${k}=this.value;save();render()"`;
+  return `<div class="card"><div class="card-title">Lock-In Mission</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label>Start</label><input type="date" value="${m.start}" ${upd('start')}></div>
+      <div class="form-group"><label>Lock-in days after trip</label><input type="number" value="${m.lockDays||14}" onchange="state.data.config.mission.lockDays=+this.value;save();render()" inputmode="numeric"></div>
+      <div class="form-group"><label>Away from</label><input type="date" value="${m.awayFrom||''}" ${upd('awayFrom')}></div>
+      <div class="form-group"><label>Away to</label><input type="date" value="${m.awayTo||''}" ${upd('awayTo')}></div>
+    </div>
+    <div class="stat-row"><span class="stat-label">Checkpoint</span><span class="stat-value" style="font-size:15px;color:var(--yellow)">${fmtDate(missionEnd(m))}</span></div>
+    <button class="btn btn-danger btn-sm" style="width:100%;margin-top:10px" onclick="endMission()">End mission</button>
+  </div>`;
 }
 
 // ═══════════════════════════════════════════
@@ -1965,6 +2193,7 @@ function renderToday(){
 
   return `
     ${renderDateNav()}
+    ${renderMission()}
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <span class="streak-badge">${ICON.streak||''} ${streak} day streak</span>
@@ -2546,6 +2775,7 @@ function importData(e){
           active:{...(state.data.active||{}),...(imp.active||{})},
           waist:{...(state.data.waist||{}),...(imp.waist||{})},
           resting:{...(state.data.resting||{}),...(imp.resting||{})},
+          missionChecks:{...(state.data.missionChecks||{}),...(imp.missionChecks||{})},
           lifts:(()=>{const a=state.data.lifts||{},b=imp.lifts||{},o={...a};Object.keys(b).forEach(d=>{o[d]={...(a[d]||{}),...b[d]};});return o;})(),
           photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])].map(p=>(p&&p.id)?p:{...p,id:genPhotoId(p&&p.ts)}),
           favorites:(Array.isArray(imp.favorites)&&imp.favorites.length)?imp.favorites:(Array.isArray(state.data.favorites)?state.data.favorites:[]),
