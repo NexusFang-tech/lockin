@@ -1,7 +1,7 @@
 {
   "name": "LOCK IN",
   "short_name": "LOCK IN",
-  "description": "305 to 275 by November. Daily wellness tracker.",
+  "description": "Daily wellness tracker.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
