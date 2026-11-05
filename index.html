@@ -2559,7 +2559,13 @@ function renderRecharge(){
   const vd=getVD();
   const sleep=state.data.sleep[vd];
 
-  const loggedHTML=sleep?`<div class="card"><div class="card-title">Sleep Log</div>
+  const needsRate=sleep&&!(sleep.quality>0&&sleep.energy>0);
+  const loggedHTML=needsRate?`<div class="card" style="border-color:rgba(0,240,255,.5)"><div class="card-title">Sleep — ${sleep.hours}h from Apple Health</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Two taps to finish it:</p>
+    <div class="form-group"><label>Sleep quality</label><div class="quality-stars" id="quality-stars">${[1,2,3,4,5].map(i=>`<span class="star" onclick="setSleepQuality(${i})" data-star="${i}">⭐</span>`).join('')}</div></div>
+    <div class="form-group"><label>Morning energy level</label><div class="energy-selector">${[{v:1,l:'😴 Dead'},{v:2,l:'😐 Low'},{v:3,l:'🙂 OK'},{v:4,l:'😊 Good'},{v:5,l:'⚡ Wired'}].map(e=>`<div class="energy-btn" onclick="setEnergy(${e.v})" data-energy="${e.v}">${e.l}</div>`).join('')}</div></div>
+    <button class="btn btn-primary" onclick="rateSleep()">Save rating</button>
+  </div>`:sleep?`<div class="card"><div class="card-title">Sleep Log</div>
     <div class="inline-stat">
       <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${sleep.hours}</div><div class="inline-stat-label">Hours</div></div>
       <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber)">${'⭐'.repeat(sleep.quality)}</div><div class="inline-stat-label">Quality</div></div>
@@ -2577,8 +2583,9 @@ function renderRecharge(){
   const histHTML=sleepDates.map(d=>{const s=state.data.sleep[d];if(!s)return '';return `<div class="log-entry"><span>${fmtDate(d)}</span><span>${s.hours}h · ${'⭐'.repeat(s.quality)} · ${['','😴','😐','🙂','😊','⚡'][s.energy]||''}</span></div>`;}).join('');
   const allSleep=Object.values(state.data.sleep).filter(s=>s);
   const avgH=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.hours,0)/allSleep.length):'—';
-  const avgQ=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.quality,0)/allSleep.length):'—';
-  const avgE=allSleep.length>0?round1(allSleep.reduce((s,v)=>s+v.energy,0)/allSleep.length):'—';
+  const rq=allSleep.filter(s=>s.quality>0),re=allSleep.filter(s=>s.energy>0);
+  const avgQ=rq.length>0?round1(rq.reduce((s,v)=>s+v.quality,0)/rq.length):'—';
+  const avgE=re.length>0?round1(re.reduce((s,v)=>s+v.energy,0)/re.length):'—';
 
   return `
     ${renderDateNav()}
@@ -2849,6 +2856,10 @@ function logSleep(){
   tempSleepQuality=0;tempEnergy=0;save();render();
 }
 
+function rateSleep(){
+  const s=state.data.sleep[getVD()];if(!s)return;if(!tempSleepQuality||!tempEnergy){alert('Tap a quality and an energy level.');return;}
+  s.quality=tempSleepQuality;s.energy=tempEnergy;delete s.auto;tempSleepQuality=0;tempEnergy=0;save();render();
+}
 function logWaist(){
   const v=parseFloat(document.getElementById('waist-in')?.value);
   if(!v||v<20||v>70)return;
@@ -3459,6 +3470,8 @@ function parseHealth(txt){
       else if(us){const y=us[3].length===2?'20'+us[3]:us[3];d=`${y}-${us[1].padStart(2,'0')}-${us[2].padStart(2,'0')}`;}
       if(d)out.date=d;return;
     }
+    if(/^sleep(min|minutes|hours|hrs)?$/.test(k)){const h=parseSleepVal(v,k);if(h!=null)out.sleep=h;return;}
+    if(k==='sleepdate'){const iso=v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);if(iso)out.sleepDate=`${iso[1]}-${iso[2].padStart(2,'0')}-${iso[3].padStart(2,'0')}`;return;}
     const num=parseFloat(v.replace(/,/g,'').match(/-?\d+(\.\d+)?/)?.[0]);if(isNaN(num))return;
     const key={rest:'rest',resting:'rest',restingenergy:'rest',basal:'rest',active:'active',activeenergy:'active',steps:'steps',step:'steps',weight:'weight',bodymass:'weight',exercise:'exmin',exmin:'exmin',exerciseminutes:'exmin'}[k];
     if(key)out[key]=num;
@@ -3468,6 +3481,15 @@ function parseHealth(txt){
   if(out.steps!=null&&!(out.steps>=0&&out.steps<=100000))delete out.steps;
   if(out.weight!=null&&!(out.weight>=80&&out.weight<=600))delete out.weight;
   return out;
+}
+// Sleep arrives as hours, minutes or seconds depending on how the Shortcut is built — normalise to hours.
+function parseSleepVal(v,k){
+  const t=String(v).replace(/,/g,'').trim();
+  const hm=t.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);if(hm)return round1(+hm[1]+(+hm[2])/60);
+  const hr=t.match(/(\d+(?:\.\d+)?)\s*h(?:r|rs|ours?)?\b(?:\s*(\d+)\s*m)?/i);if(hr)return round1(+hr[1]+(hr[2]?+hr[2]/60:0));
+  const n=parseFloat((t.match(/-?\d+(\.\d+)?/)||[])[0]);if(isNaN(n)||n<=0)return null;
+  let h=/min/.test(k)?n/60:/hour|hrs/.test(k)?n:n<=24?n:n<=1440?n/60:n/3600;
+  h=round1(h);return (h>=1&&h<=16)?h:null;
 }
 
 // ═══════════════════════════════════════════
@@ -3581,9 +3603,12 @@ function logNeck(){const v=parseFloat(document.getElementById('neck-in')?.value)
 
 // ── Health import UI ──
 async function healthFromClipboard(){
-  let t='';try{if(navigator.clipboard&&navigator.clipboard.readText)t=await navigator.clipboard.readText();}catch(e){t='';}
-  state.healthText=t||'';state.modal='health';render();
+  let t='',err='';
+  try{if(navigator.clipboard&&navigator.clipboard.readText)t=await navigator.clipboard.readText();else err='unsupported';}catch(e){t='';err='blocked';}
+  state.healthText=t||'';state.healthErr=t?'':(err||'empty');state.modal='health';render();
+  if(!t)setTimeout(()=>{const el=document.getElementById('health-txt');if(el)el.focus();},120);
 }
+function healthPasted(){setTimeout(()=>{state.healthText=document.getElementById('health-txt')?.value||'';state.healthErr='';render();},60);}
 function healthReparse(){state.healthText=document.getElementById('health-txt')?.value||'';render();}
 function applyHealth(){
   const p=parseHealth(state.healthText);const date=p.date||getVD();
@@ -3593,20 +3618,23 @@ function applyHealth(){
   if(p.active!=null){d.active[date]=Math.round(p.active);n++;}
   if(p.steps!=null){if(!d.steps)d.steps={};d.steps[date]=Math.round(p.steps);n++;}
   if(p.weight!=null&&document.getElementById('health-w')?.checked){d.weights[date]=round1(p.weight);n++;}
+  if(p.sleep!=null){const sd=healthSleepDate(p,date);const ex=d.sleep[sd];
+    if(ex)ex.hours=p.sleep;else d.sleep[sd]={hours:p.sleep,quality:0,energy:0,auto:true};n++;}
   if(!n){alert('Nothing to import — check the text below.');return;}
   save();state.healthText='';closeModal();
 }
+function healthSleepDate(p,date){if(p.sleepDate)return p.sleepDate;const n=addDays(date,1);return n>getToday()?getToday():n;}
 function renderHealthModal(){
   const p=parseHealth(state.healthText);const date=p.date||getVD();
   const has=Object.keys(p).filter(k=>k!=='date').length;
   const row=(l,v)=>`<div class="stat-row"><span class="stat-label">${l}</span><span class="stat-value" style="font-size:15px">${v}</span></div>`;
   return {title:'Import from Apple Health',body:`
     ${has?`<div class="coach-note" style="color:var(--green);background:rgba(0,255,156,.06);font-style:normal;margin:0 0 10px">Found data for <b>${fmtDate(date)}</b></div>
-      ${p.rest!=null?row('Resting energy',Math.round(p.rest)+' cal'):''}${p.active!=null?row('Active energy',Math.round(p.active)+' cal'):''}${p.steps!=null?row('Steps',Math.round(p.steps).toLocaleString()):''}
+      ${p.rest!=null?row('Resting energy',Math.round(p.rest)+' cal'):''}${p.active!=null?row('Active energy',Math.round(p.active)+' cal'):''}${p.steps!=null?row('Steps',Math.round(p.steps).toLocaleString()):''}${p.sleep!=null?row('Sleep → '+fmtShort(healthSleepDate(p,date)),p.sleep+' h'):''}
       ${p.weight!=null?`<div class="checkbox-row"><input type="checkbox" id="health-w" ${state.data.weights[date]==null?'checked':''}><label for="health-w">Also save weight ${round1(p.weight)} lb${state.data.weights[date]!=null?` (replaces ${state.data.weights[date]})`:''}</label></div>`:''}
       <button class="btn btn-primary" style="margin-top:10px" onclick="applyHealth()">Import ${fmtShort(date)}</button>`
-      :`<div class="coach-note" style="margin:0 0 10px">Nothing readable on the clipboard. Run your <b>LOCK IN Sync</b> shortcut first, then tap Import again — or paste the text below.</div>`}
-    <div class="form-group" style="margin-top:14px"><label>Clipboard text</label><textarea id="health-txt" rows="6" style="width:100%;font-family:var(--font-mono);font-size:13px" placeholder="date=2026-11-04&#10;rest=2811&#10;active=535&#10;steps=10234" onchange="healthReparse()">${escapeHTML(state.healthText||'')}</textarea></div>
+      :`<div class="coach-note" style="margin:0 0 10px">${state.healthErr==='empty'?'The clipboard was empty.':'iOS didn\'t hand over the clipboard automatically (normal for home-screen apps).'} <b>Long-press the box below → Paste</b> — it imports as soon as the text lands. If Paste shows nothing, run <b>LOCK IN Sync</b> first.</div>`}
+    <div class="form-group" style="margin-top:14px"><label>Clipboard text</label><textarea id="health-txt" rows="6" style="width:100%;font-family:var(--font-mono);font-size:13px" placeholder="Long-press here → Paste" onpaste="healthPasted()" onchange="healthReparse()">${escapeHTML(state.healthText||'')}</textarea></div>
     <button class="btn btn-secondary btn-sm" style="width:100%" onclick="healthReparse()">Re-read text</button>
     <button class="btn btn-secondary btn-sm" style="width:100%;margin-top:8px" onclick="showModal('health-guide')">How to set up the shortcut</button>`};
 }
@@ -3621,7 +3649,8 @@ function renderHealthGuide(){
     ${st(5,'Weight (optional)','<b>Find Health Samples</b>: Type <b>Weight</b>, Sort by Start Date <b>Latest First</b>, Limit <b>1</b>. Rename it <b>Weight</b>. Skip if you log weight by hand.')}
     ${st(6,'Format the text','Add <b>Format Date</b> on Start → Custom <b>yyyy-MM-dd</b>. Then add a <b>Text</b> action with these lines, inserting each variable:<pre class="hg-pre">date=[Formatted Date]\nrest=[Rest]\nactive=[Active]\nsteps=[Steps]\nweight=[Weight]</pre>')}
     ${st(7,'Copy it','Add <b>Copy to Clipboard</b> (input: Text). Done.')}
-    ${st(8,'Automate (optional)','<b>Automation</b> tab → <b>+</b> → <b>Time of Day</b> 6:00 AM daily → <b>Run Immediately</b> → Run Shortcut: LOCK IN Sync.')}
+    ${st('+','Sleep (optional)','Run your sleep-minutes shortcut with <b>Run Shortcut</b> before the Text action and add a line <b>sleep=[Shortcut Result]</b>. Minutes, hours or seconds all work. It lands on the morning you woke up.')}
+    ${st(8,'Run it after you unlock','iPhone locks Health data while the phone is locked, so a 6 AM automation reads nothing. Use <b>Back Tap</b> (Settings → Accessibility → Touch → Back Tap) or a Shortcuts widget, and run it once you\'re up.')}
     ${st(9,'Import','Open LOCK IN → Today → Energy Balance → <b>⤓ Import from Health</b> → tap <b>Paste</b> if iOS asks → Import.')}
     <p class="cal-note">Units like "kcal" and commas are fine — LOCK IN strips them. Workouts still log in LOCK IN because Apple Health doesn't store your sets and reps.</p>
     <button class="btn btn-primary" onclick="healthFromClipboard()">Try an import now</button>`};
