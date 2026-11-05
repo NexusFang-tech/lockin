@@ -335,13 +335,77 @@ label{display:block;font-family:var(--font-ui);font-size:13px;font-weight:600;co
 .ms-foot{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-top:8px}
 .ms-rules{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;background:rgba(0,0,0,.2);font-size:12.5px;line-height:1.5;display:flex;flex-direction:column;gap:6px;color:var(--text2)}
 .ms-rules b{color:var(--text);font-family:var(--font-ui);letter-spacing:.5px;margin-right:4px}
+
+/* ── v12: program · strength-for-size · volume · weigh & log · health import · reveal ── */
+.pb-week{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:14px}
+.pb-chip{padding:7px 2px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);text-align:center;font-family:var(--font-ui);font-weight:700;font-size:10px;letter-spacing:.5px;color:var(--text2)}
+.pb-chip span{display:block;font-family:var(--font-mono);font-size:12px;margin-top:2px}
+.pb-chip.done{border-color:rgba(0,255,156,.5);color:var(--green);background:rgba(0,255,156,.07)}
+.pb-chip.next{border-color:var(--yellow);color:var(--yellow);box-shadow:0 0 10px rgba(252,238,10,.25)}
+.role-tag{display:inline-block;font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:1.2px;padding:2px 5px;border-radius:3px;margin-right:6px;vertical-align:2px;color:var(--yellow);border:1px solid rgba(252,238,10,.5)}
+.role-tag.bo{color:var(--cyan);border-color:rgba(0,240,255,.45)}
+.lx-ramp{font-family:var(--font-mono);font-size:11.5px;color:var(--text2);margin-top:4px;line-height:1.5}
+.lx-ramp b{color:var(--yellow)}
+.lx-ramp span{color:var(--text2)}
+.sx-row{display:grid;grid-template-columns:78px 1fr auto;grid-template-areas:"n v t" "b b b" "x x x";gap:2px 8px;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(40,48,77,.45)}
+.sx-row:last-of-type{border-bottom:none}
+.sx-name{grid-area:n;font-family:var(--font-ui);font-weight:700;font-size:14px;letter-spacing:.5px}
+.sx-val{grid-area:v;font-family:var(--font-mono);font-size:13px}
+.sx-val b{font-size:17px;color:var(--text)}
+.sx-val span{color:var(--text2);font-size:11px}
+.sx-tier{grid-area:t;font-family:var(--font-ui);font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.sx-bar{grid-area:b;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:5px}
+.sx-bar i{display:block;height:100%;border-radius:3px}
+.sx-next{grid-area:x;font-family:var(--font-mono);font-size:10.5px;color:var(--text2)}
+.vol-row{display:grid;grid-template-columns:86px 1fr 34px;gap:8px;align-items:center;padding:5px 0;font-size:12px}
+.vol-row span:first-child{font-family:var(--font-ui);font-weight:600;letter-spacing:.3px}
+.vol-row span:last-child{font-family:var(--font-mono);text-align:right}
+.vol-bar{position:relative;height:8px;background:var(--surface2);border-radius:4px;overflow:visible}
+.vol-bar i{display:block;height:100%;border-radius:4px}
+.vol-bar b{position:absolute;top:-3px;width:2px;height:14px;background:var(--text2);opacity:.7}
+.src-tag{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1px solid;border-radius:4px;font-family:var(--font-mono);font-size:11px;margin-right:7px;vertical-align:1px;cursor:pointer;flex-shrink:0}
+.social-chip{font-family:var(--font-mono);font-size:12px;border:1px solid;border-radius:6px;padding:8px 10px;margin:0 0 10px;text-align:center}
+.pl-results{max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;background:var(--surface2)}
+.pl-results:empty{display:none}
+.pl-food{display:flex;justify-content:space-between;gap:10px;padding:11px 12px;border-bottom:1px solid rgba(40,48,77,.45);cursor:pointer;font-size:13px}
+.pl-food:last-child{border-bottom:none}
+.pl-food span:last-child{font-family:var(--font-mono);color:var(--text2);font-size:11.5px;white-space:nowrap}
+.pl-food:active{background:rgba(0,240,255,.08)}
+.pl-row{display:grid;grid-template-columns:1fr 70px 34px 74px 22px;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(40,48,77,.45)}
+.pl-n{font-size:13px;line-height:1.3;min-width:0}
+.pl-amt{padding:9px 6px!important;font-family:var(--font-mono);font-size:16px;text-align:center}
+.pl-u{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
+.pl-r{font-family:var(--font-mono);font-size:11.5px;color:var(--cyan);text-align:right}
+.pl-total{font-family:var(--font-mono);font-size:16px;color:var(--yellow);text-align:right;padding:10px 0 0}
+.hg-step{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid rgba(40,48,77,.45);font-size:13px;line-height:1.5}
+.hg-step b{color:var(--text)}
+.hg-step>div:last-child{color:var(--text2);min-width:0}
+.hg-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--font-mono);font-size:12px;display:flex;align-items:center;justify-content:center}
+.hg-pre{font-family:var(--font-mono);font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-top:6px;white-space:pre-wrap;color:var(--cyan)}
+.scan-video{width:100%;max-height:220px;border-radius:6px;background:#000;object-fit:cover;border:1px solid var(--border)}
+.rv-row{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(40,48,77,.45)}
+.rv-row:last-child{border-bottom:none}
+.rv-p{font-family:var(--font-mono);font-size:15px;color:var(--amber)}
+.rv-t{font-size:12.5px;color:var(--text2);line-height:1.35}
+.rv-w{font-family:var(--font-mono);font-size:12px;color:var(--text2);text-align:right}
+.rv-w b{font-size:16px;color:var(--text)}
+.rv-w span{display:block;font-size:10.5px}
+.rv-row.done .rv-p,.rv-row.done .rv-w b{color:var(--green)}
+textarea{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:10px}
+select{width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:15px}
+.form-group{min-width:0}
+.form-group input,.form-group select,.form-group textarea{box-sizing:border-box;max-width:100%}
+
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
 // ═══════════════════════════════════════════
-// LOCK IN v11 — Cyberpunk Wellness Command Center
+// LOCK IN v12 — Cyberpunk Wellness Command Center
+// v12: powerbuilding program (top sets, back-offs, warm-ups, plate math), strength-for-size (e1RM tiers, DOTS, rivals),
+//      weekly volume, meal sources (weighed/homemade/restaurant) + scale-fit padding, body-based burn, Apple Health import,
+//      My Foods weigh-and-log + USDA + barcode, body-fat / reveal tracker, second-social-day guard.
 // ═══════════════════════════════════════════
 // v11: strength log + progression (double progression, e1RM, PRs), Next Up split recommender,
 //   muscle-recency body map, Charts tab (weight/strength/intake/execution/waist + weekly review),
@@ -368,14 +432,14 @@ const TAB_LABELS={today:'Today',fuel:'Fuel',train:'Train',goals:'Goals',recharge
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let state={tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1,bodyRegion:null,bodyView:'front',goalTerm:'short',msRules:false,msHideSetup:false,wRange:'90',liftSel:null,reviewWeek:null,lxOpen:{},lxExtra:{},editWeight:false};
+let state={plate:[],plateQ:'',foodTab:'custom',healthText:'',tab:'today',modal:null,selectedWorkout:null,data:null,viewDate:null,photoFilter:'all',photoWeeks:[],editingPhoto:-1,bodyRegion:null,bodyView:'front',goalTerm:'short',msRules:false,msHideSetup:false,wRange:'90',liftSel:null,reviewWeek:null,lxOpen:{},lxExtra:{},editWeight:false};
 let tempSleepQuality=0,tempEnergy=0;
 let QUICK=[]; // current quick-add meal list (rebuilt each render that shows chips)
 
 function defaults(){
   const sd='2026-07-08';
   const gd=new Date(sd+'T12:00:00');gd.setDate(gd.getDate()+90); // neutral 90-day default, not anyone's specific date
-  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225,restingBase:2583,activeHaircut:0.18,typicalActive:500,birthdayDate:'2027-01-28',birthdayLabel:'34th birthday',waistTarget:36,deficitTarget:500,scoreBasis:'calibrated'},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},active:{},resting:{},waist:{},lifts:{},missionChecks:{},photos:[],favorites:[],goals:{short:[],long:[]}};
+  return{config:{startWeight:305,goalWeight:270,startDate:sd,goalDate:gd.toISOString().slice(0,10),goalLabel:'goal',calorieTarget:2100,proteinTarget:150,sleepTarget:7.5,waterTarget:110,phase:'cut',leanTarget:225,restingBase:2583,activeHaircut:0.18,typicalActive:500,birthdayDate:'2027-01-28',birthdayLabel:'34th birthday',waistTarget:36,deficitTarget:500,scoreBasis:'physio',heightIn:null,birthDate:'',sex:'m',baseFactor:1.15,physActiveFactor:0.65,program:'powerbuilding',usdaKey:'',v12:true},weights:{},meals:{},workouts:{},focus:{},sleep:{},water:{},active:{},resting:{},waist:{},lifts:{},missionChecks:{},steps:{},neck:{},rivals:[],photos:[],favorites:[],goals:{short:[],long:[]}};
 }
 
 function load(){
@@ -397,12 +461,17 @@ function load(){
         resting:{...def.resting,...(d.resting||{})},
         lifts:{...def.lifts,...(d.lifts||{})},
         missionChecks:{...def.missionChecks,...(d.missionChecks||{})},
+        steps:{...(d.steps||{})},neck:{...(d.neck||{})},rivals:Array.isArray(d.rivals)?d.rivals:[],
+        myFoods:Array.isArray(d.myFoods)?d.myFoods:undefined,
         photos:Array.isArray(d.photos)?d.photos:[],
         favorites:Array.isArray(d.favorites)?d.favorites:[],
         goals:(d.goals&&typeof d.goals==='object')?{short:Array.isArray(d.goals.short)?d.goals.short:[],long:Array.isArray(d.goals.long)?d.goals.long:[]}:{short:[],long:[]}
       };
+      // v12 one-time migration: switch to body-based energy model + powerbuilding program
+      if(!(d.config||{}).v12){state.data.config.scoreBasis='physio';state.data.config.program='powerbuilding';state.data.config.v12=true;}
     }else{state.data=defaults();}
   }catch(e){state.data=defaults();}
+  if(!Array.isArray(state.data.myFoods))state.data.myFoods=seedFoods();
   state.viewDate=getToday();
 }
 
@@ -776,11 +845,16 @@ function dayEnergy(date){
   const wt=watchTdee(date);
   const cal=calibrationAt(date);
   const calTdee=cal?Math.round(cal.maint+(wt.tdee-cal.watchAvg)):null;
-  const useCal=(cfg.scoreBasis||'calibrated')==='calibrated'&&calTdee!=null;
-  const tdee=useCal?calTdee:wt.tdee;
-  const deficit=hasMeals?(tdee-intake):null;
+  const pb=physBurn(date);const pad=padAt(date);const split=daySplit(date);
+  const adjIntake=Math.round(split.known+split.home*(1+pad.pHome)+split.est*(1+pad.pEst));
+  let basis=cfg.scoreBasis||'physio';
+  if(basis==='physio'&&!pb)basis=calTdee!=null?'calibrated':'watch';
+  if(basis==='calibrated'&&calTdee==null)basis='watch';
+  const tdee=basis==='physio'?pb.tdee:basis==='calibrated'?calTdee:wt.tdee;
+  const eaten=basis==='physio'?adjIntake:intake;
+  const deficit=hasMeals?(tdee-eaten):null;
   return{intake,hasMeals,activeRaw:wt.activeRaw,usedActive:wt.usedActive,isEstimated:wt.isEstimated,adjActive:wt.adjActive,
-    rest:wt.rest,restLogged:wt.restLogged,watchTdee:wt.tdee,calTdee,cal,calibrated:useCal,tdee,deficit};
+    rest:wt.rest,restLogged:wt.restLogged,watchTdee:wt.tdee,calTdee,cal,calibrated:basis==='calibrated',basis,physio:pb,pad,split,adjIntake,eaten,tdee,deficit};
 }
 function rollingDeficit(days){
   const today=new Date();let totalDef=0,counted=0,estDays=0;
@@ -1067,7 +1141,7 @@ function openDatePicker(){
 // v11 ENGINES — strength log · next-up · calibration · debrief · weekly review
 // ═══════════════════════════════════════════
 let CAL_CACHE={},LIFT_CACHE=null;
-function bustCaches(){CAL_CACHE={};LIFT_CACHE=null;}
+function bustCaches(){CAL_CACHE={};LIFT_CACHE=null;PAD_CACHE={};}
 function addDays(ds,n){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()+n);return localDateStr(d);}
 function dayIntake(date){return (state.data.meals[date]||[]).reduce((s,m)=>s+(m.calories||0),0);}
 function dayProtein(date){return (state.data.meals[date]||[]).reduce((s,m)=>s+(m.protein||0),0);}
@@ -1140,6 +1214,7 @@ const SESSION_TYPES=[
   {key:'shoulders',label:'Shoulders & Arms',main:'shoulders',primaries:['shoulders','biceps','triceps'],weekly:1,accent:'var(--amber)',cat:'gym'}
 ];
 function sessionTypeOf(w){
+  if(w&&w.pb)return w.pb==='pb-cond'?null:'pb';
   const n=(w.name||'').toLowerCase();
   if(n==='chest & triceps')return 'push';
   if(n==='back & biceps')return 'pull';
@@ -1232,7 +1307,7 @@ function allLiftHistory(){
     Object.entries(L[d]||{}).forEach(([name,e])=>{
       const sets=(e.sets||[]).filter(s=>s&&s.r>0);
       if(!sets.length)return;
-      (by[name]=by[name]||[]).push(sessionMetrics(name,d,e.mode||defaultLiftMode(name),sets));
+      (by[name]=by[name]||[]).push({...sessionMetrics(name,d,e.mode||defaultLiftMode(name),sets),role:e.role||null});
     });
   });
   return (LIFT_CACHE=by);
@@ -1296,11 +1371,12 @@ function liftSuggestion(name,scheme,before){
   return {w:W,text:`Stay at ${W} — add a rep or two. Earn ${sc.hi} on all ${sc.sets} sets, then +${inc} lb.`};
 }
 function lastModeFor(name){const h=allLiftHistory()[name]||[];return h.length?h[h.length-1].mode:defaultLiftMode(name);}
-function liftEntry(vd,name,create){
+function liftEntry(vd,name,create,role){
   if(!state.data.lifts)state.data.lifts={};
   if(!state.data.lifts[vd]){if(!create)return null;state.data.lifts[vd]={};}
   let e=state.data.lifts[vd][name];
-  if(!e&&create)e=state.data.lifts[vd][name]={mode:lastModeFor(name),sets:[]};
+  if(!e&&create){e=state.data.lifts[vd][name]={mode:lastModeFor(name),sets:[]};if(role)e.role=role;}
+  if(e&&role&&!e.role)e.role=role;
   return e||null;
 }
 function pruneLifts(vd){
@@ -1371,7 +1447,7 @@ function dayDebrief(date){
   else if(meals.length)(inProgress?heads:fixes).push(inProgress?`${proT-protein}g protein to go — a shake (~40g) or 5 oz chicken (~45g) closes it.`:`Protein ${protein}/${proT}g — ${proT-protein}g short. Easiest fix: a shake or 5 oz chicken.`);
   // Deficit (calibrated when available)
   if(e.deficit!=null){
-    const basis=e.calibrated?'calibrated':'watch-based';
+    const basis={physio:'body-based, padded',calibrated:'calibrated',watch:'watch-based'}[e.basis]||'watch-based';
     if(inProgress){
       const room=Math.round(e.tdee-defT-intake);
       heads.push(room>0?`~${room} cal left to land a ${defT} deficit (${basis} burn ~${e.tdee}).`:`Already past the ${defT}-deficit budget by ~${-room} — keep the rest of today lean & high-protein.`);
@@ -1380,11 +1456,12 @@ function dayDebrief(date){
     else fixes.push(`Surplus ~${-e.deficit} (${basis}). One day won't matter — the pattern does.`);
   }
   // Estimate-heavy & salty & alcohol
-  const est=meals.filter(m=>ESTIMATE_RX.test(m.name||''));
+  const est=meals.filter(m=>mealSrc(m)==='est');
   const estCal=est.reduce((a,m)=>a+(m.calories||0),0);
   if(est.length>=2||(intake&&estCal/intake>=0.4&&est.length)){
-    fixes.push(`Estimate-heavy: ${est.map(m=>m.name).slice(0,3).join(', ')}${est.length>3?'…':''}. This is where logs under-count — if not already padded, real intake is likely ~${Math.round(estCal*0.25/10)*10} higher.`);
+    fixes.push(`Estimate-heavy: ${est.map(m=>m.name).slice(0,3).join(', ')}${est.length>3?'…':''}. Your scale says these really cost ~${Math.round(e.pad.pEst*100)}% more than logged (~${Math.round(estCal*e.pad.pEst/10)*10} cal) — already counted in the deficit.`);
   }
+  const sdw=socialDaysWeek(date);if(sdw.length>=2)fixes.push(`${sdw.length} social days this week (${sdw.map(fmtShort).join(', ')}). One is the plan — two is the stall.`);
   const salty=meals.filter(m=>SALTY_RX.test(m.name||''));
   if(salty.length)heads.push(`Salty day (${salty.map(m=>m.name).slice(0,2).join(', ')}) — expect a 1–3 lb water bump tomorrow. Not fat.`);
   const booze=meals.filter(m=>ALCOHOL_RX.test(m.name||''));
@@ -1415,7 +1492,8 @@ function dayDebrief(date){
   let focus='';
   const f=fixes.join(' ');
   if(/Protein/.test(f))focus=`Protein first: build tomorrow around ${proT}g — plan the shake and the chicken before you plan anything else.`;
-  else if(/Surplus|near maintenance/.test(f))focus='Tighten the ledger: weigh the add-ons (oils, cheese, sauces) and pad restaurant meals ~25%.';
+  else if(/social days/.test(f))focus='One social meal per weekend, on one day. The other weekend day runs like a Tuesday.';
+  else if(/Surplus|near maintenance/.test(f))focus='Make tomorrow a weighed day: Weigh & Log on Fuel for every plate — weighed food needs no padding.';
   else if(/Estimate-heavy/.test(f))focus='Make tomorrow a "known numbers" day — weighed chicken, rice, yogurt. Let the estimates rest.';
   else if(/Slept/.test(f))focus=`Protect sleep: lights out early enough for ${sleepT}h.`;
   else if(/Water/.test(f))focus='Water: 32 oz before noon, 80 by 5 PM.';
@@ -1449,7 +1527,7 @@ function weeklyReview(offset){
   const defs=logged.map(x=>dayEnergy(x)).filter(e=>e.deficit!=null);
   const defAvg=wavg(defs.map(e=>e.deficit));
   const sess={};let total=0;
-  past.forEach(x=>(d.workouts[x]||[]).forEach(w=>{const t=sessionTypeOf(w);const k=t?SESSION_TYPES.find(s=>s.key===t).label:(workoutMuscles(w).some(([m])=>m==='cardio')?'Cardio':workoutMuscles(w).some(([m])=>m==='core')?'Core':'Other');sess[k]=(sess[k]||0)+1;total++;}));
+  past.forEach(x=>(d.workouts[x]||[]).forEach(w=>{const t=sessionTypeOf(w);const k=t==='pb'?({'pb-l1':'Legs','pb-l2':'Legs','pb-u1':'Upper','pb-u2':'Upper','pb-arms':'Arms','pb-cond':'Cardio'}[w.pb]||'Lift'):t?SESSION_TYPES.find(s=>s.key===t).label:(workoutMuscles(w).some(([m])=>m==='cardio')?'Cardio':workoutMuscles(w).some(([m])=>m==='core')?'Core':'Other');sess[k]=(sess[k]||0)+1;total++;}));
   const prs=[];past.forEach(x=>prsOn(x).forEach(n=>prs.push(n)));
   const waistIn=Object.keys(d.waist||{}).filter(x=>x>=ws&&x<=we).sort();
   const thisAvg=wavg(wThis),prevAvg=wavg(wPrev);
@@ -1486,7 +1564,7 @@ function dLabel(ds){return ds==null?'never':(ds===0?'today':ds+'d');}
 function renderNextUp(){
   const n=nextUp();const today=getToday();
   const rec=muscleRecency(today);
-  const doneTxt=n.doneToday.length?`<div class="coach-note" style="color:var(--green);background:rgba(0,255,156,.06);font-style:normal;margin:0 0 10px">✓ Today: ${n.doneToday.map(k=>SESSION_TYPES.find(s=>s.key===k).label).join(' + ')} logged. Here's tomorrow.</div>`:'';
+  const doneTxt=n.doneToday.length?`<div class="coach-note" style="color:var(--green);background:rgba(0,255,156,.06);font-style:normal;margin:0 0 10px">✓ Today: ${n.doneToday.map(k=>(SESSION_TYPES.find(s=>s.key===k)||{label:'Powerbuilding'}).label).join(' + ')} logged. Here's tomorrow.</div>`:'';
   let main='';
   if(n.pick){
     const t=n.pick.t,ds=n.pick.dsMain;
@@ -1517,11 +1595,11 @@ function renderNextUp(){
 }
 
 // ── Strength logger (inside the workout-detail modal) ──
-let LOGEX=[];
+let LOGEX=[],LOGROLE=[];
 function lxUnit(mode){return mode==='assist'?'assist lb':mode==='bw'?'+lb':'lb';}
 function renderLogger(w){
   const vd=getVD();
-  LOGEX=(w.exercises||[]).map(e=>e.name);
+  LOGEX=(w.exercises||[]).map(e=>e.name);LOGROLE=(w.exercises||[]).map(e=>e.role||null);
   if(!state.lxOpen)state.lxOpen={};
   if(!state.lxExtra)state.lxExtra={};
   return (w.exercises||[]).map((e,i)=>{
@@ -1531,7 +1609,9 @@ function renderLogger(w){
     const mode=entry?entry.mode:lastModeFor(e.name);
     const hist=liftHistory(e.name,vd);
     const last=hist[hist.length-1];
-    const sug=liftSuggestion(e.name,sc,vd);
+    const sug=e.role==='top'?topSetSuggestion(e.name,sc,vd):e.role==='backoff'?backoffSuggestion(e,sc,vd):liftSuggestion(e.name,sc,vd);
+    let ramp='';
+    if(e.role==='top'&&sug.w){const wu=warmupRamp(sug.w);const pl=platesPerSide(sug.w);ramp=`<div class="lx-ramp">${wu.length?'Warm-up: '+wu.map(([a,b])=>a+'×'+b).join(' · ')+' → ':''}<b>${sug.w}</b>${pl.length?` <span>· per side ${pl.join(' + ')}</span>`:''}</div>`;}
     const open=!!state.lxOpen[e.name];
     const todaySets=entry?(entry.sets||[]).filter(s=>s&&s.r>0):[];
     const pr=todaySets.length&&sessionIsPR(e.name,vd);
@@ -1562,13 +1642,13 @@ function renderLogger(w){
     const lastTxt=last?`Last ${fmtShort(last.date)}: ${fmtSets(last.sets,last.mode)}${last.mode==='load'?` · e1RM ${last.e1rm}`:''}`:'No history yet';
     return `<div class="lx ${open?'open':''}" id="lx-${i}">
       <div class="lx-head" onclick="toggleLx(${i})">
-        <div><span class="lx-name">${escapeHTML(e.name)}</span><span id="lxpr-${i}">${pr?'<span class="pr-badge">PR</span>':''}</span></div>
+        <div><span class="lx-name">${e.role==='top'?'<span class="role-tag">TOP SET</span>':e.role==='backoff'?'<span class="role-tag bo">BACK-OFF</span>':''}${escapeHTML(e.name.replace(/ · Back-off$/,''))}</span><span id="lxpr-${i}">${pr?'<span class="pr-badge">PR</span>':''}</span></div>
         <div style="display:flex;gap:10px;align-items:center"><span class="lx-scheme">${e.sets}</span><span class="lx-chev">›</span></div>
       </div>
       <div class="lx-meta">
         <div class="lx-last">${lastTxt}</div>
         <div class="lx-last" id="lxtoday-${i}" style="color:var(--cyan)">${todaySets.length?'Today: '+fmtSets(todaySets,mode):''}</div>
-        <div class="lx-next">▸ ${sug.text}</div>
+        <div class="lx-next">▸ ${sug.text}</div>${ramp}
       </div>
       ${body}
     </div>`;
@@ -1576,12 +1656,12 @@ function renderLogger(w){
 }
 function toggleLx(i){const n=LOGEX[i];if(!n)return;state.lxOpen[n]=!state.lxOpen[n];render();}
 function lxAddSet(i){const n=LOGEX[i];if(!n)return;state.lxExtra[n]=(state.lxExtra[n]||0)+1;render();}
-function lxMode(i,mode){const n=LOGEX[i];if(!n)return;const e=liftEntry(getVD(),n,true);e.mode=mode;save();render();}
+function lxMode(i,mode){const n=LOGEX[i];if(!n)return;const e=liftEntry(getVD(),n,true,LOGROLE[i]);e.mode=mode;save();render();}
 function lxSet(i,r){
   const n=LOGEX[i];if(!n)return;const vd=getVD();
   const wEl=document.getElementById(`lxw-${i}-${r}`),rEl=document.getElementById(`lxr-${i}-${r}`);
   const w=parseFloat(wEl&&wEl.value),reps=parseInt(rEl&&rEl.value);
-  const e=liftEntry(vd,n,true);
+  const e=liftEntry(vd,n,true,LOGROLE[i]);
   for(let k=0;k<=r;k++)if(!e.sets[k])e.sets[k]={w:0,r:0};
   e.sets[r]={w:isNaN(w)?0:w,r:isNaN(reps)?0:reps};
   save();
@@ -1611,29 +1691,35 @@ function renderDebrief(){
 
 // ── ENERGY card (calibrated + watch) ──
 function renderEnergyCard(){
-  const vd=getVD();const e=dayEnergy(vd);const roll=rollingDeficit(14);const cal=e.cal;
-  const defCol=e.deficit==null?'var(--text2)':e.deficit>0?'var(--green)':'var(--red)';
+  const vd=getVD();const e=dayEnergy(vd);const roll=rollingDeficit(14);const cal=e.cal;const pb=e.physio;const pad=e.pad;
+  const isDef=e.deficit!=null&&e.deficit>=0;
+  const defCol=e.deficit==null?'var(--text2)':isDef?'var(--green)':'var(--red)';
   const restSrc=e.restLogged?'logged':(avgRestingRecent(vd)?'recent avg':'baseline');
-  return `<div class="card"><div class="card-title">🔥 Energy Balance</div>
+  const basisLbl={physio:'body',calibrated:'cal',watch:'watch'}[e.basis];
+  const padded=e.basis==='physio'&&e.adjIntake!==e.intake;
+  const sp=e.split;
+  const steps=(state.data.steps||{})[vd];
+  return `<div class="card"><div class="card-title" style="display:flex;justify-content:space-between;align-items:center"><span>🔥 Energy Balance</span><button class="btn btn-secondary btn-sm" style="width:auto;padding:6px 10px;font-size:11px" onclick="healthFromClipboard()">⤓ Import from Health</button></div>
     <div class="inline-stat">
-      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--text2);font-size:18px">${e.tdee}</div><div class="inline-stat-label">Burn ${e.calibrated?'(cal)':'(watch)'}</div></div>
-      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber);font-size:18px">${e.intake}</div><div class="inline-stat-label">Eaten</div></div>
-      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${defCol};font-size:18px">${e.deficit==null?'--':(e.deficit>0?'-':'+')+Math.abs(e.deficit)}</div><div class="inline-stat-label">Deficit</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--text2);font-size:18px">${e.tdee}</div><div class="inline-stat-label">Burn (${basisLbl})</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber);font-size:18px">${padded?e.adjIntake:e.intake}</div><div class="inline-stat-label">${padded?'Eaten (padded)':'Eaten'}</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:${defCol};font-size:18px">${e.deficit==null?'--':Math.abs(e.deficit)}</div><div class="inline-stat-label">${e.deficit==null?'Deficit':isDef?'Deficit':'Surplus'}</div></div>
     </div>
-    <div class="stat-row" style="margin-top:10px"><span class="stat-label">Watch burn</span><span class="stat-value" style="font-size:14px">${e.rest} <span style="color:var(--text2);font-size:11px">rest·${restSrc}</span> + ${e.adjActive} <span style="color:var(--text2);font-size:11px">active${e.isEstimated?'·est':''}</span> = ${e.watchTdee}</span></div>
-    ${cal?`<div class="stat-row"><span class="stat-label">Calibrated maintenance</span><span class="stat-value" style="font-size:15px;color:var(--cyan)">${cal.maint}</span></div>
-    <div class="stat-row"><span class="stat-label">Watch vs reality gap</span><span class="stat-value" style="font-size:15px;color:${cal.gap>300?'var(--amber)':'var(--text2)'}">${cal.gap>0?'+':''}${cal.gap}/day</span></div>`:''}
+    ${pb&&e.basis==='physio'?`<div class="stat-row" style="margin-top:10px"><span class="stat-label">Body burn</span><span class="stat-value" style="font-size:13px">BMR ${pb.bmr}×${pb.bf} + ${pb.rawAct}${pb.actEst?'<span style="color:var(--text2);font-size:11px">·est</span>':''} active×${pb.af} = ${pb.tdee}</span></div>`:''}
+    <div class="stat-row" ${pb&&e.basis==='physio'?'':'style="margin-top:10px"'}><span class="stat-label">Watch says</span><span class="stat-value" style="font-size:13px">${e.rest} <span style="color:var(--text2);font-size:11px">rest·${restSrc}</span> + ${e.adjActive} <span style="color:var(--text2);font-size:11px">active${e.isEstimated?'·est':''}</span> = ${e.watchTdee}</span></div>
+    ${e.hasMeals?`<div class="stat-row"><span class="stat-label">Food sources</span><span class="stat-value" style="font-size:13px"><span style="color:#00ff9c">W ${sp.known}</span> · <span style="color:#ffb020">H ${sp.home}</span> · <span style="color:#ff2d78">E ${sp.est}</span></span></div>`:''}
+    ${e.basis==='physio'?`<div class="stat-row"><span class="stat-label">Padding (fit to scale)</span><span class="stat-value" style="font-size:13px;color:var(--cyan)">E +${Math.round(pad.pEst*100)}% · H +${Math.round(pad.pHome*100)}%${pad.ok?'':' <span style="color:var(--text2);font-size:11px">default</span>'}</span></div>`:''}
+    ${steps!=null?`<div class="stat-row"><span class="stat-label">Steps</span><span class="stat-value" style="font-size:14px;color:${steps>=8000?'var(--green)':'var(--amber)'}">${steps.toLocaleString()}</span></div>`:''}
     <div class="form-group" style="margin-top:10px"><div style="display:flex;gap:8px">
       <input type="number" id="rest-in" placeholder="Resting cal" value="${e.restLogged||''}" inputmode="numeric" style="flex:1;min-width:0">
       <input type="number" id="active-in" placeholder="Active cal" value="${e.activeRaw!=null?e.activeRaw:''}" inputmode="numeric" style="flex:1;min-width:0">
       <button class="btn btn-primary btn-sm" onclick="logActive()">Set</button>
-    </div><div style="font-size:11px;color:var(--text2);margin-top:5px">Apple Health → Resting Energy & Active Energy. Best logged next morning for the full day — use ‹ to go back a day.</div></div>
-    ${roll.avgDef!=null?`<div class="stat-row"><span class="stat-label">14-day avg deficit</span><span class="stat-value" style="color:${roll.avgDef>0?'var(--green)':'var(--red)'}">${roll.avgDef>0?'-':'+'}${Math.abs(roll.avgDef)}/day</span></div>
+    </div><div style="font-size:11px;color:var(--text2);margin-top:5px">Apple Health → Resting & Active Energy for the full day (use ‹ for yesterday), or one-tap with the <span class="edit-link" style="margin-left:0" onclick="showModal('health-guide')">Health shortcut</span>.</div></div>
+    ${roll.avgDef!=null?`<div class="stat-row"><span class="stat-label">14-day avg ${roll.avgDef>=0?'deficit':'surplus'}</span><span class="stat-value" style="color:${roll.avgDef>=0?'var(--green)':'var(--red)'}">${Math.abs(roll.avgDef)}/day</span></div>
     <div class="stat-row"><span class="stat-label">→ Projected fat loss</span><span class="stat-value" style="color:var(--cyan)">${roll.projectedWeeklyLoss>0?roll.projectedWeeklyLoss:'0'} lb/wk</span></div>`:''}
-    <p class="cal-note">${cal?`<b style="color:var(--text)">Calibrated</b> = what your scale proves you burn, in your logged-calorie units (28 days: avg logged ${cal.avgIntake}, trend ${cal.slopeWk>0?'+':''}${cal.slopeWk} lb/wk). It absorbs watch over-count and logging under-count at once. As you weigh add-ons more accurately, this number will rise — that's expected.`:'Calibration unlocks after ~2 weeks of meals + 6 weigh-ins. Until then burn is watch-based.'}</p>
+    <p class="cal-note">${e.basis==='physio'?`<b style="color:var(--text)">Body burn</b> = your BMR from height, age & weight plus a share of Apple's active calories. <b style="color:#00ff9c">W</b>eighed/labeled food counts as-is. <b style="color:#ffb020">H</b>omemade and <b style="color:#ff2d78">E</b>stimated restaurant/social meals get padded by what your last 28 days of scale data say is missing${pad.ok?` (logged ${pad.loggedAvg}/day, trend ${pad.slopeWk>0?'+':''}${pad.slopeWk} lb/wk)`:''}. Tap a meal's letter on Fuel to fix its source.`:cal?`<b style="color:var(--text)">Calibrated</b> = what your scale proves you burn in logged-calorie units (28 days: avg logged ${cal.avgIntake}, trend ${cal.slopeWk>0?'+':''}${cal.slopeWk} lb/wk). ${profileReady()?'':'Set height & birth date in ⚙ to switch to body-based burn.'}`:'Burn is watch-based until there\'s enough data. Set height & birth date in ⚙ for body-based burn.'}</p>
   </div>`;
 }
-
 // ── Chart engine (canvas, time-scaled x, tap/hover tooltip) ──
 const CHARTS={};
 function dayNum(ds){return Math.round(new Date(ds+'T12:00:00').getTime()/864e5);}
@@ -1783,11 +1869,12 @@ function renderCharts(){
       ${chartBox('weight-chart',210)}
       ${legend([['var(--green)','Daily weigh-in'],['var(--cyan)','7-day average'],['var(--yellow)','Goal',1]])}
     </div>
+    ${renderBodyComp()}
     <div class="card"><div class="card-title">🏋 Strength</div>${strength}</div>
     <div class="card"><div class="card-title">🍽 Intake vs Burn · 28 days</div>
       ${chartBox('intake-chart',190)}
-      ${legend([['var(--amber)','Logged intake'],['var(--cyan)','Calibrated maintenance'],['var(--pink)','Watch burn',1]])}
-      <p class="cal-note">Bars under the cyan line are real deficit days. The gap between the pink and cyan lines is how far the watch-and-log estimate overshoots what your scale confirms.</p>
+      ${legend([['var(--amber)','Intake (padded)'],['var(--cyan)','Burn'],['var(--pink)','Watch burn',1]])}
+      <p class="cal-note">Bars under the cyan line are real deficit days. Weighed days count as logged; estimated meals are padded to match your scale.</p>
     </div>
     <div class="card"><div class="card-title">⚡ Execution · 28 days</div>
       ${chartBox('exec-chart',150)}
@@ -1833,13 +1920,13 @@ function drawAllCharts(){
   }
   // Intake vs burn (28d)
   const days=[];for(let i=27;i>=0;i--)days.push(addDays(today,-i));
-  const intakeData=days.filter(x=>(d.meals[x]||[]).length).map(x=>({x:dayNum(x),y:dayIntake(x)}));
-  const maintData=days.map(x=>{const c=calibrationAt(x);return {x:dayNum(x),y:c?c.maint:null};});
+  const intakeData=days.filter(x=>(d.meals[x]||[]).length).map(x=>({x:dayNum(x),y:dayEnergy(x).eaten}));
+  const maintData=days.map(x=>{const e=dayEnergy(x);return {x:dayNum(x),y:e.tdee};});
   const watchData=days.filter(x=>(d.meals[x]||[]).length).map(x=>({x:dayNum(x),y:watchTdee(x).tdee}));
   drawChart('intake-chart',{height:190,yZero:false,
     series:[{type:'bars',color:'#ffb020',alpha:.75,data:intakeData},{type:'line',color:'#ff2d78',width:1.5,dash:[4,3],data:watchData},{type:'line',color:'#00f0ff',width:2.5,glow:true,data:maintData}],
     refs:[{y:cfg.calorieTarget,color:'#fcee0a',label:'Target '+cfg.calorieTarget}],xMin:dayNum(days[0]),xMax:dayNum(today),
-    tip:x=>{const ds=dayStr(x);const c=calibrationAt(ds);const it=dayIntake(ds);return `<b>${fmtDate(ds)}</b><span class="sw" style="background:#ffb020"></span>ate ${it||'—'}<br><span class="sw" style="background:#00f0ff"></span>calibrated ${c?c.maint:'—'}<br><span class="sw" style="background:#ff2d78"></span>watch ${watchTdee(ds).tdee}`;}});
+    tip:x=>{const ds=dayStr(x);const e=dayEnergy(ds);return `<b>${fmtDate(ds)}</b><span class="sw" style="background:#ffb020"></span>ate ${e.intake||'—'}${e.eaten!==e.intake?' → '+e.eaten+' padded':''}<br><span class="sw" style="background:#00f0ff"></span>burn ${e.tdee}<br><span class="sw" style="background:#ff2d78"></span>watch ${e.watchTdee}`;}});
   // Execution (28d)
   const ex=days.map(x=>{const s=executionScore(x);return s?{x:dayNum(x),y:s.score,color:s.score>=85?'#00ff9c':s.score>=65?'#ffb020':'#ff3860'}:null;}).filter(Boolean);
   drawChart('exec-chart',{height:150,yZero:true,series:[{type:'bars',color:'#00ff9c',alpha:.85,data:ex}],refs:[{y:85,color:'#00ff9c',label:'85'}],xMin:dayNum(days[0]),xMax:dayNum(today),
@@ -1859,7 +1946,7 @@ function renderSettings(){
   const liftSessions=Object.values(allLiftHistory()).reduce((a,h)=>a+h.length,0);
   const shortDone=(((state.data.goals||{}).short)||[]).filter(g=>g.done).length;
   const longDone=(((state.data.goals||{}).long)||[]).filter(g=>g.done).length;
-  const basis=c.scoreBasis||'calibrated';
+  const basis=c.scoreBasis||'physio';
   const num=(label,key,step,extra)=>`<div class="form-group"><label>${label}</label><input type="number" value="${c[key]}" step="${step||1}" inputmode="decimal" onchange="state.data.config.${key}=+this.value;save();render()" ${extra||''}></div>`;
   return `
     <div class="card"><div class="card-title">Consistency</div>
@@ -1870,6 +1957,7 @@ function renderSettings(){
       <div class="stat-row"><span class="stat-label">Meals logged</span><span class="stat-value">${totalMeals}</span></div>
       <div class="stat-row"><span class="stat-label">Cookie Jar (short · long)</span><span class="stat-value" style="color:var(--yellow)">${shortDone} · ${longDone}</span></div>
     </div>
+    ${renderSettings12()}
     ${renderMissionSettings()}
     <div class="card"><div class="card-title">Targets</div>
       ${num('Calorie target','calorieTarget')}
@@ -1887,8 +1975,10 @@ function renderSettings(){
     </div>
     <div class="card"><div class="card-title">Energy Model</div>
       <label>Score & deficit basis</label>
-      <div class="range-row"><button class="range-pill ${basis==='calibrated'?'on':''}" onclick="setScoreBasis('calibrated')">CALIBRATED</button><button class="range-pill ${basis==='watch'?'on':''}" onclick="setScoreBasis('watch')">WATCH</button></div>
-      <p class="cal-note" style="margin:-2px 0 12px">Calibrated anchors your burn to what the scale actually proves (recommended). Watch uses resting + active with the haircut — optimistic for most people.</p>
+      <div class="range-row"><button class="range-pill ${basis==='physio'?'on':''}" onclick="setScoreBasis('physio')">BODY</button><button class="range-pill ${basis==='calibrated'?'on':''}" onclick="setScoreBasis('calibrated')">CALIBRATED</button><button class="range-pill ${basis==='watch'?'on':''}" onclick="setScoreBasis('watch')">WATCH</button></div>
+      <p class="cal-note" style="margin:-2px 0 12px">Body (recommended): BMR + a share of active calories, with estimated meals padded to match your scale — weighed days show their real deficit. Calibrated: v11's blanket model. Watch: Apple's numbers with a haircut.</p>
+      <div style="display:flex;gap:8px"><div class="form-group" style="flex:1"><label>BMR multiplier</label><input type="number" value="${c.baseFactor||1.15}" step="0.05" inputmode="decimal" onchange="state.data.config.baseFactor=Math.max(1,Math.min(1.5,+this.value||1.15));save();render()"></div>
+      <div class="form-group" style="flex:1"><label>Active share</label><input type="number" value="${c.physActiveFactor!=null?c.physActiveFactor:0.65}" step="0.05" inputmode="decimal" onchange="state.data.config.physActiveFactor=Math.max(0,Math.min(1,+this.value));save();render()"></div></div>
       ${num('Resting baseline fallback (cal/day)','restingBase')}
       <div class="form-group"><label>Active-calorie haircut (%)</label><input type="number" value="${Math.round((c.activeHaircut||0.18)*100)}" onchange="state.data.config.activeHaircut=Math.max(0,Math.min(50,+this.value))/100;save();render()" inputmode="numeric"></div>
       ${num('Typical active burn (fallback, cal)','typicalActive',10)}
@@ -1947,7 +2037,8 @@ function missionItems(date){
   const lifted=wos.some(w=>sessionTypeOf(w));
   const hasSets=!!((d.lifts||{})[date]&&Object.keys(d.lifts[date]).length);
   const mc=missionChecks(date);
-  const est=meals.filter(x=>ESTIMATE_RX.test(x.name||''));
+  const est=meals.filter(x=>mealSrc(x)==='est');
+  const steps=(d.steps||{})[date];
   const items=[];
   const auto=(k,label,ok,sub)=>items.push({k,label,ok:!!ok,auto:true,sub});
   const man=(k,label,sub)=>items.push({k,label,ok:!!mc[k],auto:false,sub});
@@ -1978,7 +2069,8 @@ function missionItems(date){
     const cw=cardioWeek(date);
     if(cw<3||cardioOn(date))auto('cardio',`Cardio 25+ min (${cw}/3 this week)`,cardioOn(date),'Incline walk or Stairmaster after lifting.');
   }
-  man('walk','Walk after lunch & dinner (8k+ steps)','10 minutes each. NEAT beats the gym for fat loss at a desk job.');
+  if(steps!=null)auto('walk',`Steps ${steps.toLocaleString()}/8,000`,steps>=8000,'Walk after lunch & dinner — imported from Apple Health.');
+  else man('walk','Walk after lunch & dinner (8k+ steps)','10 minutes each. NEAT beats the gym for fat loss at a desk job.');
   auto('water',`Water ${water}/${waterT} oz`,water>=waterT);
   auto('sleep',`Sleep logged ≥ ${sleepT}h`,sleep&&sleep.hours>=sleepT);
   return items;
@@ -2193,6 +2285,7 @@ function renderToday(){
 
   return `
     ${renderDateNav()}
+    ${!profileReady()?`<div class="card" style="border-color:rgba(252,238,10,.5)"><div class="card-title" style="color:var(--yellow)">⚡ v12 setup — 30 seconds</div><p style="font-size:13px;color:var(--text2);line-height:1.5">Add your height and birth date so LOCK IN can calculate your real burn, body fat and strength-for-size.</p><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="setTab('settings')">Open Profile</button></div>`:''}
     ${renderMission()}
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -2236,6 +2329,7 @@ function renderToday(){
       <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(vdProtein/state.data.config.proteinTarget)*100)}%;background:var(--cyan);box-shadow:0 0 8px rgba(0,240,255,.5)"></div></div>
       <div class="stat-row" style="margin-top:4px"><span class="stat-label">Water</span><span class="stat-value">${vdWater}oz <span style="font-size:13px;color:var(--text2)">/ ${waterT}oz</span></span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(vdWater/waterT)*100)}%;background:#38bdf8;box-shadow:0 0 8px rgba(56,189,248,.5)"></div></div>
+      ${(state.data.steps||{})[vd]!=null?`<div class="stat-row" style="margin-top:4px"><span class="stat-label">Steps</span><span class="stat-value">${state.data.steps[vd].toLocaleString()} <span style="font-size:13px;color:var(--text2)">/ 8,000</span></span></div>`:''}
       <div class="stat-row" style="margin-top:4px"><span class="stat-label">Workouts</span><span class="stat-value">${vdWorkouts.length>0?vdWorkouts.map(w=>'<span class="tag tag-green">'+w.name+'</span>').join(' '):'None'}</span></div>
     </div>`;
 }
@@ -2258,9 +2352,11 @@ function renderFuel(){
     ${renderHydration()}
     ${renderQuickChips('fuel')}
     <div class="card"><div class="card-title">Meals Logged</div>
-      ${meals.length>0?meals.map((m,i)=>`<div class="meal-item"><div class="meal-info"><div class="meal-name">${m.name}</div><div class="meal-macros">${m.calories} cal · ${m.protein}g protein</div></div><div class="meal-delete" onclick="deleteMeal(${i})">✕</div></div>`).join(''):'<div class="empty-state">No meals logged. Get fueling.</div>'}
+      ${meals.length>0?meals.map((m,i)=>`<div class="meal-item"><div class="meal-info"><div class="meal-name">${srcTag(m,i)}${escapeHTML(m.name)}</div><div class="meal-macros">${m.calories} cal · ${m.protein}g protein</div></div><div class="meal-delete" onclick="deleteMeal(${i})">✕</div></div>`).join(''):'<div class="empty-state">No meals logged. Get fueling.</div>'}
     </div>
-    <button class="btn btn-primary" onclick="showModal('add-meal')">+ Log Meal</button>`;
+    ${renderSocialChip()}
+    <div style="display:flex;gap:8px"><button class="btn btn-primary" style="flex:1" onclick="openPlate()">⚖ Weigh & Log</button><button class="btn btn-secondary" style="flex:1" onclick="showModal('add-meal')">+ Quick Log</button></div>
+    <p class="cal-note" style="text-align:center">W weighed · H homemade estimate · E restaurant/social — tap a letter to change it.</p>`;
 }
 
 // ═══════════════════════════════════════════
@@ -2363,8 +2459,11 @@ function renderTrain(){
   const wgTitle=(icon,label,accent,extra)=>`<div class="workout-group-title" style="color:${accent||'var(--cyan)'}">${ICON[icon]||''}<span>${label}</span>${extra||''}</div>`;
   return `
     ${renderDateNav()}
-    ${isViewingToday()?renderNextUp():''}
+    ${isViewingToday()?(programMode()==='pb'?renderNextUpPB():renderNextUp()):''}
     ${loggedHTML}
+    ${programMode()==='pb'?renderProgramCard():''}
+    ${renderStrengthCard()}
+    ${renderVolumeCard()}
     ${renderBodyMap()}
     <div class="modality-sep">MODALITIES</div>
     <div class="workout-group">${wgTitle('golf','Golf Power','var(--amber)','<span style="font-size:11px;font-weight:400;color:var(--text2);margin-left:6px">— clubhead speed</span>')}
@@ -2559,6 +2658,7 @@ function renderPhase(){
 function renderModal(){
   if(!state.modal)return '';
   let title='',body='';
+  const m12=renderModal12();if(m12){title=m12.title;body=m12.body;}
 
   if(state.modal==='add-meal'){
     title='Log Meal — '+fmtDate(getVD());
@@ -2567,6 +2667,7 @@ function renderModal(){
       <div class="form-group"><label>What did you eat?</label><input type="text" id="meal-name" placeholder="e.g. Grilled chicken & rice"></div>
       <div class="form-group"><label>Calories</label><input type="number" id="meal-cal" placeholder="500" inputmode="numeric"></div>
       <div class="form-group"><label>Protein (g)</label><input type="number" id="meal-pro" placeholder="35" inputmode="numeric"></div>
+      <div class="form-group"><label>How do you know the numbers?</label><select id="meal-src"><option value="">Auto-detect from name</option><option value="known">Weighed / labeled</option><option value="home">Homemade estimate</option><option value="est">Restaurant / social estimate</option></select></div>
       <div class="checkbox-row"><input type="checkbox" id="meal-fav"><label for="meal-fav">★ Save as a favorite for one-tap logging</label></div>
       <button class="btn btn-primary" onclick="saveMeal()">Log It</button>
       ${favs.length?`<div style="margin-top:16px"><label>Saved favorites</label>${favs.map((f,i)=>`<div class="fav-row"><span>★ ${f.name} <span style="color:var(--text2);font-family:var(--font-mono)">${f.calories}·${f.protein}g</span></span><span class="meal-delete" onclick="removeFavorite(${i})">✕</span></div>`).join('')}</div>`:''}`;
@@ -2605,7 +2706,7 @@ function renderModal(){
 // ═══════════════════════════════════════════
 function setTab(t){state.tab=t;state.modal=null;state.editWeight=false;window.scrollTo(0,0);render();}
 function showModal(m){state.modal=m;render();}
-function closeModal(){pruneLifts(getVD());save();state.modal=null;state.selectedWorkout=null;state.lxExtra={};render();}
+function closeModal(){stopScan();pruneLifts(getVD());save();state.plateReturn=undefined;state.modal=null;state.selectedWorkout=null;state.lxExtra={};render();}
 
 function jumpToDate(){
   const v=document.getElementById('date-pick')?.value;
@@ -2651,8 +2752,11 @@ function saveMeal(){
   const fav=document.getElementById('meal-fav')?.checked;
   if(!name)return;
   const vd=getVD();
+  const srcSel=document.getElementById('meal-src')?.value||'';
+  const meal={name,calories:cal,protein:pro};if(srcSel)meal.src=srcSel;
+  if(!socialGuard(vd,cal,mealSrc(meal)))return;
   if(!state.data.meals[vd])state.data.meals[vd]=[];
-  state.data.meals[vd].push({name,calories:cal,protein:pro});
+  state.data.meals[vd].push(meal);
   if(fav)addFavorite(name,cal,pro);
   save();closeModal();
 }
@@ -2671,6 +2775,7 @@ function showWorkoutDetail(category,id){
   else if(category==='pfLegs')workout=WORKOUTS.pfLegs.find(c=>c.id===id);
   else if(category==='golfPower')workout=WORKOUTS.golfPower.find(c=>c.id===id);
   else if(category==='travel')workout=WORKOUTS.travel.find(c=>c.id===id);
+  else if(category==='pb'){const f=WORKOUTS.pb.find(c=>c.id===id);if(f)workout={...f,pbId:f.id};}
   if(workout){state.selectedWorkout=workout;state.modal='workout-detail';render();}
 }
 
@@ -2681,6 +2786,7 @@ function logWorkout(){
   const vd=getVD();
   if(!state.data.workouts[vd])state.data.workouts[vd]=[];
   const entry={name:w.groupName||w.name,routine:w.groupName?w.name:'',duration:dur,calories:cal,isCore:w.isCore||false};
+  if(w.pbId){entry.name='Powerbuilding';entry.routine=w.name;entry.pb=w.pbId;entry.muscles=w.muscles;}
   const ms=workoutMuscles(entry);if(ms.length)entry.muscles=ms;
   state.data.workouts[vd].push(entry);
   save();closeModal();
@@ -2776,6 +2882,9 @@ function importData(e){
           waist:{...(state.data.waist||{}),...(imp.waist||{})},
           resting:{...(state.data.resting||{}),...(imp.resting||{})},
           missionChecks:{...(state.data.missionChecks||{}),...(imp.missionChecks||{})},
+          steps:{...(state.data.steps||{}),...(imp.steps||{})},neck:{...(state.data.neck||{}),...(imp.neck||{})},
+          rivals:(Array.isArray(imp.rivals)&&imp.rivals.length)?imp.rivals:(state.data.rivals||[]),
+          myFoods:(()=>{const a=Array.isArray(state.data.myFoods)?state.data.myFoods:[],b=Array.isArray(imp.myFoods)?imp.myFoods:[];const ids=new Set(a.map(f=>f.id));return a.concat(b.filter(f=>f&&!ids.has(f.id)));})(),
           lifts:(()=>{const a=state.data.lifts||{},b=imp.lifts||{},o={...a};Object.keys(b).forEach(d=>{o[d]={...(a[d]||{}),...b[d]};});return o;})(),
           photos:[...(Array.isArray(state.data.photos)?state.data.photos:[]),...(Array.isArray(imp.photos)?imp.photos:[])].map(p=>(p&&p.id)?p:{...p,id:genPhotoId(p&&p.ts)}),
           favorites:(Array.isArray(imp.favorites)&&imp.favorites.length)?imp.favorites:(Array.isArray(state.data.favorites)?state.data.favorites:[]),
@@ -3047,6 +3156,642 @@ function viewPhoto(i){
 
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   showAt(pos);
+}
+
+
+// ═══════════════════════════════════════════
+// v12 ENGINES — powerbuilding program · strength-for-size · meal sources & padded energy model
+//               · My Foods · Health import · body composition · social-day cap
+// ═══════════════════════════════════════════
+
+// ── Powerbuilding program: 5-day rotation + optional 6th (conditioning) ──
+// Each day opens with ONE heavy top set (4–6 reps) + back-off sets, then hypertrophy work.
+// Rotation-based, not calendar-based: miss a day and the next session just waits for you.
+WORKOUTS.pb=[
+  {id:'pb-u1',name:'Upper A — Bench Day',short:'BENCH',desc:'Heavy bench top set + back-offs, rows, pull-ups, delts, triceps.',
+   muscles:[['chest','p'],['back','p'],['triceps','p'],['shoulders','s'],['biceps','s']],exercises:[
+    {name:'Flat Bench Press',sets:'1×4-6',role:'top',note:'Ramp up with the warm-ups listed. ONE all-out set of 4–6, ~1 rep left in the tank. Hit 6 → +5 lb next time. Long arms: touch low on the chest, drive feet into the floor.'},
+    {name:'Flat Bench Press · Back-off',sets:'3×6-8',role:'backoff',of:'Flat Bench Press',note:'~90% of today\'s top set. Same groove, 2 min rest. Own 8 on all three, then the % climbs with your top set.'},
+    {name:'Barbell Row',sets:'4×6-8',note:'Overhand, pull to the lower chest, 1-sec squeeze. Strict — no hip heave.'},
+    {name:'Weighted Pull-ups',sets:'3×6-10',note:'Assisted until 10 clean reps unassisted, then add weight with a belt or DB between the feet.'},
+    {name:'Incline DB Press',sets:'3×8-10',note:'30° bench. Upper chest = the "armor plate" look.'},
+    {name:'Lateral Raises',sets:'3×12-15',note:'Wide shoulders make everything else look bigger. Lead with the elbows, no swing.'},
+    {name:'Tricep Pushdowns',sets:'3×10-12',note:'Triceps are 2/3 of the arm. Full lockout, slow return.'}
+  ]},
+  {id:'pb-l1',name:'Lower A — Squat Day',short:'SQUAT',desc:'Heavy back squat top set + back-offs, RDLs, leg press, hamstrings, calves, abs.',
+   muscles:[['legs','p'],['core','s']],exercises:[
+    {name:'Barbell Back Squat',sets:'1×4-6',role:'top',note:'Belt optional. Brace hard, sit between the hips, hit parallel. Hit 6 → +10 lb next time. Long femurs: slightly wider stance, toes out.'},
+    {name:'Barbell Back Squat · Back-off',sets:'3×6-8',role:'backoff',of:'Barbell Back Squat',note:'~90% of the top set. Same depth every rep.'},
+    {name:'Romanian Deadlift',sets:'3×8-10',note:'Bar slides down the thighs, hips back, flat back. Feel the hamstrings load.'},
+    {name:'Leg Press',sets:'3×10-12',note:'Full depth without the low back peeling off the pad.'},
+    {name:'Seated Leg Curl',sets:'3×10-12',note:'3-second negative. Hamstrings make the legs look thick from the side.'},
+    {name:'Standing Calf Raises',sets:'4×10-15',note:'2-sec pause at the bottom stretch. Calves need it slow and heavy.'},
+    {name:'Cable Crunches',sets:'3×12-15',note:'Abs are a muscle — train them heavy so they show when the fat comes off.'}
+  ]},
+  {id:'pb-u2',name:'Upper B — Press Day',short:'PRESS',desc:'Heavy overhead press top set + back-offs, incline barbell, rows, pulldowns, rear delts, biceps.',
+   muscles:[['shoulders','p'],['back','p'],['chest','s'],['biceps','p'],['triceps','s']],exercises:[
+    {name:'Overhead Press (Barbell)',sets:'1×4-6',role:'top',note:'Standing, glutes squeezed, bar over mid-foot at lockout. Hit 6 → +5 lb. Big shoulders = wide frame.'},
+    {name:'Overhead Press (Barbell) · Back-off',sets:'3×6-8',role:'backoff',of:'Overhead Press (Barbell)',note:'~90% of the top set. No layback.'},
+    {name:'Incline Barbell Press',sets:'3×6-8',note:'Second heavy chest hit of the week. Builds the bench too.'},
+    {name:'Seated Cable Row',sets:'4×8-12',note:'Chest up, pull to the belly button, full stretch forward.'},
+    {name:'Lat Pulldown (Wide)',sets:'3×8-12',note:'Width. Pull elbows down to the ribs, not the hands.'},
+    {name:'Face Pulls',sets:'3×15-20',note:'Rear delts + shoulder health for all that pressing.'},
+    {name:'Barbell Curls',sets:'3×8-10',note:'Strict. Biceps peak = the "large muscles" look in a T-shirt.'}
+  ]},
+  {id:'pb-l2',name:'Lower B — Deadlift Day',short:'PULL',desc:'Heavy deadlift top set + back-offs, hack squat, lunges, hip thrusts, calves, abs.',
+   muscles:[['legs','p'],['back','s'],['core','s']],exercises:[
+    {name:'Conventional Deadlift',sets:'1×3-5',role:'top',note:'Long arms = your advantage off the floor. Wedge in, push the floor away. Hit 5 → +10 lb next time.'},
+    {name:'Conventional Deadlift · Back-off',sets:'2×5-6',role:'backoff',of:'Conventional Deadlift',note:'~85–90% of the top set. Reset every rep.'},
+    {name:'Hack Squat Machine (or Smith Squat)',sets:'3×8-10',note:'Quads. Deep and controlled.'},
+    {name:'Walking Lunges (DB)',sets:'3×10/leg',note:'Long stride for your height. Torso tall.'},
+    {name:'Hip Thrust (Machine or Barbell)',sets:'3×8-12',note:'1-sec squeeze at the top.'},
+    {name:'Seated Calf Raises',sets:'4×12-15',note:'Soleus. Slow and deep.'},
+    {name:'Hanging Leg Raises',sets:'3×10-15',note:'Control the swing. Straight legs when you can.'}
+  ]},
+  {id:'pb-arms',name:'Arms & Delts — Pump Day',short:'ARMS',desc:'Close-grip bench, curls, dips, extensions, lateral & rear delts. Size, veins, pump.',
+   muscles:[['biceps','p'],['triceps','p'],['shoulders','p'],['chest','s']],exercises:[
+    {name:'Close-Grip Bench Press',sets:'3×6-8',note:'Lockout strength for your bench + triceps mass. Hands shoulder-width.'},
+    {name:'Barbell Curls',sets:'4×8-10',note:'Heaviest curl of the week.'},
+    {name:'Tricep Dips (Machine or Assisted)',sets:'3×8-12',note:'Upright torso for triceps. Assisted → bodyweight → weighted.'},
+    {name:'Hammer Curls',sets:'3×10-12',note:'Brachialis + forearms. This is where forearm veins come from.'},
+    {name:'Overhead Tricep Extension (Cable)',sets:'3×10-15',note:'Long head stretch — the part of the triceps that makes the arm big.'},
+    {name:'Incline DB Curls',sets:'3×10-12',note:'Full stretch at the bottom.'},
+    {name:'Lateral Raises',sets:'4×15-20',note:'Higher reps today. Chase the burn.'},
+    {name:'Rear Delt Cable Flyes',sets:'3×15-20',note:'Round shoulders from every angle.'}
+  ]},
+  {id:'pb-cond',name:'Conditioning + Core',short:'COND',desc:'Optional 6th day: Stairmaster or incline walk + core circuit. Burns fat without stealing recovery.',
+   muscles:[['cardio','p'],['core','p']],exercises:[
+    {name:'Stairmaster or Incline Walk',sets:'25-35 min',note:'Zone 2 — you can talk in short sentences. Hoodie optional.'},
+    {name:'Ab Rollout (Wheel or Barbell)',sets:'3×10',note:'From the knees. Go only as far as you can control.'},
+    {name:'Hanging Leg Raises',sets:'3×10-15',note:'Slow negative.'},
+    {name:'Pallof Press',sets:'3×10/side',note:'Anti-rotation — a strong core moves heavier weights.'},
+    {name:'Farmer Carries',sets:'3×40yd',note:'Heaviest DBs you can hold. Grip, traps, forearm veins.'}
+  ]}
+];
+const PB_ORDER=['pb-u1','pb-l1','pb-u2','pb-l2','pb-arms','pb-cond'];
+function pbRoutine(id){return WORKOUTS.pb.find(r=>r.id===id)||null;}
+function programMode(){return (state.data.config.program||'powerbuilding')==='powerbuilding'?'pb':'classic';}
+function pbSessions(fromD,toD){const out=[];Object.keys(state.data.workouts).sort().forEach(d=>{if(d<fromD||d>toD)return;(state.data.workouts[d]||[]).forEach(w=>{if(w.pb)out.push({date:d,id:w.pb});});});return out;}
+function lastPbSession(before){
+  const ds=Object.keys(state.data.workouts).sort().reverse();
+  for(const d of ds){if(before&&d>=before)continue;const ws=(state.data.workouts[d]||[]).filter(w=>w.pb);if(ws.length)return {date:d,id:ws[ws.length-1].pb};}
+  return null;
+}
+function liftStreakBefore(day){let s=0;for(let i=1;i<=10;i++){const dd=addDays(day,-i);if((state.data.workouts[dd]||[]).some(w=>sessionTypeOf(w)))s++;else break;}return s;}
+function nextUpPB(){
+  const today=getToday();
+  const doneToday=(state.data.workouts[today]||[]).filter(w=>w.pb).map(w=>w.pb);
+  const planDay=doneToday.length?addDays(today,1):today;
+  const last=lastPbSession(planDay);
+  let idx=0;
+  if(last){const i=PB_ORDER.indexOf(last.id);idx=(i+1)%PB_ORDER.length;}
+  const streak=liftStreakBefore(planDay);
+  const wkStart=weekStart(planDay);
+  const thisWeek=pbSessions(wkStart,addDays(wkStart,6));
+  const liftsThisWeek=thisWeek.filter(s=>s.id!=='pb-cond').length;
+  let rest=streak>=6;
+  let id=PB_ORDER[idx];
+  // Conditioning day is optional: if the week's 5 lifts are already done, or you're on day 6 in a row, it's rest/cond.
+  const alt=PB_ORDER[(idx+1)%PB_ORDER.length];
+  return {planDay,isTomorrow:planDay!==today,doneToday,id,routine:pbRoutine(id),alt:pbRoutine(alt),rest,streak,thisWeek,liftsThisWeek,last};
+}
+
+// ── Strength: canonical big lifts, e1RM, DOTS, standards ──
+const BIG={
+  bench:{label:'Bench',rx:/^(flat |barbell )?bench press/i,std:[0.5,0.75,1.0,1.5,2.0]},
+  squat:{label:'Squat',rx:/^(barbell )?(back )?squat\b|^barbell back squat/i,std:[0.75,1.25,1.5,2.25,2.75]},
+  deadlift:{label:'Deadlift',rx:/^(conventional |sumo |barbell )?deadlift/i,std:[1.0,1.5,2.0,2.5,3.0]},
+  ohp:{label:'Overhead',rx:/^(standing )?overhead press|^ohp\b|^military press/i,std:[0.35,0.55,0.75,1.0,1.25]}
+};
+const TIERS=['Beginner','Novice','Intermediate','Advanced','Elite'];
+const TIER_HEX=['#8a93b8','#00f0ff','#00ff9c','#fcee0a','#ff2d78'];
+function bigLiftOf(name){for(const k in BIG){if(BIG[k].rx.test(name||''))return k;}return null;}
+function bestE1RM(key,asOf,days){
+  const H=allLiftHistory();let best=null;const from=addDays(asOf,-(days||90));
+  Object.keys(H).forEach(n=>{if(bigLiftOf(n)!==key)return;H[n].forEach(s=>{if(s.mode!=='load'||s.date>asOf||s.date<from)return;if(!best||s.e1rm>best.e1rm)best={e1rm:s.e1rm,date:s.date,name:n,sets:s.sets};});});
+  return best;
+}
+function tierFor(key,ratio){const st=BIG[key].std;let t=-1;st.forEach((v,i)=>{if(ratio>=v)t=i;});return t;}
+function dotsScore(totalLb,bwLb,sex){
+  const bw=Math.min(210,Math.max(40,bwLb/2.20462)),t=totalLb/2.20462;
+  const c=sex==='f'?[-0.0000010706,0.0005158568,-0.1126655495,13.6175032,-57.96288]:[-0.000001093,0.0007391293,-0.1918759221,24.0900756,-307.75076];
+  const den=c[0]*bw**4+c[1]*bw**3+c[2]*bw**2+c[3]*bw+c[4];
+  return den>0?Math.round(t*500/den*10)/10:0;
+}
+function dotsTier(d){return d>=425?4:d>=350?3:d>=275?2:d>=200?1:0;}
+function strengthProfile(asOf){
+  asOf=asOf||getToday();const bw=bodyweightOn(asOf);const sex=state.data.config.sex||'m';
+  const out={bw,lifts:{},total:null,dots:null};
+  Object.keys(BIG).forEach(k=>{const b=bestE1RM(k,asOf,90);if(b){const r=b.e1rm/bw;out.lifts[k]={...b,ratio:r,tier:tierFor(k,r)};}});
+  if(out.lifts.bench&&out.lifts.squat&&out.lifts.deadlift){out.total=out.lifts.bench.e1rm+out.lifts.squat.e1rm+out.lifts.deadlift.e1rm;out.dots=dotsScore(out.total,bw,sex);}
+  return out;
+}
+function round5(w){return Math.max(45,Math.round(w/5)*5);}
+function floor5(w){return Math.max(45,Math.floor(w/5)*5);}
+function platesPerSide(w){
+  let side=(w-45)/2;if(side<=0)return [];const out=[];
+  [45,35,25,10,5,2.5].forEach(p=>{while(side>=p-1e-9){out.push(p);side-=p;}});return out;
+}
+function warmupRamp(W){
+  if(!(W>=95))return [];
+  const steps=[[45,10],[W*0.4,5],[W*0.6,3],[W*0.75,2],[W*0.85,1]];
+  const out=[];steps.forEach(([w,r])=>{const v=round5(w);if(v<W&&(!out.length||v>out[out.length-1][0]))out.push([v,r]);});return out;
+}
+// Top-set suggestion: progress from the last TOP SET when there is one; otherwise seed it from your best e1RM.
+function topSetSuggestion(name,sc,before){
+  const h=liftHistory(name,before);const key=bigLiftOf(name);
+  const inc=/squat|deadlift/i.test(name)?10:5;
+  const mid=Math.round(((sc.lo||5)+(sc.hi||5))/2);
+  const lastTop=[...h].reverse().find(s=>s.role==='top');
+  if(lastTop){
+    const W=lastTop.topW;const best=Math.max(...lastTop.sets.filter(s=>+s.w===W).map(s=>+s.r||0));
+    if(best>=sc.hi+2)return {w:W+2*inc,text:`${W}×${best} blew past ${sc.hi} → jump to ${W+2*inc} for ${sc.lo}–${sc.hi}.`};
+    if(best>=sc.hi)return {w:W+inc,text:`Owned ${W}×${best} → go ${W+inc} for ${sc.lo}–${sc.hi}.`};
+    if(best<sc.lo)return {w:floor5(W*0.95),text:`${W}×${best} fell under ${sc.lo} — reset to ${floor5(W*0.95)} and build back up.`};
+    return {w:W,text:`Stay at ${W} — you got ${best}. Earn ${sc.hi}, then +${inc} lb.`};
+  }
+  const asOf=before?addDays(before,-1):getToday();
+  const b=key?bestE1RM(key,asOf,60):null;
+  if(b){const w=floor5(b.e1rm/(1+mid/30));return {w,text:`First top set — seeded from your e1RM ${b.e1rm} (${fmtShort(b.date)}): ${w} for ${sc.lo}–${sc.hi}, leave 1 rep in the tank.`};}
+  return {w:null,text:`First top set — work up to a weight you could do ~${sc.hi+2} times, do ${mid}. That's the baseline.`};
+}
+function backoffSuggestion(e,sc,vd){
+  const top=liftEntry(vd,e.of,false);
+  let base=null,src='';
+  if(top){const s=(top.sets||[]).filter(x=>x&&x.r>0);if(s.length){base=Math.max(...s.map(x=>+x.w||0));src='today\'s top set';}}
+  if(base==null){const tsc=parseScheme((findExerciseDef(e.of)||{}).sets)||{lo:4,hi:6,sets:1};const t=topSetSuggestion(e.of,tsc,vd);base=t.w;src='today\'s planned top set';}
+  if(!base)return {w:null,text:'Log the top set first — back-offs are ~90% of it.'};
+  const pct=/deadlift/i.test(e.name)?0.87:0.9;const w=round5(base*pct);
+  return {w,text:`${Math.round(pct*100)}% of ${src} (${base}) → ${w} × ${sc.lo}–${sc.hi}.`};
+}
+function findExerciseDef(name){for(const r of WORKOUTS.pb){const x=r.exercises.find(e=>e.name===name);if(x)return x;}return null;}
+
+// ── Weekly volume: hard sets per muscle (Mon–Sun) ──
+const VOL_GROUPS=[['chest','Chest',10],['back','Back',10],['shoulders','Delts',10],['biceps','Biceps',8],['triceps','Triceps',8],['quads','Quads',10],['hams','Hams/Glutes',8],['calves','Calves',6],['core','Abs',6]];
+const VOL_RULES=[
+  [/close-grip bench/i,[['triceps',1],['chest',.5]]],
+  [/bench|chest press|incline (db|barbell|machine) press|machine chest|floor press/i,[['chest',1],['triceps',.5],['shoulders',.5]]],
+  [/fly|flye|crossover|pec deck/i,[['chest',1]]],
+  [/rear delt|face pull|reverse fly/i,[['shoulders',1],['back',.5]]],
+  [/tricep|pushdown|skull|kickback|dip/i,[['triceps',1],['chest',.3]]],
+  [/push-?up/i,[['chest',1],['triceps',.5]]],
+  [/romanian|rdl|good morning|hip thrust|glute|leg curl|hamstring|abductor/i,[['hams',1]]],
+  [/deadlift/i,[['hams',1],['back',.5],['quads',.5]]],
+  [/calf/i,[['calves',1]]],
+  [/squat|leg press|hack|lunge|split squat|leg extension|step-?up/i,[['quads',1],['hams',.3]]],
+  [/row|pull-?up|chin|pulldown|pullover|t-bar/i,[['back',1],['biceps',.5]]],
+  [/overhead press|shoulder press|arnold|ohp|military/i,[['shoulders',1],['triceps',.5]]],
+  [/lateral|upright/i,[['shoulders',1]]],
+  [/curl/i,[['biceps',1]]],
+  [/crunch|plank|leg raise|rollout|pallof|woodchop|twist|dead bug|bird dog|carr/i,[['core',1]]]
+];
+function volOf(name){for(const [rx,m] of VOL_RULES){if(rx.test(name))return m;}return [];}
+function weeklyVolume(asOf){
+  const ws=weekStart(asOf||getToday());const tot={};VOL_GROUPS.forEach(([k])=>tot[k]=0);
+  for(let i=0;i<7;i++){const d=addDays(ws,i);const L=(state.data.lifts||{})[d];if(!L)continue;
+    Object.entries(L).forEach(([n,e])=>{const sets=(e.sets||[]).filter(s=>s&&s.r>0).length;if(!sets)return;volOf(n).forEach(([m,f])=>{tot[m]+=sets*f;});});}
+  Object.keys(tot).forEach(k=>tot[k]=Math.round(tot[k]*10)/10);
+  return {ws,tot};
+}
+
+// ── Meal sources: known (weighed/labeled) · home (homemade estimate) · est (restaurant/social) ──
+const KNOWN_RX=/barebell|barbell[s]? (bar|choc|cook|cara)|chobani|oikos|quest|fair ?life|muscle milk|pure protein|cheese sticks?|banana|protein shake|protein bar|jerky|fudgesicle|david|grilled nuggets|chicken and rice|baked chicken|chicken breast|ht chicken|yogurt|drizz|\(weighed\)|\(label\)/i;
+const EST_RX2=new RegExp(ESTIMATE_RX.source+'|beer|\\bipa\\b|wine|vodka|booze|drinks|wedding|movie|birthday|hotel|plate\\b|dominos|mcdonalds|krispy|bagel|croissant|cheesesteak|parm|steak dinner|dinner and|cava|seltzer|social|party|theater|papa john','i');
+function mealSrc(m){
+  if(m&&m.src)return m.src;const n=(m&&m.name)||'';
+  if(KNOWN_RX.test(n)&&!/pizza|fries|beer|burger/i.test(n))return 'known';
+  if(/homemade|home-?made|leftover/i.test(n))return 'home';
+  if(EST_RX2.test(n)||ALCOHOL_RX.test(n))return 'est';
+  return 'home';
+}
+const SRC_META={known:{l:'W',t:'Weighed / labeled',c:'#00ff9c'},home:{l:'H',t:'Homemade estimate',c:'#ffb020'},est:{l:'E',t:'Restaurant / social',c:'#ff2d78'}};
+function cycleSrc(i){const vd=getVD();const m=(state.data.meals[vd]||[])[i];if(!m)return;const o=['known','home','est'];m.src=o[(o.indexOf(mealSrc(m))+1)%3];save();render();}
+function daySplit(date){const o={known:0,home:0,est:0};(state.data.meals[date]||[]).forEach(m=>{o[mealSrc(m)]+=(m.calories||0);});return o;}
+function socialDay(date){const mc=(state.data.missionChecks||{})[date]||{};return !!mc.social||daySplit(date).est>=900;}
+function socialDaysWeek(date){const ws=weekStart(date);const out=[];for(let i=0;i<7;i++){const d=addDays(ws,i);if(d>getToday())break;if(socialDay(d))out.push(d);}return out;}
+// Returns false if the user cancels a second social day this week.
+function socialGuard(vd,addCal,src){
+  if(src!=='est')return true;
+  const after=daySplit(vd).est+addCal;if(after<900)return true;
+  const others=socialDaysWeek(vd).filter(d=>d!==vd);if(!others.length||socialDay(vd))return true;
+  return confirm(`Heads up: this makes ${fmtDate(vd)} a SECOND social day this week (already: ${others.map(fmtShort).join(', ')}).\n\nTwo social days is what erased your clean weekdays three weekends running. Log it anyway?`);
+}
+
+// ── Energy model v12: body-based burn + padding fit from YOUR scale ──
+// Burn = Mifflin-St Jeor BMR × base factor + Apple active × active factor.
+// Weighed/labeled food is trusted. Homemade & restaurant estimates get padded by whatever the last
+// 28 days of scale data say is missing (restaurant gets the full pad, homemade half of it).
+let PAD_CACHE={};
+function profileReady(){const c=state.data.config;return c.heightIn>0&&!!c.birthDate;}
+function ageOn(date){const b=state.data.config.birthDate;if(!b)return null;const a=new Date(date+'T12:00:00'),bd=new Date(b+'T12:00:00');let y=a.getFullYear()-bd.getFullYear();if(a.getMonth()<bd.getMonth()||(a.getMonth()===bd.getMonth()&&a.getDate()<bd.getDate()))y--;return y;}
+function bmrOn(date){const c=state.data.config;if(!profileReady())return null;const kg=bodyweightOn(date)/2.20462,cm=c.heightIn*2.54,age=ageOn(date);return Math.round(10*kg+6.25*cm-5*age+(c.sex==='f'?-161:5));}
+function physBurn(date){
+  const b=bmrOn(date);if(b==null)return null;const c=state.data.config;
+  const a=state.data.active[date];const act=a!=null?a:(c.typicalActive||500);
+  const bf=c.baseFactor||1.15,af=c.physActiveFactor!=null?c.physActiveFactor:0.65;
+  return {bmr:b,bf,af,base:Math.round(b*bf),act:Math.round(act*af),rawAct:act,actEst:a==null,tdee:Math.round(b*bf+act*af)};
+}
+function padFit(end){
+  if(PAD_CACHE[end]!==undefined)return PAD_CACHE[end];
+  const def={pEst:0.3,pHome:0.15,ok:false};
+  let res=def;
+  if(profileReady()){
+    const start=addDays(end,-27);const days=[];
+    for(let i=0;i<28;i++){const d=addDays(start,i);if(dayIntake(d)>=800)days.push(d);}
+    const weighs=Object.keys(state.data.weights).filter(d=>d>=start&&d<=end).sort().map(d=>({date:d,w:state.data.weights[d]}));
+    if(days.length>=10&&weighs.length>=6&&daysBetween(weighs[0].date,weighs[weighs.length-1].date)>=14){
+      const slope=theilSenSlope(weighs);let K=0,H=0,E=0,burn=0;
+      days.forEach(d=>{const s=daySplit(d);K+=s.known;H+=s.home;E+=s.est;burn+=physBurn(d).tdee;});
+      const n=days.length,need=burn+3500*slope*n;
+      const den=0.5*H+E;let p=den>=150*n/7?(need-K-H-E)/den:0.3;
+      const raw=p;p=Math.max(0,Math.min(1.2,p));
+      const explained=K+H*(1+p/2)+E*(1+p);
+      res={pEst:Math.round(p*100)/100,pHome:Math.round(p*50)/100,raw:Math.round(raw*100)/100,ok:true,n,slopeWk:round1(slope*7),
+        burnAvg:Math.round(burn/n),loggedAvg:Math.round((K+H+E)/n),needAvg:Math.round(need/n),
+        split:{known:Math.round(K/n),home:Math.round(H/n),est:Math.round(E/n)},unexplained:Math.round((need-explained)/n),start,end};
+    }
+  }
+  return (PAD_CACHE[end]=res);
+}
+function padAt(date){const t=getToday();const e=addDays(date,14);return padFit(e>t?t:e);}
+function adjIntakeOn(date){const s=daySplit(date),p=padAt(date);return Math.round(s.known+s.home*(1+p.pHome)+s.est*(1+p.pEst));}
+
+// ── Body composition (RFM, + Navy when neck is logged) ──
+function latestOf(obj){const ds=Object.keys(obj||{}).sort();return ds.length?{date:ds[ds.length-1],v:obj[ds[ds.length-1]]}:null;}
+function bodyComp(){
+  const c=state.data.config;const w=latestOf(state.data.waist);const n=latestOf(state.data.neck);
+  if(!(c.heightIn>0)||!w)return null;
+  const h=c.heightIn,wt=bodyweightOn(getToday());const f=c.sex==='f';
+  const rfm=(f?76:64)-20*(h/w.v);
+  let navy=null;if(n&&!f&&w.v-n.v>0)navy=86.010*Math.log10(w.v-n.v)-70.041*Math.log10(h)+36.76;
+  const bf=navy!=null?(rfm+navy)/2:rfm;const lean=wt*(1-bf/100);
+  const weighs=sortedWeightEntries().filter(e=>e.date>=addDays(getToday(),-28));
+  const slope=weighs.length>=6?theilSenSlope(weighs):null;const pace=slope!=null?-slope*7:null;
+  const tiers=[[20,'Shape shows — shoulders & arms pop'],[15,'Upper abs, forearm & biceps veins'],[12,'Full six-pack, sharp jawline'],[10,'Shredded — vascular everywhere']]
+    .map(([p,t])=>{const tw=Math.round(lean/(1-p/100));const wk=pace&&pace>0.1&&tw<wt?Math.round((wt-tw)/pace):null;const wk1=tw<wt?Math.round(wt-tw):null;return {p,t,w:tw,wk,wk1,done:bf<=p};});
+  return {bf:round1(bf),rfm:round1(rfm),navy:navy!=null?round1(navy):null,lean:Math.round(lean),wt,waist:w,neck:n,tiers,pace:pace!=null?round1(pace):null,whtr:Math.round(w.v/h*100)/100};
+}
+
+// ── My Foods: per-ounce (or per-item) library for weigh-and-log ──
+const SEED_FOODS=[
+  ['Baked chicken breast (cooked)','oz',47,8.8],['Rotisserie chicken, shredded','oz',53,7],['Steamed white rice','oz',36,0.75],['Yellow rice','oz',34,0.6],
+  ['Lean ground turkey 93/7 (cooked)','oz',60,7.4],['Lean ground beef 90/10 (cooked)','oz',62,7.3],['Shrimp (cooked)','oz',28,6.8],['Baked sweet potato','oz',26,0.6],
+  ['Julia\'s chili (lean beef & bean)','oz',34,2.7],['Turkey sweet potato skillet','oz',40,3.5],['Homemade mac & cheese','oz',62,2.6],['Fall salad','oz',50,1],
+  ['Pear, pecan & goat cheese salad','oz',55,1.1],['Greek salad','oz',35,1.5],['Homemade brownie','oz',130,1.5],['Pulled chicken','oz',50,7.5],['Pulled pork','oz',65,7],
+  ['Air-fried fries','oz',45,0.6],['Shredded sharp cheddar','oz',114,7],
+  ['Egg (cooked)','each',80,6],['Low-sodium bacon','strip',45,3],['Rye toast','slice',80,3],['Flour tortilla (10")','each',210,5],
+  ['Barebells bar','each',200,20],['Quest protein shake','each',230,45],['Chobani (20g)','each',140,20],['Cheese stick','each',70,6],['Pure Protein bar','each',180,21]
+];
+function seedFoods(){return SEED_FOODS.map(([name,unit,cal,pro],i)=>({id:'f_seed_'+i,name,unit,cal,pro,src:'coach'}));}
+function myFoods(){if(!Array.isArray(state.data.myFoods))state.data.myFoods=seedFoods();return state.data.myFoods;}
+function addFood(f){const L=myFoods();const id='f_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);L.unshift({id,...f});save();return id;}
+function deleteFood(id){state.data.myFoods=myFoods().filter(f=>f.id!==id);save();render();}
+
+// ── Apple Health import (Shortcut → clipboard → paste) ──
+function parseHealth(txt){
+  const out={};if(!txt)return out;
+  String(txt).split(/[\n;|]+/).forEach(line=>{
+    const m=line.match(/^\s*([a-z_ ]+?)\s*[=:]\s*(.+?)\s*$/i);if(!m)return;
+    const k=m[1].toLowerCase().replace(/\s+/g,''),v=m[2];
+    if(k==='date'){
+      let d=null;const iso=v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);const us=v.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+      if(iso)d=`${iso[1]}-${iso[2].padStart(2,'0')}-${iso[3].padStart(2,'0')}`;
+      else if(us){const y=us[3].length===2?'20'+us[3]:us[3];d=`${y}-${us[1].padStart(2,'0')}-${us[2].padStart(2,'0')}`;}
+      if(d)out.date=d;return;
+    }
+    const num=parseFloat(v.replace(/,/g,'').match(/-?\d+(\.\d+)?/)?.[0]);if(isNaN(num))return;
+    const key={rest:'rest',resting:'rest',restingenergy:'rest',basal:'rest',active:'active',activeenergy:'active',steps:'steps',step:'steps',weight:'weight',bodymass:'weight',exercise:'exmin',exmin:'exmin',exerciseminutes:'exmin'}[k];
+    if(key)out[key]=num;
+  });
+  if(out.rest!=null&&!(out.rest>=800&&out.rest<=6000))delete out.rest;
+  if(out.active!=null&&!(out.active>=0&&out.active<=6000))delete out.active;
+  if(out.steps!=null&&!(out.steps>=0&&out.steps<=100000))delete out.steps;
+  if(out.weight!=null&&!(out.weight>=80&&out.weight<=600))delete out.weight;
+  return out;
+}
+
+// ═══════════════════════════════════════════
+// v12 UI — program · strength-for-size · volume · weigh & log · USDA/barcode · Health import · body comp
+// ═══════════════════════════════════════════
+function srcTag(m,i){const s=mealSrc(m),M=SRC_META[s];return `<span class="src-tag" style="color:${M.c};border-color:${M.c}66" title="${M.t} — tap to change" onclick="event.stopPropagation();cycleSrc(${i})">${M.l}</span>`;}
+
+// ── NEXT UP (powerbuilding) ──
+function renderNextUpPB(){
+  const n=nextUpPB();const r=n.routine;
+  const week=PB_ORDER.map(id=>{const rr=pbRoutine(id);const done=n.thisWeek.filter(s=>s.id===id).length;const isNext=id===n.id&&!n.rest;
+    return `<div class="pb-chip ${done?'done':''} ${isNext?'next':''}"><div>${rr.short}</div><span>${done?'✓':isNext?'▶':'·'}</span></div>`;}).join('');
+  let main='';
+  if(n.rest){
+    main=`<div class="nu-pick" style="color:var(--purple);text-shadow:0 0 14px var(--purple)">Rest Day</div>
+      <div class="nu-why">${n.streak} lifting days in a row. Growth happens now — walk, stretch, eat your protein. ${r?`Next lift: <b style="color:var(--text)">${r.name}</b>.`:''}</div>`;
+  }else if(r){
+    const top=r.exercises.find(e=>e.role==='top');let topTxt='';
+    if(top){const sc=parseScheme(top.sets);const s=topSetSuggestion(top.name,sc,n.planDay);topTxt=s.w?`<div class="nu-why" style="margin-top:6px;color:var(--yellow)">Top set: ${top.name} <b>${s.w} × ${sc.lo}–${sc.hi}</b></div>`:'';}
+    const optional=r.id==='pb-cond';
+    main=`<div class="nu-pick" style="color:var(--green);text-shadow:0 0 14px var(--green)">${r.name}</div>
+      <div class="nu-why">${r.desc}${optional?' Optional — skip it and rest if you\'re beat.':''}</div>${topTxt}
+      <div class="nu-routine" onclick="showWorkoutDetail('pb','${r.id}')"><div><b>Open & log</b><div style="font-size:12px;color:var(--text2);margin-top:2px">${r.exercises.length} exercises · warm-ups & plate math included</div></div><span class="nu-go">OPEN ▸</span></div>
+      ${n.alt?`<div class="nu-why" style="margin-top:8px;font-size:12px">Can't do this one today? <span class="edit-link" style="margin-left:0" onclick="showWorkoutDetail('pb','${n.alt.id}')">Do ${n.alt.name} instead ▸</span></div>`:''}`;
+  }
+  return `<div class="card nu-card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span>▶ Next Up</span><span class="nu-when">${n.isTomorrow?'Tomorrow':'Today'} · ${fmtShort(n.planDay)}</span></div>
+    ${n.doneToday.length?`<div class="coach-note" style="color:var(--green);background:rgba(0,255,156,.06);font-style:normal;margin:0 0 10px">✓ Today: ${n.doneToday.map(id=>(pbRoutine(id)||{}).name).join(' + ')} logged. Here's tomorrow.</div>`:''}
+    ${main}
+    <div class="pb-week">${week}</div>
+    <div class="nu-why" style="font-size:11.5px;margin-top:6px">This week: ${n.liftsThisWeek}/5 lifts${n.thisWeek.some(s=>s.id==='pb-cond')?' + conditioning':''} · rotation, not calendar — a missed day just waits for you.</div>
+  </div>`;
+}
+
+// ── Program card (all six days) ──
+function renderProgramCard(){
+  return `<div class="card"><div class="card-title" style="display:flex;align-items:center;gap:7px">${ICON.barbell} Powerbuilding Program</div>
+    <p class="cal-note" style="margin:-4px 0 10px">Each day opens with one heavy top set (4–6 reps) + back-offs — that's the strength. Everything after is 8–15 reps — that's the size. 5 lifts a week, 6th day optional.</p>
+    ${WORKOUTS.pb.map((r,i)=>`<div class="workout-card" onclick="showWorkoutDetail('pb','${r.id}')"><div class="workout-card-name"><span style="color:var(--text2);font-family:var(--font-mono);margin-right:6px">${i+1}</span>${r.name}</div><div class="workout-card-desc">${r.desc}</div></div>`).join('')}
+  </div>`;
+}
+
+// ── Strength-for-size card ──
+function renderStrengthCard(){
+  const sp=strengthProfile();const sex=state.data.config.sex||'m';
+  const rows=Object.keys(BIG).map(k=>{
+    const L=sp.lifts[k];const st=BIG[k].std;
+    if(!L)return `<div class="sx-row"><div class="sx-name">${BIG[k].label}</div><div class="sx-val" style="color:var(--text2)">not logged</div></div>`;
+    const t=L.tier,next=t<4?st[t+1]*sp.bw:null;
+    const pct=t<4?Math.max(0,Math.min(100,(L.e1rm-(t>=0?st[t]*sp.bw:0))/((next)-(t>=0?st[t]*sp.bw:0))*100)):100;
+    return `<div class="sx-row"><div class="sx-name">${BIG[k].label}</div>
+      <div class="sx-val"><b>${L.e1rm}</b> <span>e1RM · ${L.ratio.toFixed(2)}× BW</span></div>
+      <div class="sx-tier" style="color:${TIER_HEX[Math.max(0,t)]}">${t>=0?TIERS[t]:'Building'}</div>
+      <div class="sx-bar"><i style="width:${pct}%;background:${TIER_HEX[Math.max(0,t)]}"></i></div>
+      <div class="sx-next">${next?`${Math.round(next)} for ${TIERS[t+1]}`:'Top tier'}</div></div>`;
+  }).join('');
+  const rivals=(state.data.rivals||[]).map(r=>{const tot=(+r.bench||0)+(+r.squat||0)+(+r.deadlift||0);const full=r.bench&&r.squat&&r.deadlift;
+    return {name:r.name,bw:+r.bw,bench:+r.bench||null,total:full?tot:null,dots:full?dotsScore(tot,+r.bw,r.sex||'m'):null,benchDots:r.bench?dotsScore(+r.bench*3,+r.bw,r.sex||'m'):null,id:r.id};});
+  const me={name:'You',bw:sp.bw,bench:sp.lifts.bench?sp.lifts.bench.e1rm:null,total:sp.total,dots:sp.dots,benchDots:sp.lifts.bench?dotsScore(sp.lifts.bench.e1rm*3,sp.bw,sex):null,me:true};
+  const board=[me,...rivals].sort((a,b)=>(b.dots||0)-(a.dots||0)||(b.benchDots||0)-(a.benchDots||0));
+  return `<div class="card"><div class="card-title">🏆 Strength for Your Size</div>
+    ${sp.dots?`<div class="inline-stat" style="margin-bottom:10px"><div class="inline-stat-item"><div class="inline-stat-num" style="color:${TIER_HEX[dotsTier(sp.dots)]}">${sp.dots}</div><div class="inline-stat-label">DOTS · ${TIERS[dotsTier(sp.dots)]}</div></div><div class="inline-stat-item"><div class="inline-stat-num">${sp.total}</div><div class="inline-stat-label">S+B+D total</div></div></div>`
+      :`<div class="coach-note" style="margin:0 0 10px">Log a squat and a deadlift top set to unlock your <b>DOTS score</b> — the powerlifting formula that ranks strength fairly across bodyweights. It's how you prove you're the strongest for your size.</div>`}
+    ${rows}
+    <div class="db-h" style="color:var(--cyan);margin-top:14px">Rivals board</div>
+    <table class="lift-tbl"><thead><tr><th>Lifter</th><th>BW</th><th>Bench</th><th>Total</th><th>DOTS</th></tr></thead><tbody>
+      ${board.map(b=>`<tr ${b.me?'style="color:var(--yellow)"':''}><td>${escapeHTML(b.name)}</td><td>${Math.round(b.bw)||'—'}</td><td>${b.bench||'—'}</td><td>${b.total||'—'}</td><td>${b.dots||'—'}</td></tr>`).join('')}
+    </tbody></table>
+    <button class="btn btn-secondary btn-sm" style="width:100%;margin-top:10px" onclick="showModal('rivals')">+ Add / edit rivals</button>
+    <p class="cal-note">e1RM = best estimated 1-rep max (Epley) from the last 90 days. Tiers use bodyweight ratios; heavier lifters naturally score lower on ratios, which is why DOTS is the fair comparison.</p>
+  </div>`;
+}
+
+// ── Weekly volume card ──
+function renderVolumeCard(){
+  const v=weeklyVolume(getToday());
+  const rows=VOL_GROUPS.map(([k,l,min])=>{const s=v.tot[k];const max=min===6?12:20;const pct=Math.min(100,s/max*100);
+    const col=s>=min?'var(--green)':s>=min/2?'var(--amber)':'var(--red)';
+    return `<div class="vol-row"><span>${l}</span><div class="vol-bar"><i style="width:${pct}%;background:${col}"></i><b style="left:${min/max*100}%"></b></div><span style="color:${col}">${s}</span></div>`;}).join('');
+  return `<div class="card"><div class="card-title" style="display:flex;justify-content:space-between"><span>📊 Weekly Volume</span><span class="nu-when">since ${fmtShort(v.ws)}</span></div>
+    ${rows}
+    <p class="cal-note">Hard sets per muscle this week (compound lifts count partly toward helpers). The tick is the growth minimum — 10+ sets for big muscles, 6+ for calves & abs. Arms and delts are what make you look big in a shirt.</p></div>`;
+}
+
+// ── Fuel extras ──
+function renderSocialChip(){
+  const vd=getVD();const s=socialDaysWeek(vd);const n=s.length;const col=n<=1?'var(--green)':'var(--red)';
+  return `<div class="social-chip" style="border-color:${col}66;color:${col}">Social days this week: <b>${n}/1</b>${n?` · ${s.map(fmtShort).join(', ')}`:''}</div>`;
+}
+
+// ── Body comp / Reveal card (Charts) ──
+function renderBodyComp(){
+  const c=state.data.config;const bc=bodyComp();
+  const form=`<div class="form-group" style="margin-top:12px"><div style="display:flex;gap:8px">
+      <input type="number" id="neck-in" placeholder="Neck (in, optional)" step="0.25" inputmode="decimal" style="flex:1;min-width:0">
+      <button class="btn btn-primary btn-sm" onclick="logNeck()">Log neck</button></div></div>`;
+  if(!(c.heightIn>0))return `<div class="card"><div class="card-title">🔪 Reveal Tracker</div><div class="coach-note" style="margin:0">Set your height in <b>⚙ Settings → Profile</b> to estimate body fat from your waist, your lean mass, and the scale weight where abs, veins and a jawline show up.</div></div>`;
+  if(!bc)return `<div class="card"><div class="card-title">🔪 Reveal Tracker</div><div class="empty-state">Log a waist measurement below to unlock.</div></div>`;
+  return `<div class="card"><div class="card-title">🔪 Reveal Tracker</div>
+    <div class="inline-stat">
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--amber)">~${bc.bf}%</div><div class="inline-stat-label">Est. body fat</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--green)">${bc.lean}</div><div class="inline-stat-label">Lean mass lb</div></div>
+      <div class="inline-stat-item"><div class="inline-stat-num" style="color:var(--cyan)">${bc.whtr}</div><div class="inline-stat-label">Waist ÷ height</div></div>
+    </div>
+    <div style="margin-top:12px">${bc.tiers.map(t=>`<div class="rv-row ${t.done?'done':''}"><div class="rv-p">${t.p}%</div><div class="rv-t">${t.t}</div><div class="rv-w"><b>${t.w}</b> lb${t.wk1?`<span>${t.wk?`~${t.wk} wk now · `:''}${t.wk1} wk @1 lb/wk</span>`:''}</div></div>`).join('')}</div>
+    <p class="cal-note">Estimate from waist ${bc.waist.v}" (${fmtShort(bc.waist.date)})${bc.navy!=null?` + neck ${bc.neck.v}" — averaging RFM ${bc.rfm}% and Navy ${bc.navy}%`:` via Relative Fat Mass — add a neck measurement for a second method`}. Target weights hold your current lean mass; every 5 lb of muscle you add raises them ~5–6 lb. A jawline and veins are body-fat milestones — they show up around 12–15%, not from face or forearm exercises.${bc.pace?` Weeks use your 28-day pace (${bc.pace} lb/wk).`:''}</p>
+    ${form}
+  </div>`;
+}
+function logNeck(){const v=parseFloat(document.getElementById('neck-in')?.value);if(!v||v<10||v>30)return;if(!state.data.neck)state.data.neck={};state.data.neck[getVD()]=round1(v);save();render();}
+
+// ── Health import UI ──
+async function healthFromClipboard(){
+  let t='';try{if(navigator.clipboard&&navigator.clipboard.readText)t=await navigator.clipboard.readText();}catch(e){t='';}
+  state.healthText=t||'';state.modal='health';render();
+}
+function healthReparse(){state.healthText=document.getElementById('health-txt')?.value||'';render();}
+function applyHealth(){
+  const p=parseHealth(state.healthText);const date=p.date||getVD();
+  if(date>getToday()){alert('That date is in the future.');return;}
+  const d=state.data;let n=0;
+  if(p.rest!=null){d.resting[date]=Math.round(p.rest);n++;}
+  if(p.active!=null){d.active[date]=Math.round(p.active);n++;}
+  if(p.steps!=null){if(!d.steps)d.steps={};d.steps[date]=Math.round(p.steps);n++;}
+  if(p.weight!=null&&document.getElementById('health-w')?.checked){d.weights[date]=round1(p.weight);n++;}
+  if(!n){alert('Nothing to import — check the text below.');return;}
+  save();state.healthText='';closeModal();
+}
+function renderHealthModal(){
+  const p=parseHealth(state.healthText);const date=p.date||getVD();
+  const has=Object.keys(p).filter(k=>k!=='date').length;
+  const row=(l,v)=>`<div class="stat-row"><span class="stat-label">${l}</span><span class="stat-value" style="font-size:15px">${v}</span></div>`;
+  return {title:'Import from Apple Health',body:`
+    ${has?`<div class="coach-note" style="color:var(--green);background:rgba(0,255,156,.06);font-style:normal;margin:0 0 10px">Found data for <b>${fmtDate(date)}</b></div>
+      ${p.rest!=null?row('Resting energy',Math.round(p.rest)+' cal'):''}${p.active!=null?row('Active energy',Math.round(p.active)+' cal'):''}${p.steps!=null?row('Steps',Math.round(p.steps).toLocaleString()):''}
+      ${p.weight!=null?`<div class="checkbox-row"><input type="checkbox" id="health-w" ${state.data.weights[date]==null?'checked':''}><label for="health-w">Also save weight ${round1(p.weight)} lb${state.data.weights[date]!=null?` (replaces ${state.data.weights[date]})`:''}</label></div>`:''}
+      <button class="btn btn-primary" style="margin-top:10px" onclick="applyHealth()">Import ${fmtShort(date)}</button>`
+      :`<div class="coach-note" style="margin:0 0 10px">Nothing readable on the clipboard. Run your <b>LOCK IN Sync</b> shortcut first, then tap Import again — or paste the text below.</div>`}
+    <div class="form-group" style="margin-top:14px"><label>Clipboard text</label><textarea id="health-txt" rows="6" style="width:100%;font-family:var(--font-mono);font-size:13px" placeholder="date=2026-11-04&#10;rest=2811&#10;active=535&#10;steps=10234" onchange="healthReparse()">${escapeHTML(state.healthText||'')}</textarea></div>
+    <button class="btn btn-secondary btn-sm" style="width:100%" onclick="healthReparse()">Re-read text</button>
+    <button class="btn btn-secondary btn-sm" style="width:100%;margin-top:8px" onclick="showModal('health-guide')">How to set up the shortcut</button>`};
+}
+function renderHealthGuide(){
+  const st=(n,t,b)=>`<div class="hg-step"><div class="hg-n">${n}</div><div><b>${t}</b><div>${b}</div></div></div>`;
+  return {title:'Apple Health → LOCK IN',body:`
+    <p class="cal-note" style="margin-top:0">Web apps can't read Apple Health directly, so a Shortcut copies yesterday's numbers and LOCK IN pastes them. One-time setup, ~5 minutes.</p>
+    ${st(1,'New shortcut','Open <b>Shortcuts</b> → <b>+</b> → name it <b>LOCK IN Sync</b>.')}
+    ${st(2,'Set the day','Add <b>Date</b> → type <b>yesterday</b>. Add <b>Adjust Date</b> → <b>Get Start of Day</b> of that Date. Rename the result <b>Start</b>. Add another <b>Date</b> = <b>today</b> → <b>Adjust Date → Get Start of Day</b>, rename it <b>End</b>.')}
+    ${st(3,'Resting energy','Add <b>Find Health Samples</b>: Type <b>Resting Energy</b>, Start Date <b>is between</b> Start and End. Then <b>Calculate Statistics</b> → <b>Sum</b>. Rename it <b>Rest</b>.')}
+    ${st(4,'Active energy & steps','Repeat step 3 with <b>Active Energy</b> (rename <b>Active</b>) and <b>Steps</b> (rename <b>Steps</b>).')}
+    ${st(5,'Weight (optional)','<b>Find Health Samples</b>: Type <b>Weight</b>, Sort by Start Date <b>Latest First</b>, Limit <b>1</b>. Rename it <b>Weight</b>. Skip if you log weight by hand.')}
+    ${st(6,'Format the text','Add <b>Format Date</b> on Start → Custom <b>yyyy-MM-dd</b>. Then add a <b>Text</b> action with these lines, inserting each variable:<pre class="hg-pre">date=[Formatted Date]\nrest=[Rest]\nactive=[Active]\nsteps=[Steps]\nweight=[Weight]</pre>')}
+    ${st(7,'Copy it','Add <b>Copy to Clipboard</b> (input: Text). Done.')}
+    ${st(8,'Automate (optional)','<b>Automation</b> tab → <b>+</b> → <b>Time of Day</b> 6:00 AM daily → <b>Run Immediately</b> → Run Shortcut: LOCK IN Sync.')}
+    ${st(9,'Import','Open LOCK IN → Today → Energy Balance → <b>⤓ Import from Health</b> → tap <b>Paste</b> if iOS asks → Import.')}
+    <p class="cal-note">Units like "kcal" and commas are fine — LOCK IN strips them. Workouts still log in LOCK IN because Apple Health doesn't store your sets and reps.</p>
+    <button class="btn btn-primary" onclick="healthFromClipboard()">Try an import now</button>`};
+}
+
+// ── Weigh & Log (plate builder) ──
+function foodById(id){return myFoods().find(f=>f.id===id)||null;}
+function plateTotals(){let cal=0,pro=0;(state.plate||[]).forEach(p=>{const f=foodById(p.fid);if(!f)return;cal+=f.cal*(+p.amt||0);pro+=f.pro*(+p.amt||0);});return {cal:Math.round(cal),pro:Math.round(pro)};}
+function openPlate(){if(!state.plate)state.plate=[];state.plateReturn=true;state.modal='plate';render();}
+function plateAdd(fid){const f=foodById(fid);if(!f)return;(state.plate=state.plate||[]).push({fid,amt:f.unit==='oz'?'':1});state.plateQ='';render();setTimeout(()=>{const els=document.querySelectorAll('.pl-amt');const el=els[els.length-1];if(el)el.focus();},60);}
+function plateAmt(i,v){if(!state.plate[i])return;state.plate[i].amt=v;const t=plateTotals();const f=foodById(state.plate[i].fid);
+  const r=document.getElementById('pl-r-'+i);if(r&&f){const a=+v||0;r.textContent=`${Math.round(f.cal*a)} · ${Math.round(f.pro*a)}g`;}
+  const T=document.getElementById('pl-total');if(T)T.textContent=`${t.cal} cal · ${t.pro}g protein`;}
+function plateRemove(i){state.plate.splice(i,1);render();}
+function plateSearch(q){state.plateQ=q;const el=document.getElementById('pl-results');if(el)el.innerHTML=plateResults(q);}
+function plateResults(q){
+  const L=myFoods();const ql=(q||'').toLowerCase().trim();
+  const list=ql?L.filter(f=>f.name.toLowerCase().includes(ql)):L.slice(0,12);
+  if(!list.length)return `<div class="empty-state" style="padding:10px">No match. <span class="edit-link" onclick="showModal('food-new')">Add "${escapeHTML(q)}" ▸</span></div>`;
+  return list.slice(0,14).map(f=>`<div class="pl-food" onclick="plateAdd('${f.id}')"><span>${escapeHTML(f.name)}</span><span>${f.cal}·${f.pro}g /${f.unit}</span></div>`).join('');
+}
+function logPlate(){
+  const P=(state.plate||[]).filter(p=>+p.amt>0&&foodById(p.fid));if(!P.length){alert('Add a food and an amount first.');return;}
+  const t=plateTotals();
+  const auto=P.map(p=>{const f=foodById(p.fid);return `${f.name.replace(/\s*\(.*?\)\s*/g,' ').trim()} ${+p.amt}${f.unit==='oz'?' oz':f.unit==='each'?'':' '+f.unit}`;}).join(' + ');
+  const name=(document.getElementById('pl-name')?.value||'').trim()||auto;
+  const vd=getVD();(state.data.meals[vd]=state.data.meals[vd]||[]).push({name,calories:t.cal,protein:t.pro,src:'known',items:P.map(p=>({fid:p.fid,amt:+p.amt}))});
+  if(document.getElementById('pl-fav')?.checked)addFavorite(name,t.cal,t.pro);
+  state.plate=[];save();closeModal();
+}
+function renderPlateModal(){
+  const P=state.plate||[];const t=plateTotals();
+  return {title:'Weigh & Log — '+fmtShort(getVD()),body:`
+    <div class="form-group"><input type="text" id="pl-q" placeholder="Search your foods (chicken, rice, chili…)" value="${escapeHTML(state.plateQ||'')}" oninput="plateSearch(this.value)" autocomplete="off"></div>
+    <div id="pl-results" class="pl-results">${plateResults(state.plateQ||'')}</div>
+    <div style="display:flex;gap:8px;margin:8px 0 14px"><button class="btn btn-secondary btn-sm" style="flex:1" onclick="showModal('food-new')">+ New food</button><button class="btn btn-secondary btn-sm" style="flex:1" onclick="state.foodTab='scan';showModal('food-new')">▦ Barcode</button></div>
+    ${P.length?`<div class="db-h" style="color:var(--cyan)">On the plate</div>${P.map((p,i)=>{const f=foodById(p.fid);if(!f)return '';const a=+p.amt||0;
+      return `<div class="pl-row"><div class="pl-n">${escapeHTML(f.name)}</div><input class="pl-amt" type="number" inputmode="decimal" step="0.05" value="${p.amt}" placeholder="${f.unit}" oninput="plateAmt(${i},this.value)"><span class="pl-u">${f.unit}</span><span class="pl-r" id="pl-r-${i}">${Math.round(f.cal*a)} · ${Math.round(f.pro*a)}g</span><span class="meal-delete" onclick="plateRemove(${i})">✕</span></div>`;}).join('')}
+      <div class="pl-total" id="pl-total">${t.cal} cal · ${t.pro}g protein</div>
+      <div class="form-group" style="margin-top:10px"><input type="text" id="pl-name" placeholder="Meal name (optional — auto-named)"></div>
+      <div class="checkbox-row"><input type="checkbox" id="pl-fav"><label for="pl-fav">★ Also save as a one-tap favorite</label></div>
+      <button class="btn btn-primary" onclick="logPlate()">Log plate (weighed ✓)</button>`:'<p class="cal-note">Tap foods above, type the weight. Logged plates count as known numbers — no padding.</p>'}`};
+}
+
+// ── New food: custom · USDA · barcode ──
+function setFoodTab(t){stopScan();state.foodTab=t;render();}
+function saveCustomFood(){
+  const name=(document.getElementById('nf-name')?.value||'').trim();const unit=document.getElementById('nf-unit')?.value||'oz';
+  const cal=parseFloat(document.getElementById('nf-cal')?.value),pro=parseFloat(document.getElementById('nf-pro')?.value)||0;
+  if(!name||!(cal>=0)){alert('Name and calories are required.');return;}
+  const id=addFood({name,unit,cal:round1(cal),pro:round1(pro),src:'custom'});afterFoodAdded(id);
+}
+function afterFoodAdded(id){stopScan();if(state.plateReturn===false){state.modal=null;render();return;}(state.plate=state.plate||[]).push({fid:id,amt:''});state.modal='plate';render();}
+async function usdaSearch(){
+  const q=(document.getElementById('usda-q')?.value||'').trim();if(!q)return;
+  const out=document.getElementById('usda-out');if(out)out.innerHTML='<div class="empty-state">Searching USDA…</div>';
+  const key=(state.data.config.usdaKey||'').trim()||'DEMO_KEY';
+  const url=`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${encodeURIComponent(key)}&query=${encodeURIComponent(q)}&pageSize=12&dataType=${encodeURIComponent('Foundation,SR Legacy,Survey (FNDDS)')}`;
+  try{
+    const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();
+    const foods=(j.foods||[]).map(f=>{const nut=(id,nm)=>{const x=(f.foodNutrients||[]).find(n=>n.nutrientId===id||(n.nutrientName===nm&&(n.unitName||'').toUpperCase()!=='KJ'));return x?+x.value:null;};
+      const kcal=nut(1008,'Energy'),pro=nut(1003,'Protein');return kcal!=null?{name:f.description,cal:round1(kcal*0.2835),pro:round1((pro||0)*0.2835)}:null;}).filter(Boolean);
+    state.usdaResults=foods;
+    if(out)out.innerHTML=foods.length?foods.map((f,i)=>`<div class="pl-food" onclick="addUsda(${i})"><span>${escapeHTML(f.name)}</span><span>${f.cal}·${f.pro}g /oz</span></div>`).join(''):'<div class="empty-state">No results — try simpler words ("chicken breast roasted").</div>';
+  }catch(e){if(out)out.innerHTML=`<div class="empty-state">USDA lookup failed (${escapeHTML(e.message)}). ${(state.data.config.usdaKey||'')?'':'The shared DEMO_KEY is rate-limited — add your free key in ⚙ Settings.'}</div>`;}
+}
+function addUsda(i){const f=(state.usdaResults||[])[i];if(!f)return;const nm=f.name.toLowerCase().replace(/(^|[\s,(])\w/g,c=>c.toUpperCase());const id=addFood({name:nm,unit:'oz',cal:f.cal,pro:f.pro,src:'usda'});afterFoodAdded(id);}
+async function offLookup(code){
+  code=String(code||document.getElementById('bc-code')?.value||'').replace(/\D/g,'');if(code.length<6){alert('Enter the barcode digits.');return;}
+  const out=document.getElementById('bc-out');if(out)out.innerHTML='<div class="empty-state">Looking up '+code+'…</div>';
+  try{
+    const r=await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json?fields=product_name,brands,nutriments,serving_size`);const j=await r.json();
+    if(!j||j.status!==1||!j.product)throw new Error('not in Open Food Facts');
+    const p=j.product,n=p.nutriments||{};const nm=[p.brands&&p.brands.split(',')[0],p.product_name].filter(Boolean).join(' ')||('Barcode '+code);
+    const opts=[];
+    if(n['energy-kcal_serving']!=null)opts.push({unit:'each',cal:Math.round(n['energy-kcal_serving']),pro:round1(n.proteins_serving||0),lbl:`per serving${p.serving_size?' ('+p.serving_size+')':''}`});
+    if(n['energy-kcal_100g']!=null)opts.push({unit:'oz',cal:round1(n['energy-kcal_100g']*0.2835),pro:round1((n.proteins_100g||0)*0.2835),lbl:'per oz (from 100 g)'});
+    if(!opts.length)throw new Error('no calorie data on this product');
+    state.offResult={name:nm,opts,code};
+    if(out)out.innerHTML=`<div class="db-h" style="color:var(--green)">${escapeHTML(nm)}</div>`+opts.map((o,i)=>`<div class="pl-food" onclick="addOff(${i})"><span>${o.lbl}</span><span>${o.cal}·${o.pro}g</span></div>`).join('');
+  }catch(e){if(out)out.innerHTML=`<div class="empty-state">${escapeHTML(e.message)}. Add it as a custom food from the label.</div>`;}
+}
+function addOff(i){const r=state.offResult;if(!r)return;const o=r.opts[i];const id=addFood({name:r.name,unit:o.unit,cal:o.cal,pro:o.pro,src:'label',barcode:r.code});afterFoodAdded(id);}
+let SCAN=null;
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('could not load scanner'));document.head.appendChild(s);});}
+async function startScan(){
+  const v=document.getElementById('scan-video');const msg=document.getElementById('scan-msg');if(!v)return;
+  try{
+    if('BarcodeDetector' in window){
+      const det=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+      const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});v.srcObject=stream;await v.play();
+      SCAN={stream};if(msg)msg.textContent='Point at the barcode…';
+      const loop=async()=>{if(!SCAN)return;try{const c=await det.detect(v);if(c&&c.length){const code=c[0].rawValue;stopScan();const el=document.getElementById('bc-code');if(el)el.value=code;offLookup(code);return;}}catch(e){}requestAnimationFrame(loop);};loop();
+    }else{
+      if(!window.ZXing)await loadScript('https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js');
+      const reader=new window.ZXing.BrowserMultiFormatReader();SCAN={reader};if(msg)msg.textContent='Point at the barcode…';
+      reader.decodeFromVideoDevice(null,'scan-video',(res)=>{if(res&&SCAN){const code=res.getText();stopScan();const el=document.getElementById('bc-code');if(el)el.value=code;offLookup(code);}});
+    }
+  }catch(e){if(msg)msg.textContent='Camera unavailable ('+e.message+') — type the digits instead.';}
+}
+function stopScan(){if(!SCAN)return;try{if(SCAN.stream)SCAN.stream.getTracks().forEach(t=>t.stop());if(SCAN.reader)SCAN.reader.reset();}catch(e){}SCAN=null;}
+function renderFoodNewModal(){
+  const tab=state.foodTab||'custom';
+  const tabs=[['custom','Custom'],['usda','USDA search'],['scan','Barcode']].map(([k,l])=>`<button class="range-pill ${tab===k?'on':''}" onclick="setFoodTab('${k}')">${l}</button>`).join('');
+  let body='';
+  if(tab==='custom')body=`<div class="form-group"><label>Food name</label><input type="text" id="nf-name" placeholder="e.g. Julia's turkey meatballs" value="${escapeHTML(state.plateQ||'')}"></div>
+    <div class="form-group"><label>Unit</label><select id="nf-unit"><option value="oz">per oz (weigh it)</option><option value="each">per item / serving</option><option value="cup">per cup</option><option value="tbsp">per tbsp</option></select></div>
+    <div style="display:flex;gap:8px"><div class="form-group" style="flex:1"><label>Calories</label><input type="number" id="nf-cal" step="0.1" inputmode="decimal"></div><div class="form-group" style="flex:1"><label>Protein (g)</label><input type="number" id="nf-pro" step="0.1" inputmode="decimal"></div></div>
+    <p class="cal-note" style="margin-top:-4px">Homemade dish? Weigh the empty pot, then the full pot. Total recipe calories ÷ ounces of food = calories per oz.</p>
+    <button class="btn btn-primary" onclick="saveCustomFood()">Save food</button>`;
+  if(tab==='usda')body=`<div style="display:flex;gap:8px"><input type="text" id="usda-q" placeholder="e.g. sweet potato baked" style="flex:1;min-width:0" onkeydown="if(event.key==='Enter')usdaSearch()"><button class="btn btn-primary btn-sm" onclick="usdaSearch()">Search</button></div>
+    <div id="usda-out" class="pl-results" style="margin-top:10px"></div>
+    <p class="cal-note">USDA FoodData Central — lab-measured nutrition per 100 g, converted per oz. Tap a result to add it to My Foods.</p>`;
+  if(tab==='scan')body=`<video id="scan-video" class="scan-video" playsinline muted></video>
+    <div id="scan-msg" class="cal-note" style="margin:6px 0">Tap Start camera, or type the digits under the barcode.</div>
+    <div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" style="flex:1" onclick="startScan()">Start camera</button><button class="btn btn-secondary btn-sm" style="flex:1" onclick="stopScan()">Stop</button></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input type="text" id="bc-code" inputmode="numeric" placeholder="Barcode digits" style="flex:1;min-width:0"><button class="btn btn-primary btn-sm" onclick="offLookup()">Look up</button></div>
+    <div id="bc-out" class="pl-results" style="margin-top:10px"></div>
+    <p class="cal-note">Open Food Facts — free, crowd-sourced. Double-check the numbers against the label the first time.</p>`;
+  return {title:'Add a Food',body:`<div class="range-row">${tabs}</div>${body}${state.plateReturn===false?'':`<button class="btn btn-secondary btn-sm" style="width:100%;margin-top:12px" onclick="stopScan();state.modal='plate';render()">‹ Back to plate</button>`}`};
+}
+
+// ── Rivals modal ──
+function addRival(){
+  const g=id=>document.getElementById(id)?.value;const name=(g('rv-name')||'').trim();const bw=+g('rv-bw');
+  if(!name||!(bw>80)){alert('Name and bodyweight are required.');return;}
+  (state.data.rivals=state.data.rivals||[]).push({id:'r_'+Date.now(),name,bw,bench:+g('rv-b')||null,squat:+g('rv-s')||null,deadlift:+g('rv-d')||null,sex:'m'});save();render();
+}
+function deleteRival(id){state.data.rivals=(state.data.rivals||[]).filter(r=>r.id!==id);save();render();}
+function renderRivalsModal(){
+  const R=state.data.rivals||[];
+  return {title:'Rivals',body:`<p class="cal-note" style="margin-top:0">Add your friends' best lifts (true maxes or best e1RMs) and bodyweight. DOTS ranks everyone fairly by size.</p>
+    ${R.map(r=>`<div class="fav-row"><span>${escapeHTML(r.name)} <span style="color:var(--text2);font-family:var(--font-mono)">${r.bw} BW · ${r.bench||'—'}/${r.squat||'—'}/${r.deadlift||'—'}</span></span><span class="meal-delete" onclick="deleteRival('${r.id}')">✕</span></div>`).join('')}
+    <div class="form-group" style="margin-top:10px"><input type="text" id="rv-name" placeholder="Name"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <input type="number" id="rv-bw" placeholder="Bodyweight" inputmode="decimal"><input type="number" id="rv-b" placeholder="Bench" inputmode="decimal">
+      <input type="number" id="rv-s" placeholder="Squat" inputmode="decimal"><input type="number" id="rv-d" placeholder="Deadlift" inputmode="decimal"></div>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="addRival()">Add rival</button>`};
+}
+
+function renderModal12(){
+  const m=state.modal;
+  if(m==='health')return renderHealthModal();
+  if(m==='health-guide')return renderHealthGuide();
+  if(m==='plate')return renderPlateModal();
+  if(m==='food-new')return renderFoodNewModal();
+  if(m==='rivals')return renderRivalsModal();
+  return null;
+}
+
+// ── Settings additions ──
+function renderSettings12(){
+  const c=state.data.config;const L=myFoods();
+  const ft=c.heightIn>0?`${Math.floor(c.heightIn/12)}′${Math.round(c.heightIn%12)}″`:'';
+  return `<div class="card"><div class="card-title">Profile</div>
+      <div style="display:flex;gap:8px"><div class="form-group" style="flex:1"><label>Height (inches) ${ft?'· '+ft:''}</label><input type="number" value="${c.heightIn||''}" placeholder="e.g. 70" step="0.5" inputmode="decimal" onchange="state.data.config.heightIn=+this.value||null;save();render()"></div>
+      <div class="form-group" style="flex:1"><label>Sex</label><select onchange="state.data.config.sex=this.value;save();render()"><option value="m" ${c.sex!=='f'?'selected':''}>Male</option><option value="f" ${c.sex==='f'?'selected':''}>Female</option></select></div></div>
+      <div class="form-group"><label>Birth date</label><input type="date" value="${c.birthDate||''}" onchange="state.data.config.birthDate=this.value;save();render()"></div>
+      <p class="cal-note" style="margin-top:-4px">Used for body-based burn (BMR), body-fat estimates and DOTS. Stays on this device.</p></div>
+    <div class="card"><div class="card-title">Training Program</div>
+      <div class="range-row"><button class="range-pill ${programMode()==='pb'?'on':''}" onclick="state.data.config.program='powerbuilding';save();render()">POWERBUILDING</button><button class="range-pill ${programMode()==='classic'?'on':''}" onclick="state.data.config.program='classic';save();render()">CLASSIC SPLIT</button></div>
+      <p class="cal-note">Powerbuilding: 5-day rotation with heavy top sets (recommended). Classic: your original body-part splits. Your history counts either way.</p></div>
+    <div class="card"><div class="card-title">Integrations</div>
+      <button class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:10px" onclick="showModal('health-guide')">Apple Health shortcut — setup guide</button>
+      <div class="form-group"><label>USDA FoodData Central API key</label><input type="text" value="${escapeHTML(c.usdaKey||'')}" placeholder="blank = shared DEMO_KEY (rate-limited)" onchange="state.data.config.usdaKey=this.value.trim();save()" autocomplete="off" autocapitalize="off"></div>
+      <p class="cal-note" style="margin-top:-4px">Free key in 1 minute at fdc.nal.usda.gov → API Key Signup. Barcodes use Open Food Facts (no key).</p></div>
+    <div class="card"><div class="card-title">My Foods (${L.length})</div>
+      <p class="cal-note" style="margin-top:-4px">Your weigh-and-log library. Coach numbers seeded from our estimates; tap ✕ to remove.</p>
+      ${L.map(f=>`<div class="fav-row"><span>${escapeHTML(f.name)} <span style="color:var(--text2);font-family:var(--font-mono)">${f.cal}·${f.pro}g/${f.unit}</span></span><span class="meal-delete" onclick="deleteFood('${f.id}')">✕</span></div>`).join('')}
+      <button class="btn btn-secondary btn-sm" style="width:100%;margin-top:8px" onclick="state.plateReturn=false;state.foodTab='custom';showModal('food-new')">+ Add food</button></div>`;
 }
 
 // ═══════════════════════════════════════════
