@@ -1,11 +1,11 @@
 // ═══════════════════════════════════════════
 // LOCK IN — Service Worker
-// Cache: lockin-v11-2  (serves the v11 app code — strength log, Next Up, Charts, calibrated
+// Cache: lockin-v12  (serves the v12 app — powerbuilding program, Health import, My Foods, body-based energy model)
 //   maintenance, Daily Debrief, weekly review, Lock-In Mission)
 // Strategy: network-first for the document (so new HTML lands on the
 //   next online load), cache-first for static shell assets.
 // ═══════════════════════════════════════════
-const CACHE='lockin-v11-2';
+const CACHE='lockin-v12';
 const SHELL=[
   './',
   './index.html',
