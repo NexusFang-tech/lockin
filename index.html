@@ -3251,7 +3251,7 @@ function importData(e){
         state.data={
           config:{...def.config,...(state.data.config||{}),...(imp.config||{})},
           weights:{...(state.data.weights||{}),...(imp.weights||{})},
-          meals:{...(state.data.meals||{}),...(imp.meals||{})},
+          meals:(()=>{const a=state.data.meals||{},b=imp.meals||{},o={...a};Object.keys(b).forEach(d=>{const cur=(a[d]||[]).slice();const have={};cur.forEach(m=>{const k=m.name+'|'+m.calories+'|'+m.protein;have[k]=(have[k]||0)+1;});(b[d]||[]).forEach(m=>{const k=m.name+'|'+m.calories+'|'+m.protein;if(have[k]>0)have[k]--;else cur.push(m);});o[d]=cur;});return o;})(),
           workouts:{...(state.data.workouts||{}),...(imp.workouts||{})},
           focus:{...(state.data.focus||{}),...(imp.focus||{})},
           sleep:{...(state.data.sleep||{}),...(imp.sleep||{})},
@@ -3275,6 +3275,7 @@ function importData(e){
         if(!(imp.config||{}).fix13)state.data.config.fix13=false;
         try{fixData13(state.data);}catch(e){console.warn('LOCK IN: v13 data fix skipped',e);}
         try{fixData131(state.data);}catch(e){}
+        Object.values(imp.meals||{}).forEach(a=>(a||[]).forEach(m=>{if(m&&m.t===undefined)m.t='';}));
         save();render();
         if(photosInIDB)idbPutAll(state.data.photos).catch(()=>{});
         alert('Data imported successfully!');
