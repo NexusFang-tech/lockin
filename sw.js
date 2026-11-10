@@ -5,7 +5,7 @@
 // Strategy: network-first for the document (so new HTML lands on the
 //   next online load), cache-first for static shell assets.
 // ═══════════════════════════════════════════
-const CACHE='lockin-v13-1';
+const CACHE='lockin-v13-3';
 const SHELL=[
   './',
   './index.html',
