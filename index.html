@@ -2398,6 +2398,11 @@ function renderSettings(){
       <button class="btn btn-secondary btn-sm" onclick="exportData()" style="margin-bottom:8px;width:100%">Export JSON Backup (includes photos)</button>
       <button class="btn btn-secondary btn-sm" style="width:100%" onclick="document.getElementById('import-file').click()">Import JSON Backup</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)">
+        <label>//SYSTEM sync</label>
+        <p class="cal-note" id="sys-sync-status" style="margin:4px 0 8px">${sysSyncStatus()}</p>
+        <button class="btn btn-secondary btn-sm" style="width:100%" onclick="sysSyncConnect()">${sysSync()?'Reconnect //SYSTEM':'Connect //SYSTEM'}</button>
+      </div>
       <p class="cal-note">Never clear Safari website data for this app — updates arrive on their own when you close and reopen it.</p>
     </div>`;
 }
@@ -5687,8 +5692,66 @@ async function boot(){
     navigator.serviceWorker.register('./sw.js').then(reg=>{if(reg&&reg.update)reg.update();}).catch(()=>{});
   }
 }
+// ── //SYSTEM sync ───────────────────────────────────────────────────────────────
+// After you save anything, a trimmed copy of your log (no photos, no food database)
+// goes to your //SYSTEM app, which turns it into XP. Connect once in ⚙ → Data.
+const SYS_KEY='lockin.systemSync';
+function sysSync(){try{return JSON.parse(localStorage.getItem(SYS_KEY)||'null');}catch(e){return null;}}
+function sysSyncStatus(){
+  const s=sysSync();
+  if(!s)return 'Not connected. In //SYSTEM: LOG → LOCK IN SYNC → Copy sync code, then tap Connect below.';
+  if(s.err)return 'Connected, but the last sync failed: '+s.err;
+  return s.last?'Connected · last sync '+new Date(s.last).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'Connected · waiting for first sync';
+}
+function sysSyncConnect(){
+  const code=prompt('Paste your //SYSTEM sync code (leave empty to disconnect):');
+  if(code==null)return;
+  if(!code.trim()){localStorage.removeItem(SYS_KEY);render();return;}
+  try{
+    const o=JSON.parse(atob(code.trim()));
+    if(!o.url||!o.key)throw new Error('bad code');
+    localStorage.setItem(SYS_KEY,JSON.stringify({url:String(o.url).replace(/\/+$/,''),key:o.key}));
+    sysPush(true);
+  }catch(e){alert("That code didn't work. Copy it again from //SYSTEM (LOG → LOCK IN SYNC).");}
+}
+let sysTimer=null;
+function sysQueue(delay){if(!sysSync())return;clearTimeout(sysTimer);sysTimer=setTimeout(()=>sysPush(false),delay==null?3000:delay);}
+function sysPayload(){
+  const d=state.data||{},out={};
+  ['config','weights','workouts','sleep','water','lifts','steps','missionChecks','focus'].forEach(k=>{if(d[k]!=null)out[k]=d[k];});
+  out.meals={};
+  Object.entries(d.meals||{}).forEach(([day,arr])=>{out.meals[day]=(arr||[]).map(m=>({calories:m&&m.calories,protein:m&&m.protein}));});
+  return out;
+}
+async function sysPush(announce){
+  const s=sysSync();if(!s)return;
+  try{
+    const r=await fetch(s.url+'/api/sync/lockin',{method:'POST',headers:{'content-type':'application/json','x-sync-key':s.key},body:JSON.stringify({data:sysPayload()})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
+    s.last=Date.now();delete s.err;localStorage.setItem(SYS_KEY,JSON.stringify(s));
+    if(j.gained>0)sysToast('//SYSTEM +'+j.gained+' XP'+(j.level_up?' · LEVEL '+j.level+'!':''));
+    else if(announce)sysToast('//SYSTEM connected ✓');
+  }catch(e){
+    s.err=e.message;localStorage.setItem(SYS_KEY,JSON.stringify(s));
+    if(announce)alert('//SYSTEM sync failed: '+e.message);
+    console.warn('//SYSTEM sync failed',e);
+  }
+  const el=document.getElementById('sys-sync-status');if(el)el.textContent=sysSyncStatus();
+}
+function sysToast(msg){
+  const t=document.createElement('div');t.textContent=msg;
+  t.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 12px);transform:translateX(-50%);z-index:99999;background:#05070f;color:#00f0ff;border:1px solid #00f0ff;box-shadow:0 0 16px rgba(0,240,255,.5);padding:8px 14px;border-radius:6px;font:600 14px "Share Tech Mono",monospace;pointer-events:none;white-space:nowrap';
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3200);
+}
+// Every save() also queues a sync (3 s later, so a burst of edits sends once).
+const _lockinSave=save;
+save=function(){_lockinSave.apply(this,arguments);sysQueue();};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sysQueue(1500);});
+
 window.addEventListener('resize',()=>{if(state.tab==='progress'&&(state.progTab||'charts')==='charts')drawAllCharts();});
 boot();
+sysQueue(2000);
 </script>
 </body>
 </html>
